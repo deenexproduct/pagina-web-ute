@@ -17,22 +17,24 @@ const cards = [
   <div class="container-content">
     {showHead && (
       <header class="franq__head">
-        <p class="eyebrow">07 · Franquicias y expansión</p>
-        <h2 id="franq-title" class="franq__title">Modelos comerciales para crecer con QUEM Central</h2>
-        <p class="franq__lede">
+        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">07 · Franquicias y expansión</p>
+        <h2 id="franq-title" class="franq__title" data-reveal style="--reveal-delay: 100ms;">
+          Modelos comerciales para <em>crecer con QUEM Central</em>
+        </h2>
+        <p class="franq__lede" data-reveal style="--reveal-delay: 200ms;">
           QUEM Central desarrolla formatos comerciales pensados para expandir la presencia de alimentos
           congelados en nuevos puntos de venta.
         </p>
-        <p class="franq__lede">
+        <p class="franq__lede" data-reveal style="--reveal-delay: 250ms;">
           A través de franquicias, corners y alianzas comerciales, la compañía busca llevar su propuesta a
           más zonas, más canales y más consumidores.
         </p>
       </header>
     )}
 
-    <div class="franq__grid">
+    <div class="franq__grid" data-reveal-stagger>
       {cards.map((c) => (
-        <article class="franq-card">
+        <article class="franq-card" data-reveal>
           <div class="franq-card__icon" aria-hidden="true">
             {c.icon === 'store' && (
               <svg viewBox="0 0 28 28" fill="none"><path d="M4 11h20l-2-6H6l-2 6Z" stroke="currentColor" stroke-width="1.8"/><path d="M5 11v12h18V11" stroke="currentColor" stroke-width="1.8"/><path d="M10 23v-6h8v6" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -60,9 +62,16 @@ const cards = [
   .franq__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
   .franq__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.1;
+    line-height: 1.05;
+  }
+  .franq__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .franq__lede {
     color: var(--color-text-secondary);

@@ -115,11 +115,137 @@ const localBusinessJsonLd = {
   </head>
   <body>
     <a href="#main" class="skip-link">Saltar al contenido</a>
+
+    <!-- Scroll progress bar (top of viewport) -->
+    <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
+
     <SmoothScroll client:idle />
     <Header />
     <main id="main">
       <slot />
     </main>
     <Footer />
+
+    <script>
+      /* ===============================================================
+       * Global motion behaviors
+       *  1. [data-reveal] → IntersectionObserver activa entrada
+       *  2. [data-counter] → cuenta de 0 a target cuando entra al viewport
+       *  3. Scroll progress bar arriba del viewport
+       *  4. Parallax sutil para [data-parallax]
+       * Todo respeta prefers-reduced-motion.
+       * =============================================================== */
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* 1) Reveal on scroll */
+      const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if (revealEls.length > 0 && !reduceMotion && 'IntersectionObserver' in window) {
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                (e.target as HTMLElement).dataset.revealed = '';
+                obs.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        revealEls.forEach((el) => obs.observe(el));
+      } else {
+        /* Si no hay IntersectionObserver o reduce-motion, mostrar todo */
+        revealEls.forEach((el) => { el.dataset.revealed = ''; });
+      }
+
+      /* 2) Number counter */
+      const counters = document.querySelectorAll<HTMLElement>('[data-counter]');
+      if (counters.length > 0 && !reduceMotion && 'IntersectionObserver' in window) {
+        const fmt = (n: number, suffix = ''): string => {
+          if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M' + suffix;
+          if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K' + suffix;
+          return Math.round(n).toString() + suffix;
+        };
+        const animate = (el: HTMLElement): void => {
+          const target = Number(el.dataset.counter ?? '0');
+          const suffix = el.dataset.counterSuffix ?? '';
+          const duration = Number(el.dataset.counterDuration ?? '1400');
+          const start = performance.now();
+          const tick = (now: number): void => {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
+            el.textContent = fmt(target * eased, suffix);
+            if (t < 1) requestAnimationFrame(tick);
+            else el.textContent = fmt(target, suffix);
+          };
+          requestAnimationFrame(tick);
+        };
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                animate(e.target as HTMLElement);
+                obs.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.3 },
+        );
+        counters.forEach((el) => obs.observe(el));
+      } else {
+        counters.forEach((el) => { el.textContent = el.dataset.counter ?? ''; });
+      }
+
+      /* 3) Scroll progress bar */
+      const progressBar = document.querySelector<HTMLElement>('[data-scroll-progress]');
+      if (progressBar && !reduceMotion) {
+        const update = (): void => {
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
+          progressBar.style.setProperty('--progress', String(pct));
+        };
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update, { passive: true });
+      }
+
+      /* 4) Parallax sutil — elementos con data-parallax="0.3" */
+      const parallaxEls = document.querySelectorAll<HTMLElement>('[data-parallax]');
+      if (parallaxEls.length > 0 && !reduceMotion && window.matchMedia('(min-width: 768px)').matches) {
+        const apply = (): void => {
+          const y = window.scrollY;
+          parallaxEls.forEach((el) => {
+            const speed = Number(el.dataset.parallax ?? '0.3');
+            el.style.setProperty('--parallax-y', `${y * speed}px`);
+          });
+        };
+        apply();
+        window.addEventListener('scroll', apply, { passive: true });
+      }
+    </script>
+
+    <style>
+      .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 500;
+        pointer-events: none;
+        background: transparent;
+      }
+      .scroll-progress::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, var(--color-brand-500), var(--color-accent-500));
+        transform-origin: left center;
+        transform: scaleX(calc(var(--progress, 0) / 100));
+        transition: transform 80ms linear;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scroll-progress { display: none; }
+      }
+    </style>
   </body>
 </html>

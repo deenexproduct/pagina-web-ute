@@ -1,187 +1,304 @@
 ---
 import { APP_BASE_URL, link } from '../config/site';
+
+/** Letras del título para text-reveal staggered */
+const titleChars = 'QUEM Central'.split('').map((c, i) => ({ char: c === ' ' ? ' ' : c, index: i }));
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero__bg" aria-hidden="true"></div>
+  <!-- Background con mesh gradient + dot pattern + grid líneas -->
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__bg-mesh" data-parallax="0.15"></div>
+    <div class="hero__bg-dots"></div>
+    <div class="hero__bg-grid"></div>
+    <div class="hero__bg-orb hero__bg-orb--brand" data-parallax="0.2"></div>
+    <div class="hero__bg-orb hero__bg-orb--accent" data-parallax="0.3"></div>
+  </div>
 
   <div class="hero__inner container-content">
     <div class="hero__copy">
-      <p class="eyebrow hero__eyebrow">
-        <span class="eyebrow__dot" aria-hidden="true"></span>
-        Plataforma integral · alimentos congelados
+      <p class="hero__eyebrow" data-reveal="fade" style="--reveal-delay: 100ms;">
+        <span class="hero__eyebrow-dot" aria-hidden="true"></span>
+        <span>Plataforma integral · alimentos congelados</span>
       </p>
 
       <h1 id="hero-title" class="hero__title">
-        QUEM<span class="hero__title-em"> Central</span>
+        <span class="text-reveal" aria-label="QUEM Central">
+          {titleChars.map((c) => (
+            c.char === ' ' ? (
+              <span class="text-reveal__char" style={`--char-index: ${c.index};`}>&nbsp;</span>
+            ) : (
+              <span class="text-reveal__char" style={`--char-index: ${c.index};`} aria-hidden="true">{c.char}</span>
+            )
+          ))}
+        </span>
       </h1>
 
-      <p class="hero__subtitle">
-        Plataforma integral para el abastecimiento y desarrollo comercial de alimentos congelados.
+      <p class="hero__subtitle" data-reveal style="--reveal-delay: 700ms;">
+        Plataforma integral para el <em>abastecimiento y desarrollo comercial</em> de alimentos congelados.
       </p>
 
-      <p class="hero__lede">
+      <p class="hero__lede" data-reveal style="--reveal-delay: 850ms;">
         Integramos distribución B2B, logística especializada, franquicias, corners comerciales y tecnología
         para conectar productos congelados con negocios gastronómicos, comercios y nuevos canales de venta.
       </p>
 
-      <div class="hero__cta-row">
-        <a class="btn btn-primary hero__cta-primary" href={APP_BASE_URL} target="_blank" rel="noopener">
-          Comprar online
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="hero__cta-row" data-reveal style="--reveal-delay: 1000ms;">
+        <a class="btn btn-primary hero__cta-main" href={APP_BASE_URL} target="_blank" rel="noopener">
+          <span>Comprar online</span>
+          <span class="hero__cta-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
         </a>
-        <a class="btn btn-outline" href="#quem-central">
-          Conocer QUEM Central
+        <a class="btn btn-outline hero__cta-alt" href="#quem-central">
+          <span>Conocer QUEM Central</span>
         </a>
       </div>
 
-      <ul class="hero__chips" aria-label="Capacidades clave">
-        <li>Distribución B2B</li>
-        <li>Logística especializada</li>
-        <li>Franquicias y Corners</li>
-        <li>Catálogo digital</li>
+      <ul class="hero__chips" aria-label="Capacidades clave" data-reveal-stagger>
+        <li data-reveal style="--reveal-y: 12px;">
+          <span class="hero__chip-mark" aria-hidden="true"></span>
+          Distribución B2B
+        </li>
+        <li data-reveal style="--reveal-y: 12px;">
+          <span class="hero__chip-mark" aria-hidden="true"></span>
+          Logística especializada
+        </li>
+        <li data-reveal style="--reveal-y: 12px;">
+          <span class="hero__chip-mark" aria-hidden="true"></span>
+          Franquicias y Corners
+        </li>
+        <li data-reveal style="--reveal-y: 12px;">
+          <span class="hero__chip-mark" aria-hidden="true"></span>
+          Catálogo digital
+        </li>
       </ul>
     </div>
 
-    <aside class="hero__panel" aria-hidden="true">
-      <div class="hero__panel-frame">
-        <div class="hero__panel-grid">
-          <div class="hero__stat hero__stat--lg">
-            <div class="hero__stat-label">Cobertura logística</div>
-            <div class="hero__stat-value">AMBA + PBA</div>
-            <div class="hero__stat-meta">última milla congelados</div>
-          </div>
+    <!-- Panel mockup: cards de stats animadas + freezer-shelves preview -->
+    <aside class="hero__showcase" aria-hidden="true" data-reveal="right" style="--reveal-delay: 600ms; --reveal-duration: 1200ms;">
+      <div class="hero__showcase-glow"></div>
 
-          <div class="hero__stat">
-            <div class="hero__stat-icon" data-tone="brand">
-              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18M8 14h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <div class="hero__stat-label">Catálogo</div>
-            <div class="hero__stat-value">Digital · App</div>
+      <div class="hero__showcase-frame">
+        <!-- Mini-header del panel -->
+        <div class="hero__showcase-bar">
+          <div class="hero__showcase-bar-dots">
+            <span></span><span></span><span></span>
           </div>
+          <div class="hero__showcase-bar-label">QÜEM · panel operativo</div>
+        </div>
 
-          <div class="hero__stat">
-            <div class="hero__stat-icon" data-tone="accent">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V8l8-4 8 4v11" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="currentColor" stroke-width="1.6"/></svg>
-            </div>
-            <div class="hero__stat-label">Modelos</div>
-            <div class="hero__stat-value">Franquicia · Corner</div>
+        <!-- Top stat card destacada -->
+        <div class="hero__showcase-hero-card">
+          <div class="hero__showcase-hero-card-label">
+            <span class="hero__showcase-pulse" aria-hidden="true"></span>
+            Operación en vivo
           </div>
+          <div class="hero__showcase-hero-card-value">AMBA + PBA</div>
+          <div class="hero__showcase-hero-card-meta">Última milla congelados · 24/7</div>
 
-          <div class="hero__stat hero__stat--accent">
-            <div class="hero__stat-pill">CTA principal</div>
-            <div class="hero__stat-value">Compra B2B</div>
-            <div class="hero__stat-meta">desde un único canal</div>
+          <!-- mini chart bars decorativo -->
+          <div class="hero__showcase-bars" aria-hidden="true">
+            <span style="--h: 35%; --d: 0ms;"></span>
+            <span style="--h: 60%; --d: 80ms;"></span>
+            <span style="--h: 45%; --d: 160ms;"></span>
+            <span style="--h: 80%; --d: 240ms;"></span>
+            <span style="--h: 70%; --d: 320ms;"></span>
+            <span style="--h: 90%; --d: 400ms;"></span>
+            <span style="--h: 75%; --d: 480ms;"></span>
           </div>
         </div>
 
-        <div class="hero__panel-foot">
-          <div class="hero__panel-tag">QUEM · Central</div>
-          <div class="hero__panel-dots" aria-hidden="true">
-            <span></span><span></span><span></span>
+        <!-- Sub-grid -->
+        <div class="hero__showcase-sub">
+          <div class="hero__showcase-card">
+            <div class="hero__showcase-card-icon" data-tone="brand">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18M8 14h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="hero__showcase-card-label">Catálogo</div>
+            <div class="hero__showcase-card-value">Digital · App</div>
+          </div>
+          <div class="hero__showcase-card">
+            <div class="hero__showcase-card-icon" data-tone="brand-2">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V8l8-4 8 4v11" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="currentColor" stroke-width="1.6"/></svg>
+            </div>
+            <div class="hero__showcase-card-label">Modelos</div>
+            <div class="hero__showcase-card-value">Franquicia · Corner</div>
+          </div>
+        </div>
+
+        <!-- Accent strip: CTA principal en el panel -->
+        <div class="hero__showcase-cta">
+          <div class="hero__showcase-cta-text">
+            <div class="hero__showcase-cta-label">Compra B2B</div>
+            <div class="hero__showcase-cta-meta">desde un único canal</div>
+          </div>
+          <div class="hero__showcase-cta-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12 12 4M12 4H6M12 4v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
       </div>
-
-      <div class="hero__panel-shadow" aria-hidden="true"></div>
     </aside>
   </div>
 
-  <a href="#quem-central" class="hero__scroll-hint" aria-label="Ir a la sección Qué es QUEM Central">
-    <span>Conocé el ecosistema</span>
-    <svg width="14" height="20" viewBox="0 0 14 20" fill="none" aria-hidden="true"><path d="M7 2v14m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <a href="#quem-central" class="hero__scroll-hint" aria-label="Ir a Qué es QUEM Central">
+    <span class="hero__scroll-hint-label">Conocer el ecosistema</span>
+    <span class="hero__scroll-hint-icon" aria-hidden="true">
+      <svg width="14" height="20" viewBox="0 0 14 20" fill="none"><path d="M7 2v14m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
   </a>
 </section>
 
 <style>
+  /* ===== Hero ===================================================== */
   .hero {
     position: relative;
-    padding-block: clamp(3rem, 5vw, 5.5rem) clamp(2.5rem, 4vw, 4rem);
+    padding-block: clamp(3rem, 6vw, 6rem) clamp(3rem, 5vw, 5rem);
     overflow: hidden;
     isolation: isolate;
+    min-height: clamp(640px, 88vh, 920px);
+    display: flex;
+    align-items: center;
   }
 
+  /* ===== Background layers ========================================= */
   .hero__bg {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background:
-      radial-gradient(60% 60% at 90% 0%, oklch(58% 0.155 254 / 0.10) 0%, transparent 70%),
-      radial-gradient(50% 50% at 0% 100%, oklch(62% 0.150 155 / 0.07) 0%, transparent 70%),
-      linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 100%);
+    background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 100%);
   }
-  .hero__bg::before {
-    content: '';
+  .hero__bg-mesh {
+    position: absolute;
+    inset: -20%;
+    background:
+      radial-gradient(40% 50% at 80% 10%, oklch(58% 0.155 254 / 0.18) 0%, transparent 60%),
+      radial-gradient(35% 45% at 10% 90%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%);
+    transform: translateY(var(--parallax-y, 0));
+    will-change: transform;
+  }
+  .hero__bg-dots {
     position: absolute;
     inset: 0;
     background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
     background-size: 28px 28px;
-    mask-image: linear-gradient(180deg, transparent 0%, black 30%, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 30%, black 70%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, black 25%, black 75%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 25%, black 75%, transparent 100%);
+  }
+  .hero__bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, oklch(42% 0.190 252 / 0.025) 1px, transparent 1px),
+      linear-gradient(0deg, oklch(42% 0.190 252 / 0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, black 20%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, black 20%, transparent 90%);
+  }
+  .hero__bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(var(--blur-xl));
+    transform: translateY(var(--parallax-y, 0));
+    will-change: transform;
+    opacity: 0.5;
+  }
+  .hero__bg-orb--brand {
+    width: 50rem;
+    height: 50rem;
+    top: -25rem;
+    right: -20rem;
+    background: var(--color-brand-300);
+  }
+  .hero__bg-orb--accent {
+    width: 30rem;
+    height: 30rem;
+    bottom: -15rem;
+    left: -10rem;
+    background: var(--color-accent-300);
   }
 
+  /* ===== Layout grid =============================================== */
   .hero__inner {
     display: grid;
     gap: var(--space-7);
     align-items: center;
+    width: 100%;
   }
   @media (min-width: 960px) {
     .hero__inner { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--space-8); }
   }
 
-  /* eyebrow con dot lateral */
+  /* ===== Eyebrow ==================================================== */
   .hero__eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
+    padding: 0.5rem 0.95rem 0.5rem 0.7rem;
     background: oklch(from var(--color-brand-500) l c h / 0.08);
-    padding: 0.4rem 0.85rem 0.4rem 0.6rem;
-    border-radius: var(--radius-pill);
     color: var(--color-text-brand);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.15);
+    border-radius: var(--radius-pill);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.18);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    backdrop-filter: blur(8px);
+    width: max-content;
   }
-  .eyebrow__dot {
-    width: 7px;
-    height: 7px;
+  .hero__eyebrow-dot {
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
-    animation: pulse 2.4s ease-in-out infinite;
+    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.20);
+    animation: hero-eyebrow-pulse 2.4s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18); }
-    50%      { box-shadow: 0 0 0 7px oklch(62% 0.150 155 / 0.06); }
+  @keyframes hero-eyebrow-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.20); }
+    50%      { box-shadow: 0 0 0 8px oklch(62% 0.150 155 / 0.05); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .eyebrow__dot { animation: none; }
+    .hero__eyebrow-dot { animation: none; }
   }
 
+  /* ===== Title gigante con text-reveal ============================== */
   .hero__title {
     font-size: var(--font-size-display);
-    line-height: 0.95;
-    letter-spacing: -0.04em;
+    line-height: 0.94;
+    letter-spacing: -0.045em;
     font-weight: var(--weight-extrabold);
     margin-block: var(--space-5) var(--space-3);
     color: var(--color-text-primary);
     text-wrap: balance;
   }
-  .hero__title-em {
-    background: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-700) 100%);
+
+  /* Las primeras 4 letras (QUEM) en color primary, después " Central" en gradient brand */
+  .hero__title .text-reveal__char:nth-child(n+5) {
+    background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    font-weight: var(--weight-extrabold);
   }
 
+  /* ===== Subtitle ================================================== */
   .hero__subtitle {
     font-size: var(--font-size-lg);
     color: var(--color-text-primary);
     line-height: var(--leading-snug);
     font-weight: var(--weight-medium);
-    max-width: 30ch;
+    max-width: 32ch;
     margin-block-end: var(--space-4);
   }
+  .hero__subtitle em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: var(--weight-semibold);
+  }
 
+  /* ===== Lede ====================================================== */
   .hero__lede {
     max-width: 52ch;
     color: var(--color-text-secondary);
@@ -190,160 +307,286 @@ import { APP_BASE_URL, link } from '../config/site';
     margin-block-end: var(--space-6);
   }
 
+  /* ===== CTAs ====================================================== */
   .hero__cta-row {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
     margin-block-end: var(--space-7);
   }
-  .hero__cta-primary { padding-inline: 1.5rem; padding-block: 0.95rem; font-size: var(--font-size-sm); }
+  .hero__cta-main {
+    padding: 1rem 1.6rem;
+    font-size: var(--font-size-sm);
+    box-shadow:
+      0 6px 18px oklch(62% 0.150 155 / 0.32),
+      inset 0 1px 0 oklch(100% 0 0 / 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero__cta-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, oklch(100% 0 0 / 0) 0%, oklch(100% 0 0 / 0.12) 50%, oklch(100% 0 0 / 0) 100%);
+    transform: translateX(-110%);
+    transition: transform 600ms var(--ease-out-expo);
+  }
+  .hero__cta-main:hover::before { transform: translateX(110%); }
+  .hero__cta-main:hover { box-shadow: 0 8px 24px oklch(62% 0.150 155 / 0.40), inset 0 1px 0 oklch(100% 0 0 / 0.25); }
+  .hero__cta-icon { display: inline-flex; transition: transform var(--dur-fast) var(--ease-standard); }
+  .hero__cta-main:hover .hero__cta-icon { transform: translate(2px, -2px); }
+  .hero__cta-alt { padding: 1rem 1.4rem; font-size: var(--font-size-sm); }
 
+  /* ===== Chips de capacidades ====================================== */
   .hero__chips {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
   }
   .hero__chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    background-color: var(--color-bg-elevated);
+    background-color: oklch(from var(--color-bg-elevated) l c h / 0.7);
     border: 1px solid var(--color-border-subtle);
-    padding: 0.4rem 0.8rem;
+    padding: 0.45rem 0.85rem;
     border-radius: var(--radius-pill);
     font-weight: var(--weight-medium);
+    backdrop-filter: blur(6px);
+    transition: transform var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
   }
+  .hero__chips li:hover { transform: translateY(-1px); border-color: var(--color-brand-300); }
+  .hero__chip-mark {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-brand-500);
+    flex-shrink: 0;
+  }
+  .hero__chips li:nth-child(2) .hero__chip-mark { background: var(--color-accent-500); }
+  .hero__chips li:nth-child(4) .hero__chip-mark { background: var(--color-accent-500); }
 
-  /* Panel lateral */
-  .hero__panel { position: relative; }
-  .hero__panel-frame {
+  /* ===== Showcase panel ============================================ */
+  .hero__showcase {
+    position: relative;
+    perspective: 1200px;
+  }
+  .hero__showcase-glow {
+    position: absolute;
+    inset: 8% -12% -12% 4%;
+    z-index: 0;
+    border-radius: 1.5rem;
+    background: var(--gradient-mixed);
+    filter: blur(60px);
+    opacity: 0.30;
+  }
+  .hero__showcase-frame {
     position: relative;
     z-index: 1;
-    padding: var(--space-5);
+    padding: 1.25rem;
+    background: oklch(from var(--color-bg-elevated) l c h / 0.95);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border-subtle);
     border-radius: 1.5rem;
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-subtle);
-    box-shadow: var(--shadow-lg);
-    backdrop-filter: blur(4px);
-  }
-  .hero__panel-grid {
+    box-shadow: var(--shadow-elevated);
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
+    transform: rotateY(-2deg) rotateX(2deg);
+    transform-style: preserve-3d;
+    transition: transform var(--dur-slow) var(--ease-premium);
   }
-  .hero__stat {
-    padding: var(--space-4);
-    border-radius: 0.9rem;
-    background: var(--color-surface-subtle);
-    border: 1px solid var(--color-border-subtle);
-    display: grid;
-    gap: 0.35rem;
-    align-content: start;
-    min-height: 120px;
-  }
-  .hero__stat--lg {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-700) 100%);
-    color: var(--color-text-on-brand);
-    border-color: transparent;
-    padding: var(--space-5);
-    min-height: 0;
-  }
-  .hero__stat--accent {
-    background: linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-accent-700) 100%);
-    color: var(--color-text-on-accent);
-    border-color: transparent;
-  }
-  .hero__stat-label {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-muted);
-  }
-  .hero__stat--lg .hero__stat-label,
-  .hero__stat--accent .hero__stat-label {
-    color: oklch(100% 0 0 / 0.78);
-  }
+  .hero__showcase:hover .hero__showcase-frame { transform: rotateY(0deg) rotateX(0deg); }
 
-  .hero__stat-value {
-    font-family: var(--font-display);
-    font-size: var(--font-size-md);
-    font-weight: var(--weight-bold);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-  }
-  .hero__stat--lg .hero__stat-value,
-  .hero__stat--accent .hero__stat-value { color: currentColor; font-size: var(--font-size-xl); }
-
-  .hero__stat-meta {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    margin-top: 0.15rem;
-  }
-  .hero__stat--lg .hero__stat-meta,
-  .hero__stat--accent .hero__stat-meta { color: oklch(100% 0 0 / 0.72); }
-
-  .hero__stat-icon {
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 0.6rem;
-    display: grid;
-    place-items: center;
-    margin-block-end: 0.5rem;
-  }
-  .hero__stat-icon[data-tone="brand"] { color: var(--color-brand-600); background: var(--color-brand-50); }
-  .hero__stat-icon[data-tone="accent"] { color: var(--color-accent-700); background: var(--color-accent-50); }
-  .hero__stat-icon svg { width: 1.2rem; height: 1.2rem; }
-
-  .hero__stat-pill {
-    align-self: start;
-    padding: 0.2rem 0.55rem;
-    border-radius: var(--radius-pill);
-    background: oklch(100% 0 0 / 0.22);
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-semibold);
-    width: max-content;
-  }
-
-  .hero__panel-foot {
-    margin-block-start: var(--space-4);
-    padding-block-start: var(--space-4);
-    border-top: 1px solid var(--color-border-subtle);
+  .hero__showcase-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.4rem 0.6rem 0.7rem;
+    border-bottom: 1px solid var(--color-border-subtle);
   }
-  .hero__panel-tag {
-    font-size: var(--font-size-xs);
+  .hero__showcase-bar-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .hero__showcase-bar-dots span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--color-border-strong);
+  }
+  .hero__showcase-bar-dots span:nth-child(1) { background: oklch(70% 0.16 25); }
+  .hero__showcase-bar-dots span:nth-child(2) { background: oklch(78% 0.14 80); }
+  .hero__showcase-bar-dots span:nth-child(3) { background: var(--color-accent-500); }
+  .hero__showcase-bar-label {
+    font-size: var(--font-size-2xs);
     color: var(--color-text-muted);
     font-family: var(--font-mono);
     letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
   }
-  .hero__panel-dots { display: flex; gap: 0.3rem; }
-  .hero__panel-dots span {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--color-border-strong);
-  }
-  .hero__panel-dots span:first-child { background: var(--color-accent-500); }
 
-  .hero__panel-shadow {
+  /* Hero card (top) — gradient brand con stats */
+  .hero__showcase-hero-card {
+    background: var(--gradient-brand);
+    color: var(--color-text-on-brand);
+    border-radius: 1rem;
+    padding: 1.2rem 1.3rem;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero__showcase-hero-card::before {
+    content: '';
     position: absolute;
-    inset: 12% -8% -10% 8%;
-    z-index: 0;
-    border-radius: 1.5rem;
-    background: linear-gradient(135deg, var(--color-brand-100) 0%, var(--color-accent-100) 100%);
-    filter: blur(40px);
-    opacity: 0.6;
+    inset: 0;
+    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+    z-index: -1;
   }
-
-  /* Scroll hint */
-  .hero__scroll-hint {
-    display: none;
+  .hero__showcase-hero-card-label {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    color: oklch(100% 0 0 / 0.85);
+    margin-block-end: 0.4rem;
+  }
+  .hero__showcase-pulse {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent-300);
+    box-shadow: 0 0 0 3px oklch(76% 0.125 155 / 0.25);
+    animation: hero-eyebrow-pulse 2.4s ease-in-out infinite;
+  }
+  .hero__showcase-hero-card-value {
+    font-family: var(--font-display);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .hero__showcase-hero-card-meta {
+    font-size: var(--font-size-xs);
+    color: oklch(100% 0 0 / 0.78);
+    margin-block-start: 0.25rem;
+  }
+  .hero__showcase-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 32px;
+    margin-block-start: 0.9rem;
+  }
+  .hero__showcase-bars span {
+    flex: 1;
+    background: oklch(100% 0 0 / 0.4);
+    border-radius: 2px 2px 0 0;
+    height: var(--h, 50%);
+    animation: hero-bar-grow var(--dur-cinematic-long) var(--ease-out-expo) backwards;
+    animation-delay: calc(1200ms + var(--d, 0ms));
+    transform-origin: bottom;
+  }
+  @keyframes hero-bar-grow {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__showcase-bars span { animation: none; }
+  }
+
+  /* Sub-grid de 2 cards */
+  .hero__showcase-sub {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+  .hero__showcase-card {
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 0.9rem;
+    padding: 0.95rem 1rem;
+    display: grid;
+    gap: 0.3rem;
+    align-content: start;
+    transition: background var(--dur-fast), border-color var(--dur-fast);
+  }
+  .hero__showcase-card:hover {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-brand-200);
+  }
+  .hero__showcase-card-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    display: grid;
+    place-items: center;
+    margin-block-end: 0.3rem;
+  }
+  .hero__showcase-card-icon[data-tone="brand"] { background: var(--color-brand-50); color: var(--color-brand-600); }
+  .hero__showcase-card-icon[data-tone="brand-2"] { background: oklch(from var(--color-brand-500) l c h / 0.08); color: var(--color-brand-700); }
+  .hero__showcase-card-icon svg { width: 1.1rem; height: 1.1rem; }
+  .hero__showcase-card-label {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+  }
+  .hero__showcase-card-value {
+    font-family: var(--font-display);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  /* CTA strip */
+  .hero__showcase-cta {
+    margin-block-start: 0.2rem;
+    padding: 0.95rem 1.1rem;
+    background: var(--gradient-accent);
+    color: var(--color-text-on-accent);
+    border-radius: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform var(--dur-fast);
+  }
+  .hero__showcase-cta:hover { transform: translateY(-2px); }
+  .hero__showcase-cta-label {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .hero__showcase-cta-meta {
+    font-size: var(--font-size-2xs);
+    color: oklch(100% 0 0 / 0.85);
+    margin-block-start: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-semibold);
+  }
+  .hero__showcase-cta-arrow {
+    width: 2rem; height: 2rem;
+    border-radius: 50%;
+    background: oklch(100% 0 0 / 0.18);
+    display: grid;
+    place-items: center;
+    transition: transform var(--dur-fast) var(--ease-standard);
+  }
+  .hero__showcase-cta:hover .hero__showcase-cta-arrow { transform: translate(2px, -2px); }
+
+  /* ===== Scroll hint =============================================== */
+  .hero__scroll-hint {
+    display: none;
     color: var(--color-text-muted);
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
@@ -351,21 +594,37 @@ import { APP_BASE_URL, link } from '../config/site';
     font-weight: var(--weight-semibold);
   }
   .hero__scroll-hint:hover { color: var(--color-text-primary); }
-  .hero__scroll-hint svg { animation: scroll-bounce 2s ease-in-out infinite; }
-  @keyframes scroll-bounce {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(4px); }
+  .hero__scroll-hint-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 2.4rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 1rem;
+    margin-inline-start: 0.6rem;
+    vertical-align: middle;
+  }
+  .hero__scroll-hint-icon svg { animation: hero-scroll-bounce 2s ease-in-out infinite; }
+  @keyframes hero-scroll-bounce {
+    0%, 100% { transform: translateY(-2px); opacity: 0.6; }
+    50%      { transform: translateY(3px); opacity: 1; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero__scroll-hint svg { animation: none; }
+    .hero__scroll-hint-icon svg { animation: none; }
   }
   @media (min-width: 960px) {
     .hero__scroll-hint {
       display: inline-flex;
+      align-items: center;
       position: absolute;
       bottom: 1.5rem;
       left: 50%;
       transform: translateX(-50%);
+      opacity: 0;
+      animation: hero-scroll-fade-in 600ms 1800ms forwards ease-out;
     }
+  }
+  @keyframes hero-scroll-fade-in {
+    to { opacity: 1; }
   }
 </style>

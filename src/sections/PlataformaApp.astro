@@ -13,19 +13,21 @@ const mensajes = [
 <section class="plat section-y" aria-labelledby="plat-title">
   <div class="container-content plat__inner">
     <div class="plat__copy">
-      <p class="eyebrow">06 · Plataforma</p>
-      <h2 id="plat-title" class="plat__title">Comprá online desde el catálogo de QUEM Central</h2>
-      <p>
+      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">06 · Plataforma</p>
+      <h2 id="plat-title" class="plat__title" data-reveal style="--reveal-delay: 100ms;">
+        Comprá online desde el <em>catálogo de QUEM Central</em>
+      </h2>
+      <p data-reveal style="--reveal-delay: 200ms;">
         La app de QUEM Central centraliza el catálogo, las categorías de producto y el acceso a compra online.
       </p>
-      <p>
+      <p data-reveal style="--reveal-delay: 250ms;">
         Desde allí, clientes gastronómicos, comercios y compradores pueden consultar disponibilidad, explorar
         productos y realizar pedidos de forma simple.
       </p>
 
-      <ul class="plat__list">
+      <ul class="plat__list" data-reveal-stagger>
         {mensajes.map((m) => (
-          <li>
+          <li data-reveal style="--reveal-y: 12px;">
             <span class="plat__check" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m3 7 3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
@@ -42,7 +44,7 @@ const mensajes = [
       </div>
     </div>
 
-    <div class="plat__device" aria-hidden="true">
+    <div class="plat__device" aria-hidden="true" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
       <div class="plat__device-frame">
         <div class="plat__device-bar">
           <span></span><span></span><span></span>
@@ -82,10 +84,17 @@ const mensajes = [
   .plat__copy { display: grid; gap: var(--space-4); max-width: 56ch; }
   .plat__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.08;
+    line-height: 1.05;
     margin-block-end: var(--space-2);
+  }
+  .plat__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .plat__copy p {
     color: var(--color-text-secondary);

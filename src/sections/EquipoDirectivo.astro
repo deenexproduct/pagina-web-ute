@@ -16,18 +16,20 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
   <div class="container-content">
     {showHead && (
       <header class="team__head">
-        <p class="eyebrow">09 · Equipo directivo</p>
-        <h2 id="team-title" class="team__title">Equipo directivo</h2>
-        <p class="team__lede">
+        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">09 · Equipo directivo</p>
+        <h2 id="team-title" class="team__title" data-reveal style="--reveal-delay: 100ms;">
+          Equipo <em>directivo</em>
+        </h2>
+        <p class="team__lede" data-reveal style="--reveal-delay: 200ms;">
           QUEM Central está liderada por un equipo con experiencia en operación gastronómica, desarrollo
           comercial y crecimiento de unidades de negocio.
         </p>
       </header>
     )}
 
-    <ul class="team__grid" role="list">
+    <ul class="team__grid" role="list" data-reveal-stagger>
       {TEAM.map((m, i) => (
-        <li class="team-card">
+        <li class="team-card" data-reveal>
           <div class="team-card__avatar" aria-hidden="true">
             {m.photo ? (
               <img src={m.photo} alt={`Retrato de ${m.name}`} loading="lazy" decoding="async" />
@@ -57,6 +59,13 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-tighter);
     line-height: 1.05;
+  }
+  .team__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .team__lede { color: var(--color-text-secondary); font-size: var(--font-size-md); line-height: var(--leading-relaxed); }
 

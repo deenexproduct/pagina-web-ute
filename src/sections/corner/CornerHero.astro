@@ -8,18 +8,18 @@ const waLink = whatsappLink();
 
   <div class="container-content cn-hero__inner">
     <div class="cn-hero__copy">
-      <p class="cn-hero__tag">
+      <p class="cn-hero__tag" data-reveal style="--reveal-y: 12px;">
         <span class="cn-hero__tag-dot" aria-hidden="true"></span>
         Modelo comercial · Corner QÜEM
       </p>
-      <h1 id="cn-hero-title" class="cn-hero__title">
+      <h1 id="cn-hero-title" class="cn-hero__title" data-reveal style="--reveal-delay: 100ms;">
         Convertimos espacios en <span class="cn-hero__title-em">nuevas oportunidades de venta</span>.
       </h1>
-      <p class="cn-hero__subtitle">
+      <p class="cn-hero__subtitle" data-reveal style="--reveal-delay: 200ms;">
         Retail congelado listo para operar. Una solución integral de marca, producto, logística y
         soporte — instalada dentro de tu comercio.
       </p>
-      <div class="cn-hero__cta-row">
+      <div class="cn-hero__cta-row" data-reveal style="--reveal-delay: 300ms;">
         <a class="btn btn-primary cn-hero__cta-main" href={waLink}>
           Quiero hablar con el equipo comercial
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -27,27 +27,27 @@ const waLink = whatsappLink();
         <a class="btn btn-outline" href="#cn-formatos">Ver formatos</a>
       </div>
 
-      <dl class="cn-hero__highlights" aria-label="Highlights del modelo">
-        <div>
+      <dl class="cn-hero__highlights" aria-label="Highlights del modelo" data-reveal-stagger>
+        <div data-reveal style="--reveal-y: 12px;">
           <dt>Implementación</dt>
           <dd>rápida</dd>
         </div>
-        <div>
+        <div data-reveal style="--reveal-y: 12px;">
           <dt>Operación</dt>
           <dd>baja complejidad</dd>
         </div>
-        <div>
+        <div data-reveal style="--reveal-y: 12px;">
           <dt>Producto</dt>
           <dd>alta rotación</dd>
         </div>
-        <div>
+        <div data-reveal style="--reveal-y: 12px;">
           <dt>Estética</dt>
           <dd>retail moderno</dd>
         </div>
       </dl>
     </div>
 
-    <aside class="cn-hero__panel" aria-hidden="true">
+    <aside class="cn-hero__panel" aria-hidden="true" data-reveal="right" style="--reveal-delay: 250ms; --reveal-duration: 1000ms;">
       <div class="cn-hero__panel-card">
         <div class="cn-hero__panel-display">
           <div class="cn-hero__panel-display-top">

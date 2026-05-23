@@ -36,12 +36,12 @@ const capabilities = [
 <section class="num section-y" aria-labelledby="num-title">
   <div class="container-content num__inner">
     <header class="num__head">
-      <p class="eyebrow">08 · QUEM Central en crecimiento</p>
-      <h2 id="num-title" class="num__title">
+      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">08 · QUEM Central en crecimiento</p>
+      <h2 id="num-title" class="num__title" data-reveal style="--reveal-delay: 100ms;">
         Una compañía en expansión que integra <em>operación, red comercial y tecnología</em>
       </h2>
       {showSoft && (
-        <p class="num__lede">
+        <p class="num__lede" data-reveal style="--reveal-delay: 200ms;">
           Operación B2B, red comercial, franquicias, corners, logística especializada y tecnología
           aplicada al abastecimiento de alimentos congelados.
         </p>
@@ -49,9 +49,9 @@ const capabilities = [
     </header>
 
     {showSoft ? (
-      <ul class="num__capabilities" role="list">
+      <ul class="num__capabilities" role="list" data-reveal-stagger>
         {capabilities.map((c) => (
-          <li class:list={['capability', `capability--${c.tone}`]}>
+          <li class:list={['capability', `capability--${c.tone}`]} data-reveal>
             <span class="capability__label">{c.label}</span>
             <span class="capability__value">{c.value}</span>
             <span class="capability__meta">{c.meta}</span>

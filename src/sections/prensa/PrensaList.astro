@@ -13,9 +13,9 @@ const fmtDate = (iso: string): string => {
       <h2 id="pr-list-title" class="sr-only">Notas de prensa</h2>
     </header>
 
-    <ul class="pr-list__grid" role="list">
+    <ul class="pr-list__grid" role="list" data-reveal-stagger>
       {PRESS.map((p) => (
-        <li>
+        <li data-reveal>
           <a
             class:list={['pr-card', `pr-card--${p.outletSlug}`, p.featured && 'pr-card--featured']}
             href={p.url}

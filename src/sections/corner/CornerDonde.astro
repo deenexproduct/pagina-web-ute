@@ -18,19 +18,19 @@ const venues = [
 <section class="cn-where section-y" aria-labelledby="cn-where-title">
   <div class="container-content">
     <header class="cn-where__head">
-      <p class="eyebrow">03 · Dónde funciona</p>
-      <h2 id="cn-where-title" class="cn-where__title">
+      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">03 · Dónde funciona</p>
+      <h2 id="cn-where-title" class="cn-where__title" data-reveal style="--reveal-delay: 100ms;">
         Diseñado para espacios con <em>tráfico real</em>
       </h2>
-      <p class="cn-where__lede">
+      <p class="cn-where__lede" data-reveal style="--reveal-delay: 200ms;">
         El modelo se adapta a múltiples canales. Cualquier comercio o espacio con flujo de personas
         puede sumar una unidad de venta congelada con menor complejidad operativa.
       </p>
     </header>
 
-    <ul class="cn-where__grid" role="list">
+    <ul class="cn-where__grid" role="list" data-reveal-stagger>
       {venues.map((v) => (
-        <li class="cn-venue">
+        <li class="cn-venue" data-reveal>
           <div class="cn-venue__icon" aria-hidden="true">
             {v.icon === 'supermarket' && (
               <svg viewBox="0 0 32 32" fill="none"><path d="M4 8h2l3 16h17l3-12H9" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="28" r="1.6" stroke="currentColor" stroke-width="1.6"/><circle cx="22" cy="28" r="1.6" stroke="currentColor" stroke-width="1.6"/></svg>

@@ -31,19 +31,19 @@ const columns = [
 <section class="cn-includes section-y" aria-labelledby="cn-includes-title">
   <div class="container-content">
     <header class="cn-includes__head">
-      <p class="eyebrow">02 · Qué incluye el modelo</p>
-      <h2 id="cn-includes-title" class="cn-includes__title">
+      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">02 · Qué incluye el modelo</p>
+      <h2 id="cn-includes-title" class="cn-includes__title" data-reveal style="--reveal-delay: 100ms;">
         Una solución comercial completa — <em>llave en mano</em>
       </h2>
-      <p class="cn-includes__lede">
+      <p class="cn-includes__lede" data-reveal style="--reveal-delay: 200ms;">
         QÜEM aporta producto, marca, logística, experiencia y soporte. El comercio aporta el espacio
         y el flujo de clientes.
       </p>
     </header>
 
-    <ul class="cn-includes__grid" role="list">
+    <ul class="cn-includes__grid" role="list" data-reveal-stagger>
       {columns.map((c) => (
-        <li class="cn-col">
+        <li class="cn-col" data-reveal>
           <div class="cn-col__icon" aria-hidden="true">
             {c.icon === 'infra' && (
               <svg viewBox="0 0 24 24" fill="none"><path d="M4 9 12 4l8 5v11H4V9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 20v-6h6v6M4 13h16" stroke="currentColor" stroke-width="1.6"/></svg>

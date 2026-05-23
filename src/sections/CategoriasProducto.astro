@@ -28,19 +28,21 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
   <div class="container-content">
     {showHead && (
       <header class="cats__head">
-        <p class="eyebrow">05 · Categorías</p>
-        <h2 id="cats-title" class="cats__title">Categorías de productos</h2>
-        <p class="cats__lede">
+        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">05 · Categorías</p>
+        <h2 id="cats-title" class="cats__title" data-reveal style="--reveal-delay: 100ms;">
+          Categorías de <em>productos</em>
+        </h2>
+        <p class="cats__lede" data-reveal style="--reveal-delay: 200ms;">
           Explorá nuestras principales líneas de alimentos congelados y comprá online desde el catálogo digital de QUEM Central.
         </p>
       </header>
     )}
 
-    <ul class="cats__grid" role="list">
+    <ul class="cats__grid" role="list" data-reveal-stagger>
       {CATEGORIES.map((cat) => {
         const icon = iconFor(cat.slug);
         return (
-          <li>
+          <li data-reveal>
             <a class="cat-card" href={categoryUrl(cat)} target="_blank" rel="noopener" aria-label={`${cat.nombre} — abrir en app`}>
               <div
                 class="cat-card__photo"
@@ -83,6 +85,13 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
     font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-tighter);
     line-height: 1.05;
+  }
+  .cats__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .cats__lede {
     color: var(--color-text-secondary);

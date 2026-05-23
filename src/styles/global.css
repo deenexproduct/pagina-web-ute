@@ -188,7 +188,85 @@ p { text-wrap: pretty; }
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
+
+/* -------- Reveal system (data-reveal) -------------------------------------
+ * Cualquier elemento con [data-reveal] arranca invisible y se anima cuando
+ * entra al viewport. Variantes:
+ *   data-reveal           → fade-up default
+ *   data-reveal="fade"    → solo fade
+ *   data-reveal="left"    → fade + slide desde la izquierda
+ *   data-reveal="right"   → fade + slide desde la derecha
+ *   data-reveal="scale"   → fade + scale-up
+ *   data-reveal="blur"    → fade + blur-out
+ *
+ * Custom timing por elemento:
+ *   style="--reveal-delay: 200ms"
+ *   style="--reveal-duration: 1000ms"
+ *
+ * Cuando entra: agrega data-revealed por IntersectionObserver (en BaseLayout).
+ * --------------------------------------------------------------------------*/
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 24px));
+  transition:
+    opacity var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
+    transform var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
+    filter var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal="fade"]  { transform: none; }
+[data-reveal="left"]  { transform: translateX(calc(-1 * var(--reveal-y, 32px))); }
+[data-reveal="right"] { transform: translateX(var(--reveal-y, 32px)); }
+[data-reveal="scale"] { transform: scale(0.96); }
+[data-reveal="blur"]  { filter: blur(8px); transform: translateY(16px); }
+
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Stagger automático para hijos de un wrapper con data-reveal-stagger.
+ * Cada hijo se anima con un delay incremental basado en su nth-child. */
+[data-reveal-stagger] > [data-reveal]:nth-child(1)  { --reveal-delay: 0ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(2)  { --reveal-delay: 80ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(3)  { --reveal-delay: 160ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(4)  { --reveal-delay: 240ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(5)  { --reveal-delay: 320ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(6)  { --reveal-delay: 400ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(7)  { --reveal-delay: 480ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(8)  { --reveal-delay: 560ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(n+9) { --reveal-delay: 640ms; }
+
+/* Hero text reveal — letra por letra al cargar */
+.text-reveal {
+  display: inline-block;
+}
+.text-reveal__word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+.text-reveal__char {
+  display: inline-block;
+  transform: translateY(110%);
+  animation: text-reveal-char var(--dur-cinematic) var(--ease-out-expo) forwards;
+  animation-delay: calc(var(--char-index, 0) * 35ms + var(--text-reveal-delay, 0ms));
+}
+@keyframes text-reveal-char {
+  to { transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-reveal__char { animation: none; transform: none; }
+}
+
+/* Number counter — counts up from 0 cuando entra al viewport */
+[data-counter] { transition: color var(--dur-fast); }
 
 /* -------- Utilities del proyecto ------------------------------------------ */
 .container-content {
