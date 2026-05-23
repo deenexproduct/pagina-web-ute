@@ -155,14 +155,28 @@ Pipeline pre-commit a futuro: `check → lint → format:check`.
 
 ---
 
-## TODOs abiertos (al cierre de scaffold)
+## Dirección de arte (decidida 2026-05-23)
+
+**Editorial monocromo (alta gama) + acento dorado pálido.** Tipografía gigante como protagonista, ilustración cero, asimetría extrema, mucho aire. Mood: "Tate Modern como restaurante" (Aman, Le Bernardin, Frame magazine).
+
+Paleta vigente en `tokens.css`:
+
+| Rol         | Hex          | Uso                                           |
+|-------------|--------------|-----------------------------------------------|
+| Crema base  | `#FAF8F3`    | bg light, papel cremoso, no blanco puro       |
+| Tinta       | `#0F0F0E`    | text-primary, casi-negro                      |
+| Dorado 500  | `#B89968`    | brand primario — italics, hover, focus        |
+
+Tipografía: Fraunces variable (display) + Inter variable (body). Upgrade futuro opcional a GT Sectra / Apoc / PP Editorial si se compra licencia boutique. Ver [`brand-ute`](./.claude/skills/brand-ute/SKILL.md) para detalle completo.
+
+## TODOs abiertos
 
 - [ ] Confirmar dominio definitivo de UTE → reemplazar `SITE_URL` en `astro.config.mjs` y `vercel.json`.
-- [ ] Brand kit UTE: paleta final, tipografías definitivas, logo. Hasta entonces, paleta brand provisoria en tokens.
-- [ ] Direcciones de arte (Fase 3) — 2-3 moods para elegir.
+- [ ] Brand kit UTE: logo, naming definitivo, favicon system completo. Tipografías y paleta YA están definidos en tokens.
+- [ ] Tipografía display boutique (GT Sectra / Apoc / PP Editorial) — decisión de presupuesto. Hasta entonces, Fraunces variable.
 - [ ] Reservas: definir si va con formulario propio, integración OpenTable/Tock, o WhatsApp.
 - [ ] Schema.org `Restaurant` JSON-LD: completar address, geo, openingHours cuando estén confirmados.
-- [ ] og-default.jpg: arte para social share.
+- [ ] og-default.jpg: arte para social share (1200×630).
 - [ ] Favicons completos (apple-touch-icon, maskable, etc.) cuando exista logo final.
 - [ ] CI (GitHub Actions): lint + check + build.
 - [ ] Husky + lint-staged si suma con el flujo del equipo.
