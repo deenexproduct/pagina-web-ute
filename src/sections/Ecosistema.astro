@@ -1,0 +1,111 @@
+---
+interface Props {
+  showHead?: boolean;
+}
+const { showHead = true } = Astro.props;
+
+const cards = [
+  { title: 'Distribución B2B', desc: 'Abastecimiento para restaurantes, comercios, cafeterías, hoteles, eventos y operadores gastronómicos.', tone: 'brand' },
+  { title: 'Retail B2C', desc: 'Tiendas y canales de venta directa al consumidor final.', tone: 'neutral' },
+  { title: 'Franquicias', desc: 'Modelo de expansión comercial para operar unidades QUEM bajo una estructura definida.', tone: 'brand' },
+  { title: 'Corner QUEM', desc: 'Formato comercial flexible para insertar productos QUEM en puntos estratégicos de venta.', tone: 'accent' },
+  { title: 'Logística especializada', desc: 'Distribución de alimentos congelados de última milla con foco en AMBA y Provincia de Buenos Aires.', tone: 'neutral' },
+  { title: 'Tecnología / App', desc: 'Catálogo digital para facilitar la compra, ordenar pedidos y conectar la operación comercial con el canal online.', tone: 'brand' },
+  { title: 'Fraccionamiento', desc: 'Capacidad operativa para adaptar productos y presentaciones a distintas necesidades comerciales.', tone: 'neutral' },
+  { title: 'Representación comercial', desc: 'Potencial unidad para representar marcas de alimentos congelados en eventos y puntos de expendio.', tone: 'neutral' },
+] as const;
+---
+
+<section class="eco section-y" id="ecosistema" aria-labelledby="eco-title">
+  <div class="container-content">
+    {showHead && (
+      <header class="eco__head">
+        <p class="eyebrow">02 · Ecosistema</p>
+        <h2 id="eco-title" class="eco__title">Un ecosistema diseñado para escalar alimentos congelados</h2>
+        <p class="eco__lede">
+          QUEM Central integra distintas unidades operativas y comerciales para llevar productos congelados a múltiples canales:
+          negocios gastronómicos, comercios, consumidores finales, eventos, franquicias y corners.
+        </p>
+        <p class="eco__lede">
+          Cada unidad cumple un rol dentro de una misma visión: construir una red eficiente, flexible y escalable
+          para el mercado de alimentos congelados.
+        </p>
+      </header>
+    )}
+
+    <ul class="eco__grid" role="list">
+      {cards.map((c) => (
+        <li class:list={['eco-card', `eco-card--${c.tone}`]}>
+          <h3>{c.title}</h3>
+          <p>{c.desc}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .eco__head {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+    max-width: 60ch;
+  }
+  .eco__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+    margin-block-end: var(--space-2);
+  }
+  .eco__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+
+  .eco__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .eco-card {
+    position: relative;
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .eco-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-strong);
+  }
+  .eco-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.25rem;
+    right: 1.25rem;
+    height: 3px;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+  .eco-card--brand::before { background-color: var(--color-brand-500); }
+  .eco-card--accent::before { background-color: var(--color-accent-500); }
+  .eco-card--neutral::before { background-color: var(--color-neutral-300); }
+
+  .eco-card h3 {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-semibold);
+    margin-block-end: var(--space-2);
+  }
+  .eco-card p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-relaxed);
+  }
+</style>

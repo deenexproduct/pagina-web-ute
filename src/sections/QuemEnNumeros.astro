@@ -1,0 +1,100 @@
+---
+import { SHOW_METRICS, METRICS } from '../config/site';
+
+/**
+ * "QUEM en números"
+ * - SHOW_METRICS=false (default): versión institucional suave SIN datos duros.
+ * - SHOW_METRICS=true: requiere completar METRICS con datos REALES del cliente.
+ *
+ * Regla del brief: NO inventar números.
+ */
+
+const items: ReadonlyArray<{ value: string; label: string }> = SHOW_METRICS
+  ? [
+      ...(METRICS.yearsOfOperation ? [{ value: String(METRICS.yearsOfOperation), label: 'Años de operación' }] : []),
+      ...(METRICS.monthlyOrders ? [{ value: String(METRICS.monthlyOrders), label: 'Pedidos mensuales' }] : []),
+      ...(METRICS.coverageZones ? [{ value: String(METRICS.coverageZones), label: 'Zonas de cobertura' }] : []),
+      ...(METRICS.activeUnits ? [{ value: String(METRICS.activeUnits), label: 'Unidades activas' }] : []),
+      ...(METRICS.productCategories ? [{ value: String(METRICS.productCategories), label: 'Categorías de producto' }] : []),
+      ...(METRICS.b2bClients ? [{ value: String(METRICS.b2bClients), label: 'Clientes B2B activos' }] : []),
+      ...(METRICS.commercialPoints ? [{ value: String(METRICS.commercialPoints), label: 'Puntos comerciales' }] : []),
+    ]
+  : [];
+
+const showSoft = !SHOW_METRICS || items.length === 0;
+---
+
+<section class="num section-y" aria-labelledby="num-title">
+  <div class="container-content">
+    <p class="eyebrow">08 · QUEM Central en crecimiento</p>
+    <h2 id="num-title" class="num__title">
+      Una compañía en expansión que integra operación, red comercial y tecnología
+    </h2>
+
+    {showSoft ? (
+      <p class="num__lede">
+        Una compañía en expansión, con operación B2B, red comercial, franquicias, corners, logística
+        especializada y tecnología aplicada al abastecimiento de alimentos congelados.
+      </p>
+    ) : (
+      <ul class="num__grid" role="list">
+        {items.map((it) => (
+          <li class="num-item">
+            <span class="num-item__value">{it.value}</span>
+            <span class="num-item__label">{it.label}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  .num {
+    background:
+      linear-gradient(135deg,
+        oklch(from var(--color-brand-50) l c h / 0.6) 0%,
+        var(--color-bg) 100%);
+  }
+  .num__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+    margin-block: var(--space-3) var(--space-4);
+    max-width: 36ch;
+  }
+  .num__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    max-width: 60ch;
+  }
+
+  .num__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    margin-block-start: var(--space-5);
+  }
+  .num-item {
+    padding: var(--space-5);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    text-align: center;
+  }
+  .num-item__value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-brand);
+    letter-spacing: var(--tracking-tightest);
+    margin-block-end: var(--space-2);
+  }
+  .num-item__label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FranquiciasExpansion from '../sections/FranquiciasExpansion.astro';
+import CornerQuem from '../sections/CornerQuem.astro';
+import Contacto from '../sections/Contacto.astro';
+---
+
+<BaseLayout
+  title="Franquicias y expansión"
+  description="QUEM Central desarrolla franquicias, corners y alianzas comerciales para expandir la presencia de alimentos congelados en nuevos puntos de venta."
+>
+  <header class="page-hero">
+    <div class="container-content">
+      <p class="eyebrow">Franquicias y expansión</p>
+      <h1>Modelos comerciales para crecer con QUEM Central</h1>
+      <p class="page-hero__lede">
+        QUEM Central desarrolla formatos comerciales pensados para expandir la presencia de alimentos
+        congelados en nuevos puntos de venta — franquicias, corners y alianzas comerciales.
+      </p>
+    </div>
+  </header>
+
+  <FranquiciasExpansion showHead={false} />
+  <CornerQuem />
+  <Contacto showHead={true} defaultTipo="Franquicias" />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 6vw, 6rem) clamp(2rem, 4vw, 4rem);
+    background: linear-gradient(180deg, var(--color-surface-subtle), var(--color-bg));
+  }
+  .page-hero h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1.06;
+    margin-block: var(--space-3) var(--space-4);
+    max-width: 24ch;
+  }
+  .page-hero__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    max-width: 60ch;
+  }
+</style>

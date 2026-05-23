@@ -1,0 +1,151 @@
+---
+interface Props {
+  showHead?: boolean;
+}
+const { showHead = true } = Astro.props;
+
+const unidades = [
+  {
+    n: '01',
+    title: 'Distribución B2B',
+    badge: 'Negocio principal',
+    desc: 'Abastecemos a negocios gastronómicos y comercios con productos congelados seleccionados, logística especializada y un catálogo pensado para operaciones de alta rotación.',
+  },
+  {
+    n: '02',
+    title: 'Franquicias',
+    badge: 'En funcionamiento',
+    desc: 'Desarrollamos formatos comerciales replicables para expandir la presencia de QUEM Central en nuevos mercados y puntos de venta.',
+  },
+  {
+    n: '03',
+    title: 'Corner QUEM',
+    badge: 'Sección destacada',
+    desc: 'Un formato flexible para incorporar productos QUEM en espacios comerciales existentes, generando una nueva unidad de venta sin montar una operación completa desde cero.',
+  },
+  {
+    n: '04',
+    title: 'Logística de alimentos congelados',
+    desc: 'Operación logística especializada para alimentos congelados, con foco en última milla en AMBA y Provincia de Buenos Aires.',
+  },
+  {
+    n: '05',
+    title: 'Retail B2C',
+    desc: 'Tiendas y canales de venta directa al consumidor final, orientados a acercar productos congelados a hogares y consumidores particulares.',
+  },
+  {
+    n: '06',
+    title: 'Tecnología / App',
+    desc: 'Una plataforma digital que permite consultar categorías, comprar online y ordenar la experiencia de compra desde un único canal.',
+  },
+  {
+    n: '07',
+    title: 'Fraccionamiento',
+    desc: 'Capacidad operativa para adaptar formatos, presentaciones y unidades según las necesidades de cada canal comercial.',
+  },
+  {
+    n: '08',
+    title: 'Desarrolladora comercial',
+    desc: 'Estructura orientada a crear, validar y escalar nuevos formatos comerciales vinculados al mercado de alimentos congelados.',
+  },
+  {
+    n: '09',
+    title: 'Representación comercial de marcas',
+    badge: 'En desarrollo',
+    desc: 'Una línea proyectada para representar marcas de alimentos congelados en eventos, puntos de expendio y canales comerciales estratégicos.',
+  },
+] as const;
+---
+
+<section class="unidades section-y" id="unidades-de-negocio" aria-labelledby="unidades-title">
+  <div class="container-content">
+    {showHead && (
+      <header class="unidades__head">
+        <p class="eyebrow">03 · Unidades de negocio</p>
+        <h2 id="unidades-title" class="unidades__title">Una compañía organizada por unidades comerciales</h2>
+        <p class="unidades__lede">
+          QUEM Central opera sobre distintas líneas comerciales que permiten abastecer, distribuir,
+          representar y escalar productos congelados en múltiples canales.
+        </p>
+      </header>
+    )}
+
+    <ol class="unidades__list">
+      {unidades.map((u) => (
+        <li class="unidad">
+          <span class="unidad__num" aria-hidden="true">{u.n}</span>
+          <div class="unidad__body">
+            <header class="unidad__title-row">
+              <h3>{u.title}</h3>
+              {'badge' in u && u.badge && <span class="unidad__badge">{u.badge}</span>}
+            </header>
+            <p>{u.desc}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .unidades__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .unidades__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+  }
+  .unidades__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+
+  .unidades__list {
+    display: grid;
+    gap: var(--space-1);
+  }
+  .unidad {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-5);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  .unidad:last-child { border-bottom: 1px solid var(--color-border-subtle); }
+
+  .unidad__num {
+    font-family: var(--font-display);
+    font-feature-settings: 'tnum';
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-brand);
+    min-width: 2.4rem;
+  }
+  .unidad__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block-end: var(--space-2);
+  }
+  .unidad__body h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-semibold);
+  }
+  .unidad__badge {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-accent-700);
+    background: var(--color-accent-50);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    font-weight: var(--weight-semibold);
+  }
+  .unidad__body p {
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    max-width: 70ch;
+  }
+</style>

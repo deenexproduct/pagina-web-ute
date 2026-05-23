@@ -1,0 +1,189 @@
+---
+import { APP_BASE_URL } from '../config/site';
+
+const mensajes = [
+  'Catálogo digital siempre disponible',
+  'Compra online desde un único canal',
+  'Acceso directo a categorías',
+  'Experiencia simple para clientes B2B y compradores recurrentes',
+  'Conexión entre web institucional y canal operativo',
+];
+---
+
+<section class="plat section-y" aria-labelledby="plat-title">
+  <div class="container-content plat__inner">
+    <div class="plat__copy">
+      <p class="eyebrow">06 · Plataforma</p>
+      <h2 id="plat-title" class="plat__title">Comprá online desde el catálogo de QUEM Central</h2>
+      <p>
+        La app de QUEM Central centraliza el catálogo, las categorías de producto y el acceso a compra online.
+      </p>
+      <p>
+        Desde allí, clientes gastronómicos, comercios y compradores pueden consultar disponibilidad, explorar
+        productos y realizar pedidos de forma simple.
+      </p>
+
+      <ul class="plat__list">
+        {mensajes.map((m) => (
+          <li>
+            <span class="plat__check" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m3 7 3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>{m}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div class="plat__cta-row">
+        <a class="btn btn-primary" href={APP_BASE_URL} target="_blank" rel="noopener">
+          Comprar online
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="plat__device" aria-hidden="true">
+      <div class="plat__device-frame">
+        <div class="plat__device-bar">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="plat__device-screen">
+          <div class="plat__device-header">
+            <div class="plat__device-logo">Q · Central</div>
+            <div class="plat__device-pill">App</div>
+          </div>
+          <div class="plat__device-grid">
+            <span>Empanadas</span>
+            <span>Pizzas</span>
+            <span>Hamburguesas</span>
+            <span>Postres</span>
+            <span>Frutas</span>
+            <span>Verduras</span>
+          </div>
+          <div class="plat__device-cta">Comprar online →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .plat {
+    background: linear-gradient(180deg, var(--color-bg), var(--color-surface-subtle));
+  }
+  .plat__inner {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .plat__inner { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  }
+  .plat__copy { display: grid; gap: var(--space-4); max-width: 56ch; }
+  .plat__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.08;
+    margin-block-end: var(--space-2);
+  }
+  .plat__copy p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+
+  .plat__list { display: grid; gap: var(--space-2); margin-block-start: var(--space-3); }
+  .plat__list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-snug);
+  }
+  .plat__check {
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent-100);
+    color: var(--color-accent-700);
+  }
+  .plat__cta-row { margin-block-start: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+
+  .plat__device {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding-block: var(--space-5);
+  }
+  .plat__device-frame {
+    width: min(28rem, 100%);
+    background: var(--color-bg-elevated);
+    border-radius: 1.5rem;
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+  }
+  .plat__device-bar {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.7rem 1rem;
+    background-color: var(--color-surface-subtle);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .plat__device-bar span {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background-color: var(--color-border-strong);
+  }
+  .plat__device-bar span:nth-child(1) { background-color: oklch(70% 0.16 25); }
+  .plat__device-bar span:nth-child(2) { background-color: oklch(80% 0.14 80); }
+  .plat__device-bar span:nth-child(3) { background-color: oklch(70% 0.14 155); }
+
+  .plat__device-screen { padding: var(--space-5); display: grid; gap: var(--space-4); }
+  .plat__device-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .plat__device-logo {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+  }
+  .plat__device-pill {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+    font-weight: var(--weight-semibold);
+  }
+  .plat__device-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+  .plat__device-grid span {
+    padding: 0.9rem;
+    background: var(--color-surface-subtle);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+  }
+  .plat__device-cta {
+    text-align: center;
+    padding: 0.9rem;
+    background: var(--color-accent-500);
+    color: var(--color-text-on-accent);
+    border-radius: var(--radius-md);
+    font-weight: var(--weight-semibold);
+    font-size: var(--font-size-sm);
+  }
+</style>

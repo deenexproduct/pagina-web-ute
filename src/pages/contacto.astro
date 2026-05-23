@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Contacto from '../sections/Contacto.astro';
+
+const tipo = Astro.url.searchParams.get('tipo') ?? '';
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Hablemos de cómo trabajar con QUEM Central — compra B2B, franquicias, Corner QUEM, representación de marcas, inversores. Equipo comercial disponible."
+>
+  <header class="page-hero">
+    <div class="container-content">
+      <p class="eyebrow">Contacto</p>
+      <h1>Hablemos de cómo trabajar con QUEM Central</h1>
+      <p class="page-hero__lede">
+        Si querés comprar online, conocer el catálogo, consultar por abastecimiento B2B, franquicias,
+        corners o alianzas comerciales, nuestro equipo puede ayudarte.
+      </p>
+    </div>
+  </header>
+
+  <Contacto showHead={false} defaultTipo={tipo} />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 6vw, 6rem) clamp(2rem, 4vw, 4rem);
+    background: linear-gradient(180deg, var(--color-surface-subtle), var(--color-bg));
+  }
+  .page-hero h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1.06;
+    margin-block: var(--space-3) var(--space-4);
+    max-width: 22ch;
+  }
+  .page-hero__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    max-width: 60ch;
+  }
+</style>

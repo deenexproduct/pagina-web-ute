@@ -1,0 +1,119 @@
+---
+import { whatsappLink } from '../config/site';
+
+interface Props {
+  showHead?: boolean;
+}
+const { showHead = true } = Astro.props;
+
+const bloques = [
+  { t: 'Qué resuelve', d: 'Permite sumar una unidad de venta de congelados con menor complejidad operativa.' },
+  { t: 'Para quién es', d: 'Comercios, cafeterías, mercados, clubes, instituciones, estaciones, puntos gastronómicos y espacios con tráfico comercial.' },
+  { t: 'Qué puede incluir', d: 'Productos, freezer, reposición, catálogo digital, soporte comercial, materiales de marca y logística.' },
+  { t: 'Por qué QUEM Central', d: 'Porque combina producto, distribución, operación y tecnología en una misma estructura.' },
+];
+
+const cornerCta = whatsappLink();
+---
+
+<section class="corner section-y" id="corner-quem" aria-labelledby="corner-title">
+  <div class="container-content corner__inner">
+    {showHead && (
+      <header class="corner__head">
+        <p class="eyebrow corner__eyebrow">04 · Corner QUEM</p>
+        <h2 id="corner-title" class="corner__title">Corner QUEM</h2>
+        <p class="corner__subtitle">
+          Un modelo flexible para llevar productos congelados de alta rotación a nuevos puntos de venta.
+        </p>
+      </header>
+    )}
+
+    <div class="corner__copy">
+      <p>
+        Corner QUEM permite incorporar una unidad comercial de alimentos congelados dentro de espacios
+        existentes, con una propuesta simple, escalable y pensada para generar una nueva fuente de ingresos.
+      </p>
+      <p>
+        El modelo está diseñado para comercios, puntos gastronómicos y espacios con circulación que buscan
+        sumar una línea de productos congelados sin desarrollar una operación completa desde cero.
+      </p>
+    </div>
+
+    <div class="corner__grid">
+      {bloques.map((b) => (
+        <article class="corner-block">
+          <h3>{b.t}</h3>
+          <p>{b.d}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="corner__cta-row">
+      <a class="btn btn-secondary" href={cornerCta}>Quiero conocer el modelo Corner QUEM</a>
+      <a class="btn btn-ghost" href="/corner-quem">Ver detalle</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .corner {
+    background:
+      radial-gradient(ellipse at 100% 0%, oklch(75% 0.110 252 / 0.10) 0%, transparent 50%),
+      var(--color-bg);
+  }
+  .corner__inner { display: grid; gap: var(--space-7); }
+  .corner__head { display: grid; gap: var(--space-2); max-width: 60ch; }
+  .corner__title {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1.04;
+  }
+  .corner__subtitle {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    max-width: 50ch;
+    line-height: var(--leading-snug);
+    margin-block-start: var(--space-2);
+  }
+
+  .corner__copy {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 70ch;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+
+  .corner__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .corner-block {
+    padding: var(--space-5);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+  }
+  .corner-block h3 {
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-brand);
+    margin-block-end: var(--space-3);
+    font-weight: var(--weight-semibold);
+  }
+  .corner-block p {
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  .corner__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+</style>

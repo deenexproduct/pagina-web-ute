@@ -1,0 +1,184 @@
+---
+import { APP_BASE_URL } from '../config/site';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__inner container-content">
+    <div class="hero__copy">
+      <p class="eyebrow">Plataforma integral · alimentos congelados</p>
+      <h1 id="hero-title" class="hero__title">
+        QUEM <em>Central</em>
+        <span class="hero__title-sub">Plataforma integral para el abastecimiento y desarrollo comercial de alimentos congelados.</span>
+      </h1>
+      <p class="hero__lede">
+        Integramos distribución B2B, logística especializada, franquicias, corners comerciales y tecnología
+        para conectar productos congelados con negocios gastronómicos, comercios y nuevos canales de venta.
+      </p>
+      <div class="hero__cta-row">
+        <a class="btn btn-primary" href={APP_BASE_URL} target="_blank" rel="noopener">
+          Comprar online
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-outline" href="#quem-central">Conocer QUEM Central</a>
+        <a class="btn btn-ghost" href="/contacto">Contactar</a>
+      </div>
+
+      <ul class="hero__chips" aria-label="Capacidades clave">
+        <li>Distribución B2B</li>
+        <li>Logística especializada</li>
+        <li>Franquicias y Corners</li>
+        <li>Catálogo digital</li>
+      </ul>
+    </div>
+
+    <aside class="hero__panel" aria-hidden="true">
+      <div class="hero__panel-card hero__panel-card--logistics">
+        <div class="hero__panel-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M3 22V10h17v12M20 14h6l3 4v4h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="24" r="2.4" stroke="currentColor" stroke-width="1.8"/><circle cx="23" cy="24" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <div>
+          <p class="hero__panel-label">Logística última milla</p>
+          <p class="hero__panel-meta">Foco AMBA · Provincia de Buenos Aires</p>
+        </div>
+      </div>
+
+      <div class="hero__panel-card hero__panel-card--catalog">
+        <div class="hero__panel-icon">
+          <svg viewBox="0 0 32 32" fill="none"><rect x="5" y="4" width="22" height="24" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M10 10h12M10 15h12M10 20h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <p class="hero__panel-label">Catálogo digital</p>
+          <p class="hero__panel-meta">Compra B2B desde un único canal</p>
+        </div>
+      </div>
+
+      <div class="hero__panel-card hero__panel-card--network">
+        <div class="hero__panel-icon">
+          <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="6" cy="8" r="2.6" stroke="currentColor" stroke-width="1.8"/><circle cx="26" cy="8" r="2.6" stroke="currentColor" stroke-width="1.8"/><circle cx="6" cy="24" r="2.6" stroke="currentColor" stroke-width="1.8"/><circle cx="26" cy="24" r="2.6" stroke="currentColor" stroke-width="1.8"/><path d="m8 10 5 4M24 10l-5 4M8 22l5-4M24 22l-5-4" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div>
+          <p class="hero__panel-label">Red comercial</p>
+          <p class="hero__panel-meta">B2B · Retail · Corners · Franquicias</p>
+        </div>
+      </div>
+
+      <div class="hero__panel-gradient" aria-hidden="true"></div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(3.5rem, 6vw, 6rem) clamp(3rem, 5vw, 5rem);
+    background:
+      radial-gradient(ellipse at 0% 0%, oklch(75% 0.110 252 / 0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 100%, oklch(62% 0.150 155 / 0.08) 0%, transparent 55%),
+      var(--color-bg);
+    overflow: hidden;
+  }
+  .hero__inner {
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .hero__inner { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  }
+
+  .hero__title {
+    font-size: var(--font-size-4xl);
+    line-height: 1.04;
+    letter-spacing: var(--tracking-tightest);
+    font-weight: var(--weight-bold);
+    margin-block: var(--space-4) var(--space-5);
+    color: var(--color-text-primary);
+  }
+  .hero__title em {
+    font-style: normal;
+    color: var(--color-text-brand);
+    font-weight: var(--weight-semibold);
+  }
+  .hero__title-sub {
+    display: block;
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-snug);
+    margin-block-start: var(--space-4);
+    max-width: 28ch;
+  }
+
+  .hero__lede {
+    max-width: 56ch;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    margin-block-end: var(--space-6);
+  }
+
+  .hero__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+  }
+
+  .hero__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .hero__chips li {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .hero__panel {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    background:
+      linear-gradient(180deg, var(--color-bg-elevated), oklch(from var(--color-brand-50) l c h / 0.6));
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: var(--shadow-lg);
+  }
+  .hero__panel-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+  }
+  .hero__panel-icon {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-brand-50);
+    color: var(--color-brand-600);
+  }
+  .hero__panel-card--logistics .hero__panel-icon { background: var(--color-brand-50); color: var(--color-brand-600); }
+  .hero__panel-card--catalog .hero__panel-icon { background: var(--color-accent-50); color: var(--color-accent-700); }
+  .hero__panel-card--network .hero__panel-icon { background: var(--color-neutral-100); color: var(--color-neutral-700); }
+  .hero__panel-icon svg { width: 1.5rem; height: 1.5rem; }
+  .hero__panel-label {
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+  }
+  .hero__panel-meta {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+</style>

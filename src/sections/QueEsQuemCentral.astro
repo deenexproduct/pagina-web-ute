@@ -1,0 +1,112 @@
+---
+const puntosClave = [
+  { titulo: 'Abastecimiento B2B', desc: 'Insumos congelados confiables para operaciones de alta rotación.' },
+  { titulo: 'Logística de congelados', desc: 'Última milla especializada con foco en AMBA y Provincia de Buenos Aires.' },
+  { titulo: 'Red comercial', desc: 'B2B, retail, franquicias y corners coordinados en una sola estructura.' },
+  { titulo: 'App y catálogo digital', desc: 'Compra online y categorías centralizadas en un único canal.' },
+  { titulo: 'Corners y franquicias', desc: 'Formatos replicables para escalar puntos de venta.' },
+];
+---
+
+<section id="quem-central" class="que-es section-y" aria-labelledby="que-es-title">
+  <div class="container-content que-es__inner">
+    <header class="que-es__head">
+      <p class="eyebrow">01 · Qué es QUEM Central</p>
+      <h2 id="que-es-title" class="que-es__title">
+        Una compañía gastronómica y tecnológica integrada para escalar alimentos congelados.
+      </h2>
+    </header>
+
+    <div class="que-es__body">
+      <div class="que-es__copy">
+        <p>
+          <strong>QUEM Central</strong> es una compañía enfocada en el abastecimiento, distribución y
+          desarrollo comercial de alimentos congelados.
+        </p>
+        <p>
+          A través de su red B2B, sus tiendas, franquicias, corners, logística especializada y plataforma
+          digital, conecta productos congelados con distintos canales de consumo y comercialización.
+        </p>
+        <p>
+          El modelo combina operación gastronómica, capilaridad comercial y tecnología para facilitar
+          compras, ordenar el abastecimiento y escalar nuevas unidades de negocio.
+        </p>
+      </div>
+
+      <ul class="que-es__points">
+        {puntosClave.map((p, i) => (
+          <li>
+            <span class="que-es__points-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3>{p.titulo}</h3>
+              <p>{p.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .que-es__inner { display: grid; gap: var(--space-7); }
+  .que-es__head { display: grid; gap: var(--space-3); max-width: 50ch; }
+  .que-es__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+  }
+  .que-es__body { display: grid; gap: var(--space-7); }
+  @media (min-width: 960px) {
+    .que-es__body { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  }
+  .que-es__copy {
+    display: grid;
+    gap: var(--space-4);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    max-width: 42ch;
+  }
+  .que-es__copy strong { color: var(--color-text-primary); font-weight: var(--weight-semibold); }
+
+  .que-es__points {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .que-es__points li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    transition: border-color var(--dur-fast) var(--ease-standard),
+                transform var(--dur-fast) var(--ease-standard);
+  }
+  .que-es__points li:hover {
+    border-color: var(--color-brand-200);
+    transform: translateY(-1px);
+  }
+  .que-es__points-num {
+    font-family: var(--font-display);
+    font-feature-settings: 'tnum';
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-brand);
+    padding-top: 0.25rem;
+    min-width: 2rem;
+  }
+  .que-es__points h3 {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-semibold);
+    margin-block-end: 0.25rem;
+  }
+  .que-es__points p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-relaxed);
+  }
+</style>

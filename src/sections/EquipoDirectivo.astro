@@ -1,0 +1,94 @@
+---
+import { TEAM } from '../config/site';
+
+interface Props {
+  showHead?: boolean;
+}
+const { showHead = true } = Astro.props;
+
+const initials = (name: string): string =>
+  name.split(' ').slice(0, 2).map((n) => n.charAt(0)).join('').toUpperCase();
+---
+
+<section class="team section-y" aria-labelledby="team-title">
+  <div class="container-content">
+    {showHead && (
+      <header class="team__head">
+        <p class="eyebrow">09 · Equipo directivo</p>
+        <h2 id="team-title" class="team__title">Equipo directivo</h2>
+        <p class="team__lede">
+          QUEM Central está liderada por un equipo con experiencia en operación gastronómica, desarrollo
+          comercial y crecimiento de unidades de negocio.
+        </p>
+      </header>
+    )}
+
+    <ul class="team__grid" role="list">
+      {TEAM.map((m) => (
+        <li class="team-card">
+          <div class="team-card__avatar" aria-hidden="true">
+            {m.photo ? (
+              <img src={m.photo} alt={`Retrato de ${m.name}`} loading="lazy" decoding="async" />
+            ) : (
+              <span>{initials(m.name)}</span>
+            )}
+          </div>
+          <div class="team-card__body">
+            <h3>{m.name}</h3>
+            <p class="team-card__title">{m.title}</p>
+            {m.org && <p class="team-card__org">{m.org}</p>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .team__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .team__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+  }
+  .team__lede { color: var(--color-text-secondary); font-size: var(--font-size-md); line-height: var(--leading-relaxed); }
+
+  .team__grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .team-card {
+    padding: var(--space-5);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    display: grid;
+    gap: var(--space-4);
+  }
+  .team-card__avatar {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, var(--color-brand-100), var(--color-brand-300));
+    color: var(--color-brand-700);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: var(--font-size-lg);
+    letter-spacing: -0.02em;
+    overflow: hidden;
+  }
+  .team-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .team-card__body h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-semibold);
+    margin-block-end: var(--space-1);
+  }
+  .team-card__title { color: var(--color-text-primary); font-size: var(--font-size-sm); }
+  .team-card__org { color: var(--color-text-muted); font-size: var(--font-size-xs); margin-block-start: 0.25rem; }
+</style>

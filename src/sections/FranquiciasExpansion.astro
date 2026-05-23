@@ -1,0 +1,113 @@
+---
+interface Props {
+  showHead?: boolean;
+}
+const { showHead = true } = Astro.props;
+
+const cards = [
+  { title: 'Franquicias', desc: 'Para operar unidades comerciales bajo la marca QUEM Central.', icon: 'store' },
+  { title: 'Corner QUEM', desc: 'Para incorporar productos congelados dentro de espacios comerciales existentes.', icon: 'corner' },
+  { title: 'Alianzas comerciales', desc: 'Para marcas, operadores y partners que buscan capilaridad comercial.', icon: 'handshake' },
+] as const;
+---
+
+<section class="franq section-y" id="franquicias" aria-labelledby="franq-title">
+  <div class="container-content">
+    {showHead && (
+      <header class="franq__head">
+        <p class="eyebrow">07 · Franquicias y expansión</p>
+        <h2 id="franq-title" class="franq__title">Modelos comerciales para crecer con QUEM Central</h2>
+        <p class="franq__lede">
+          QUEM Central desarrolla formatos comerciales pensados para expandir la presencia de alimentos
+          congelados en nuevos puntos de venta.
+        </p>
+        <p class="franq__lede">
+          A través de franquicias, corners y alianzas comerciales, la compañía busca llevar su propuesta a
+          más zonas, más canales y más consumidores.
+        </p>
+      </header>
+    )}
+
+    <div class="franq__grid">
+      {cards.map((c) => (
+        <article class="franq-card">
+          <div class="franq-card__icon" aria-hidden="true">
+            {c.icon === 'store' && (
+              <svg viewBox="0 0 28 28" fill="none"><path d="M4 11h20l-2-6H6l-2 6Z" stroke="currentColor" stroke-width="1.8"/><path d="M5 11v12h18V11" stroke="currentColor" stroke-width="1.8"/><path d="M10 23v-6h8v6" stroke="currentColor" stroke-width="1.8"/></svg>
+            )}
+            {c.icon === 'corner' && (
+              <svg viewBox="0 0 28 28" fill="none"><path d="M4 22V8l9-3 11 4v13" stroke="currentColor" stroke-width="1.8"/><path d="M9 22v-7h6v7M19 22v-4h2v4" stroke="currentColor" stroke-width="1.8"/></svg>
+            )}
+            {c.icon === 'handshake' && (
+              <svg viewBox="0 0 28 28" fill="none"><path d="m4 16 4-5 6 5-3 3-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 16 9 21l3 2 4-4M14 16l5-5 5 5-4 5-3-2-3-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            )}
+          </div>
+          <h3>{c.title}</h3>
+          <p>{c.desc}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="franq__cta-row">
+      <a class="btn btn-secondary" href="/contacto?tipo=Franquicias">Consultar por expansión comercial</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .franq__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .franq__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+  }
+  .franq__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+
+  .franq__grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .franq-card {
+    padding: var(--space-6);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .franq-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-md);
+  }
+  .franq-card__icon {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-brand-50);
+    color: var(--color-brand-600);
+    margin-block-end: var(--space-4);
+  }
+  .franq-card__icon svg { width: 1.7rem; height: 1.7rem; }
+  .franq-card h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-semibold);
+    margin-block-end: var(--space-2);
+  }
+  .franq-card p {
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  .franq__cta-row { display: flex; justify-content: center; margin-block-start: var(--space-7); }
+</style>

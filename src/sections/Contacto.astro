@@ -1,93 +1,251 @@
 ---
-/**
- * Contacto / reservas — CTA grande tipo final-statement.
- * Bloque alto contraste para cerrar la página.
- */
+import { APP_BASE_URL, EMAILS, whatsappLink, WHATSAPP } from '../config/site';
+
+interface Props {
+  showHead?: boolean;
+  defaultTipo?: string;
+}
+const { showHead = true, defaultTipo = '' } = Astro.props;
+
+const tipos = [
+  'Compra B2B',
+  'Corner QUEM',
+  'Franquicias',
+  'Proveedores / marcas',
+  'Inversores',
+  'Otro',
+];
+
+const waLink = whatsappLink();
+const hasWhatsapp = WHATSAPP.length > 0;
 ---
 
-<section class="contacto section-y" id="reservas" aria-labelledby="contacto-title">
-  <div class="container-content contacto__inner">
-    <p class="eyebrow contacto__eyebrow">04 · Reservas</p>
+<section class="contact section-y" id="contacto" aria-labelledby="contact-title">
+  <div class="container-content contact__inner">
+    <div class="contact__copy">
+      {showHead && (
+        <header>
+          <p class="eyebrow">10 · Contacto</p>
+          <h2 id="contact-title" class="contact__title">Hablemos de cómo trabajar con QUEM Central</h2>
+        </header>
+      )}
+      <p class="contact__lede">
+        Si querés comprar online, conocer el catálogo, consultar por abastecimiento B2B, franquicias,
+        corners o alianzas comerciales, nuestro equipo puede ayudarte.
+      </p>
 
-    <h2 id="contacto-title" class="contacto__title">
-      Querés ser de los primeros en sentarse,<br />
-      <em>escribinos.</em>
-    </h2>
+      <div class="contact__cta-row">
+        <a class="btn btn-primary" href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online</a>
+        <a class="btn btn-secondary" href={waLink} {...(hasWhatsapp ? { target: '_blank', rel: 'noopener' } : {})}>
+          Contactar por WhatsApp
+        </a>
+        <a class="btn btn-outline" href="/contacto?tipo=Franquicias">Consultar por franquicias / corners</a>
+      </div>
 
-    <p class="contacto__lede">
-      Estamos terminando los detalles de apertura. Dejanos un mensaje para reservar mesa
-      cuando abramos las primeras fechas — sin filas, sin formularios largos.
-    </p>
-
-    <div class="contacto__actions">
-      <a href="mailto:hola@ute.example.com" class="cta cta--primary cta--invert">
-        hola@ute.example.com
-      </a>
-      <a href="https://wa.me/" class="cta cta--ghost cta--invert">WhatsApp</a>
+      <dl class="contact__channels">
+        <div>
+          <dt>Consultas comerciales B2B</dt>
+          <dd><a href={`mailto:${EMAILS.comercial}`}>{EMAILS.comercial}</a></dd>
+        </div>
+        <div>
+          <dt>Pedidos y catálogo</dt>
+          <dd><a href={`mailto:${EMAILS.ventas}`}>{EMAILS.ventas}</a></dd>
+        </div>
+        <div>
+          <dt>Contacto general</dt>
+          <dd><a href={`mailto:${EMAILS.contacto}`}>{EMAILS.contacto}</a></dd>
+        </div>
+      </dl>
     </div>
 
-    <footer class="contacto__foot">
-      <span>UTE · proyecto Deenex · 2026</span>
-    </footer>
+    <form
+      class="contact__form"
+      method="post"
+      action="#"
+      novalidate
+      aria-label="Formulario de contacto comercial"
+      data-form
+    >
+      <p class="contact__form-note">
+        Completá el formulario y te responde el equipo comercial. Los campos con * son obligatorios.
+      </p>
+
+      <div class="field">
+        <label for="f-nombre">Nombre y apellido *</label>
+        <input id="f-nombre" name="nombre" type="text" autocomplete="name" required />
+      </div>
+
+      <div class="field">
+        <label for="f-empresa">Empresa</label>
+        <input id="f-empresa" name="empresa" type="text" autocomplete="organization" />
+      </div>
+
+      <div class="field">
+        <label for="f-tipo">Tipo de consulta *</label>
+        <select id="f-tipo" name="tipo" required>
+          <option value="" disabled selected={!defaultTipo}>Elegí una opción</option>
+          {tipos.map((t) => (
+            <option value={t} selected={defaultTipo === t}>{t}</option>
+          ))}
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-tel">Teléfono</label>
+          <input id="f-tel" name="telefono" type="tel" autocomplete="tel" />
+        </div>
+        <div class="field">
+          <label for="f-email">Email *</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-msg">Mensaje *</label>
+        <textarea id="f-msg" name="mensaje" rows="5" required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary contact__submit">Enviar consulta</button>
+      <p class="contact__form-status" data-form-status role="status" aria-live="polite"></p>
+    </form>
   </div>
 </section>
 
-<style>
-  .contacto {
-    background-color: var(--color-bg-inverted);
-    color: var(--color-text-inverted);
-  }
-  .contacto__inner {
-    display: grid;
-    gap: var(--space-6);
-    padding-block: var(--space-7);
-  }
-  .contacto__eyebrow { color: oklch(90% 0.01 80 / 0.6); }
+<script>
+  /**
+   * Form modular: por ahora el envío es client-only — muestra mensaje de éxito
+   * y arma mailto. Cuando llegue endpoint o servicio (Formspree/Netlify Forms/
+   * propio backend), reemplazar el handler.
+   */
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  const status = document.querySelector<HTMLElement>('[data-form-status]');
 
-  .contacto__title {
-    font-size: var(--font-size-4xl);
-    font-weight: var(--weight-light);
-    line-height: 1.05;
+  if (form && status) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const data = new FormData(form);
+      const params = new URLSearchParams();
+      const subject = `Consulta web QUEM Central · ${String(data.get('tipo') ?? '')}`;
+      const body =
+        `Nombre: ${data.get('nombre')}\n` +
+        `Empresa: ${data.get('empresa') ?? '-'}\n` +
+        `Tipo: ${data.get('tipo')}\n` +
+        `Teléfono: ${data.get('telefono') ?? '-'}\n` +
+        `Email: ${data.get('email')}\n\n` +
+        `Mensaje:\n${data.get('mensaje')}\n`;
+      params.set('subject', subject);
+      params.set('body', body);
+      window.location.href = `mailto:comercial@quem-central.com?${params.toString()}`;
+      status.textContent = 'Abriendo tu cliente de email…';
+    });
+
+    // Si llega el query ?tipo=Franquicias, prefill
+    const u = new URL(window.location.href);
+    const t = u.searchParams.get('tipo');
+    if (t) {
+      const sel = form.querySelector<HTMLSelectElement>('#f-tipo');
+      if (sel) sel.value = t;
+    }
+  }
+</script>
+
+<style>
+  .contact__inner {
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 960px) {
+    .contact__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
+  }
+
+  .contact__copy { display: grid; gap: var(--space-5); align-content: start; }
+  .contact__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-semibold);
     letter-spacing: var(--tracking-tighter);
+    line-height: 1.1;
+    margin-block-start: var(--space-3);
     max-width: 22ch;
   }
-  .contacto__title em {
-    font-style: italic;
-    color: var(--color-brand-300);
-  }
-  .contacto__lede {
-    max-width: 44ch;
-    color: oklch(90% 0.01 80 / 0.7);
-    font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
-  }
-  .contacto__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-block-start: var(--space-4);
-  }
-  .cta--invert.cta--primary {
-    background-color: var(--color-bg);
-    color: var(--color-text-primary);
-  }
-  .cta--invert.cta--primary:hover {
-    background-color: var(--color-brand-300);
-  }
-  .cta--invert.cta--ghost {
-    border-color: oklch(90% 0.01 80 / 0.3);
-    color: var(--color-text-inverted);
-  }
-  .cta--invert.cta--ghost:hover {
-    background-color: oklch(90% 0.01 80 / 0.08);
-  }
-  .contacto__foot {
-    margin-block-start: var(--space-8);
+  .contact__lede { color: var(--color-text-secondary); line-height: var(--leading-relaxed); max-width: 42ch; }
+  .contact__cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .contact__channels {
+    display: grid;
+    gap: var(--space-4);
     padding-block-start: var(--space-5);
-    border-top: 1px solid oklch(90% 0.01 80 / 0.15);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  .contact__channels dt {
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
-    color: oklch(90% 0.01 80 / 0.5);
+    color: var(--color-text-muted);
+    margin-block-end: 0.25rem;
+    font-weight: var(--weight-semibold);
+  }
+  .contact__channels dd a {
+    color: var(--color-text-primary);
+    font-weight: var(--weight-medium);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-subtle);
+    text-underline-offset: 3px;
+  }
+  .contact__channels dd a:hover { text-decoration-color: var(--color-brand-500); }
+
+  .contact__form {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+  }
+  .contact__form-note {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+  .field { display: grid; gap: 0.4rem; }
+  .field-row { display: grid; gap: var(--space-4); }
+  @media (min-width: 640px) {
+    .field-row { grid-template-columns: 1fr 1fr; }
+  }
+  .field label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    font-weight: var(--weight-semibold);
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    padding: 0.85rem 1rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    transition: border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+    min-height: 44px;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--color-brand-500);
+    box-shadow: var(--shadow-glow-brand);
+  }
+  .field textarea { resize: vertical; min-height: 120px; line-height: var(--leading-relaxed); }
+
+  .contact__submit { justify-self: start; margin-block-start: var(--space-2); }
+  .contact__form-status {
+    color: var(--color-accent-700);
+    font-size: var(--font-size-sm);
+    min-height: 1.5rem;
   }
 </style>
