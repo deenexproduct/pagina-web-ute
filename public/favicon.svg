@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0d0d0c"/>
-  <text x="50%" y="58%" text-anchor="middle" dominant-baseline="middle"
-        font-family="Georgia, serif" font-size="18" font-style="italic" fill="#fafaf7">u</text>
+  <rect width="32" height="32" rx="7" fill="#2854C5"/>
+  <text x="50%" y="56%" text-anchor="middle" dominant-baseline="middle"
+        font-family="-apple-system, 'Inter', system-ui, sans-serif" font-size="18" font-weight="700" fill="#F8F9FB" letter-spacing="-0.04em">Q</text>
 </svg>

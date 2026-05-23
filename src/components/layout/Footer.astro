@@ -1,0 +1,139 @@
+---
+import { NAV_PRIMARY, APP_BASE_URL, EMAILS, SOCIAL } from '../../config/site';
+
+const year = new Date().getFullYear();
+const hasInstagram = SOCIAL.instagram.length > 0;
+const hasLinkedin = SOCIAL.linkedin.length > 0;
+---
+
+<footer class="site-footer">
+  <div class="container-content site-footer__inner">
+    <div class="site-footer__brand">
+      <a href="/" class="site-footer__logo" aria-label="QUEM Central · inicio">
+        <span class="brand-mark" aria-hidden="true">Q</span>
+        <span class="brand-name">QUEM Central</span>
+      </a>
+      <p class="site-footer__pitch">
+        Plataforma integral para el abastecimiento, distribución y desarrollo comercial de alimentos congelados.
+      </p>
+      <a class="btn btn-primary site-footer__cta" href={APP_BASE_URL} target="_blank" rel="noopener">
+        Comprar online
+      </a>
+    </div>
+
+    <nav class="site-footer__links" aria-label="Links del sitio">
+      <h2>Sitio</h2>
+      <ul>
+        {NAV_PRIMARY.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-footer__contact">
+      <h2>Contacto</h2>
+      <ul>
+        <li><a href={`mailto:${EMAILS.comercial}`}>{EMAILS.comercial}</a></li>
+        <li><a href={`mailto:${EMAILS.ventas}`}>{EMAILS.ventas}</a></li>
+        <li><a href="/contacto">Formulario de contacto</a></li>
+      </ul>
+
+      {(hasInstagram || hasLinkedin) && (
+        <>
+          <h2 class="site-footer__social-title">Redes</h2>
+          <ul class="site-footer__social">
+            {hasInstagram && <li><a href={SOCIAL.instagram} target="_blank" rel="noopener">Instagram</a></li>}
+            {hasLinkedin && <li><a href={SOCIAL.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>}
+          </ul>
+        </>
+      )}
+    </div>
+  </div>
+
+  <div class="site-footer__bar container-content">
+    <small>© {year} QUEM Central. Todos los derechos reservados.</small>
+    <small class="site-footer__credit">Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a>.</small>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background-color: var(--color-bg-inverted);
+    color: var(--color-text-inverted);
+    padding-block: var(--space-8) var(--space-5);
+    margin-top: var(--space-9);
+  }
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 768px) {
+    .site-footer__inner {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+  .site-footer h2 {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: oklch(from var(--color-text-inverted) l c h / 0.6);
+    font-weight: var(--weight-semibold);
+    margin-block-end: var(--space-4);
+  }
+  .site-footer__brand .brand-name { color: var(--color-text-inverted); font-size: var(--font-size-lg); }
+  .site-footer__brand .brand-mark {
+    background: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+  }
+  .site-footer__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-inverted);
+  }
+  .site-footer__pitch {
+    margin-block: var(--space-4);
+    color: oklch(from var(--color-text-inverted) l c h / 0.72);
+    line-height: var(--leading-relaxed);
+    max-width: 38ch;
+  }
+  .site-footer__cta { background-color: var(--color-accent-500); }
+  .site-footer__cta:hover { background-color: var(--color-accent-600); }
+
+  .site-footer__links ul,
+  .site-footer__contact ul {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .site-footer__links a,
+  .site-footer__contact a {
+    color: oklch(from var(--color-text-inverted) l c h / 0.82);
+    font-size: var(--font-size-sm);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .site-footer__links a:hover,
+  .site-footer__contact a:hover { color: var(--color-text-inverted); }
+
+  .site-footer__social-title { margin-block-start: var(--space-5); }
+
+  .site-footer__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid oklch(from var(--color-text-inverted) l c h / 0.12);
+    font-size: var(--font-size-xs);
+    color: oklch(from var(--color-text-inverted) l c h / 0.6);
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .site-footer__credit a {
+    color: var(--color-text-inverted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+</style>

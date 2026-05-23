@@ -1,8 +1,9 @@
-# UTE — web institucional
+# QUEM Central — web institucional
 
-Sitio web de **UTE**, propuesta gastronómica de autor (cliente de Deenex). Astro + TypeScript + Tailwind v4 + React islands.
+Sitio web institucional de **QUEM Central**, plataforma integral de abastecimiento, distribución y desarrollo comercial de alimentos congelados (cliente de Deenex). Astro + TypeScript + Tailwind v4 + React islands.
 
 > Ver [`CLAUDE.md`](./CLAUDE.md) para convenciones de código, sistema de tokens y reglas de diseño.
+> Brief completo del cliente: [`docs/brief-quem-central.md`](./docs/brief-quem-central.md).
 
 ## Requisitos
 
@@ -37,11 +38,11 @@ pnpm dev           # http://localhost:4321
 ## Stack
 
 - **Astro 6** + TypeScript estricto (`astro/tsconfigs/strictest`)
-- **Tailwind CSS v4** vía `@tailwindcss/vite` (CSS-first, sin `tailwind.config.js`)
-- **React 19 islands** vía `@astrojs/react`, solo en piezas interactivas
+- **Tailwind CSS v4** vía `@tailwindcss/vite` (CSS-first)
+- **React 19 islands** vía `@astrojs/react`
 - **Motion 12** + **GSAP 3** (ScrollTrigger) para animaciones
-- **Lenis 1.3** para smooth scroll (respeta `prefers-reduced-motion`)
-- **@fontsource-variable/inter** + **fraunces** self-hosted
+- **Lenis 1.3** smooth scroll (respeta `prefers-reduced-motion`)
+- **@fontsource-variable/inter** + **fraunces** self-hosted (Fraunces reservada)
 - **@astrojs/sitemap** + imágenes optimizadas con Sharp
 - **ESLint 10** + **Prettier 3**
 
@@ -49,19 +50,53 @@ pnpm dev           # http://localhost:4321
 
 ```
 src/
-├── assets/         # imágenes y fuentes optimizadas por Vite
-├── components/     # UI compartido
-├── content/        # content collections (menú, novedades)
-├── layouts/        # BaseLayout.astro
-├── sections/       # bloques de la home (Hero, Propuesta, ...)
-├── lib/            # utils (motion, etc.)
+├── assets/brand/       # logo definitivo (TODO descargar de Drive)
+├── components/
+│   ├── layout/         # Header.astro, Footer.astro
+│   └── SmoothScroll.tsx
+├── config/site.ts      # CONFIG CENTRAL — dominio, mails, whatsapp, equipo, categorías
+├── content/            # content collections (futuro)
+├── layouts/BaseLayout.astro
+├── lib/motion.ts
+├── sections/           # 11 secciones modulares de la home
 ├── styles/
-│   ├── tokens.css  # design tokens — única fuente de verdad
-│   └── global.css  # reset + @theme + bases tipográficas
-└── pages/index.astro
+│   ├── tokens.css      # design tokens — única fuente de verdad
+│   └── global.css      # reset + @theme + .btn + bases
+└── pages/
+    ├── index.astro
+    ├── ecosistema.astro
+    ├── unidades-de-negocio.astro
+    ├── corner-quem.astro
+    ├── productos.astro
+    ├── franquicias.astro
+    └── contacto.astro
 ```
 
 Detalle de convenciones, tokens, breakpoints y reglas de diseño → `CLAUDE.md`.
+
+## Arquitectura de la home
+
+Orden exacto (del brief):
+
+1. Header sticky con CTA "Comprar online"
+2. Hero corporativo
+3. Qué es QUEM Central
+4. Ecosistema
+5. Unidades de negocio
+6. Corner QUEM (destacada)
+7. Categorías de producto
+8. Plataforma / Comprar online
+9. Franquicias y expansión
+10. QUEM en números (toggle `SHOW_METRICS`)
+11. Equipo directivo
+12. Contacto (form modular)
+13. Footer
+
+## Config central
+
+Todo lo variable o pendiente vive en `src/config/site.ts`: dominio, app URL, mails, WhatsApp, cargo de Joaquín, toggle de métricas, categorías de producto con links a la app, navegación, SEO, redes sociales, dirección comercial.
+
+Cambiar cualquier dato sin tocar markup.
 
 ## Deploy
 
@@ -69,4 +104,4 @@ Target: **Vercel** (configuración en `vercel.json`). No deployear sin OK del ow
 
 ## Licencia
 
-Propietario · Deenex / UTE — todos los derechos reservados.
+Propietario · Deenex / QUEM Central — todos los derechos reservados.

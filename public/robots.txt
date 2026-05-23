@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ute.example.com/sitemap-index.xml
+Sitemap: https://quem-central.com/sitemap-index.xml
