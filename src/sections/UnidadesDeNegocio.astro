@@ -4,60 +4,73 @@ interface Props {
 }
 const { showHead = true } = Astro.props;
 
+/**
+ * Unidades de negocio v2 — timeline copy comprimido.
+ * Status visual por unidad: 'active', 'featured', 'development'.
+ * Descripciones max ~14 palabras.
+ */
 const unidades = [
-  { n: '01', title: 'Distribución B2B', badge: 'Negocio principal', badgeTone: 'accent',
-    desc: 'Abastecemos a negocios gastronómicos y comercios con productos congelados seleccionados, logística especializada y un catálogo pensado para operaciones de alta rotación.' },
-  { n: '02', title: 'Franquicias', badge: 'En funcionamiento', badgeTone: 'accent',
-    desc: 'Desarrollamos formatos comerciales replicables para expandir la presencia de QUEM Central en nuevos mercados y puntos de venta.' },
-  { n: '03', title: 'Corner QÜEM', badge: 'Modelo destacado', badgeTone: 'brand',
-    desc: 'Un formato flexible para incorporar productos QUEM en espacios comerciales existentes, generando una nueva unidad de venta sin montar una operación completa desde cero.' },
-  { n: '04', title: 'Logística de alimentos congelados', badge: null, badgeTone: null,
-    desc: 'Operación logística especializada para alimentos congelados, con foco en última milla en AMBA y Provincia de Buenos Aires.' },
-  { n: '05', title: 'Retail B2C', badge: null, badgeTone: null,
-    desc: 'Tiendas y canales de venta directa al consumidor final, orientados a acercar productos congelados a hogares y consumidores particulares.' },
-  { n: '06', title: 'Tecnología / App', badge: null, badgeTone: null,
-    desc: 'Una plataforma digital que permite consultar categorías, comprar online y ordenar la experiencia de compra desde un único canal.' },
-  { n: '07', title: 'Fraccionamiento', badge: null, badgeTone: null,
-    desc: 'Capacidad operativa para adaptar formatos, presentaciones y unidades según las necesidades de cada canal comercial.' },
-  { n: '08', title: 'Desarrolladora comercial', badge: null, badgeTone: null,
-    desc: 'Estructura orientada a crear, validar y escalar nuevos formatos comerciales vinculados al mercado de alimentos congelados.' },
-  { n: '09', title: 'Representación comercial de marcas', badge: 'En desarrollo', badgeTone: 'neutral',
-    desc: 'Una línea proyectada para representar marcas de alimentos congelados en eventos, puntos de expendio y canales comerciales estratégicos.' },
+  { n: '01', title: 'Distribución B2B',
+    desc: 'Negocio principal: gastronómicos y comercios con catálogo de alta rotación.',
+    status: 'featured', badge: 'Principal' },
+  { n: '02', title: 'Franquicias',
+    desc: 'Formatos replicables bajo marca QUEM en nuevos mercados.',
+    status: 'active', badge: 'Activo' },
+  { n: '03', title: 'Corner QÜEM',
+    desc: 'Productos QÜEM dentro de espacios comerciales existentes.',
+    status: 'featured', badge: 'Destacado' },
+  { n: '04', title: 'Logística de congelados',
+    desc: 'Última milla AMBA y Provincia de Buenos Aires.',
+    status: 'active', badge: null },
+  { n: '05', title: 'Retail B2C',
+    desc: 'Tiendas y venta directa al consumidor final.',
+    status: 'active', badge: null },
+  { n: '06', title: 'Tecnología / App',
+    desc: 'Catálogo digital, pedidos y compra B2B en un canal.',
+    status: 'active', badge: null },
+  { n: '07', title: 'Fraccionamiento',
+    desc: 'Formatos y presentaciones según necesidad comercial.',
+    status: 'active', badge: null },
+  { n: '08', title: 'Desarrolladora comercial',
+    desc: 'Validamos y escalamos nuevos formatos del mercado.',
+    status: 'active', badge: null },
+  { n: '09', title: 'Representación de marcas',
+    desc: 'Marcas en eventos, puntos de expendio y canales estratégicos.',
+    status: 'development', badge: 'En desarrollo' },
 ] as const;
 ---
 
-<section class="unidades section-y" id="unidades-de-negocio" aria-labelledby="unidades-title">
+<section class="un section-y" id="unidades-de-negocio" aria-labelledby="un-title">
   <div class="container-content">
     {showHead && (
-      <header class="unidades__head">
-        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">03 · Unidades de negocio</p>
-        <h2 id="unidades-title" class="unidades__title" data-reveal style="--reveal-delay: 100ms;">
-          Una compañía organizada por <em>unidades comerciales</em>
+      <header class="un__head">
+        <p class="eyebrow" data-reveal style="--reveal-y: 14px;">03 · Unidades de negocio</p>
+        <h2 id="un-title" class="un__title" data-reveal style="--reveal-delay: 100ms;">
+          9 unidades comerciales. <em>Una sola operación.</em>
         </h2>
-        <p class="unidades__lede" data-reveal style="--reveal-delay: 200ms;">
-          QUEM Central opera sobre distintas líneas comerciales que permiten abastecer, distribuir,
-          representar y escalar productos congelados en múltiples canales.
+        <p class="un__lede" data-reveal style="--reveal-delay: 200ms;">
+          Líneas que abastecen, distribuyen, representan y escalan productos congelados.
         </p>
       </header>
     )}
 
-    <ol class="unidades__timeline" data-reveal-stagger>
-      <div class="unidades__line" aria-hidden="true"></div>
+    <ol class="un__timeline" data-reveal-stagger>
+      <div class="un__line" aria-hidden="true"></div>
       {unidades.map((u, i) => (
-        <li class:list={['unidad', `unidad--${i % 2 === 0 ? 'left' : 'right'}`]} data-reveal>
-          <div class="unidad__dot" aria-hidden="true">
-            <span class="unidad__dot-inner"></span>
+        <li class:list={['un-item', `un-item--${i % 2 === 0 ? 'left' : 'right'}`, `un-item--${u.status}`]} data-reveal>
+          <div class="un-item__dot" aria-hidden="true">
+            <span class="un-item__dot-inner"></span>
           </div>
 
-          <div class:list={['unidad__card', u.badge && 'unidad__card--featured']}>
-            <div class="unidad__card-head">
-              <span class="unidad__num" aria-hidden="true">{u.n}</span>
+          <div class="un-item__card">
+            <div class="un-item__head">
+              <span class="un-item__num" aria-hidden="true">{u.n}</span>
               {u.badge && (
-                <span class:list={['unidad__badge', `unidad__badge--${u.badgeTone}`]}>{u.badge}</span>
+                <span class:list={['un-item__badge', `un-item__badge--${u.status}`]}>{u.badge}</span>
               )}
             </div>
-            <h3 class="unidad__title-card">{u.title}</h3>
-            <p class="unidad__desc">{u.desc}</p>
+            <h3 class="un-item__title">{u.title}</h3>
+            <p class="un-item__desc">{u.desc}</p>
           </div>
         </li>
       ))}
@@ -66,55 +79,41 @@ const unidades = [
 </section>
 
 <style>
-  .unidades__head {
-    display: grid;
-    gap: var(--space-3);
-    margin-block-end: var(--space-8);
-    max-width: 60ch;
-  }
-  .unidades__title {
+  .un__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-8); max-width: 56ch; }
+  .un__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.04;
+    line-height: 1.02;
   }
-  .unidades__title em {
+  .un__title em {
     font-style: normal;
     background: var(--gradient-text-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
+    -webkit-background-clip: text; background-clip: text;
     color: transparent;
   }
-  .unidades__lede {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
-  }
+  .un__lede { color: var(--color-text-secondary); font-size: var(--font-size-md); line-height: var(--leading-snug); }
 
-  .unidades__timeline {
+  .un__timeline {
     position: relative;
     display: grid;
     gap: var(--space-5);
-    padding-inline: 0;
   }
-  .unidades__line { display: none; }
-
+  .un__line { display: none; }
   @media (min-width: 960px) {
-    .unidades__line {
+    .un__line {
       display: block;
       position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
+      top: 0; bottom: 0; left: 50%;
       width: 2px;
       background: linear-gradient(180deg, transparent 0%, var(--color-border-strong) 8%, var(--color-border-strong) 92%, transparent 100%);
       transform: translateX(-50%);
       pointer-events: none;
     }
-    .unidades__timeline { gap: var(--space-4); }
+    .un__timeline { gap: var(--space-4); }
   }
 
-  .unidad {
+  .un-item {
     position: relative;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -122,123 +121,118 @@ const unidades = [
     align-items: start;
   }
   @media (min-width: 960px) {
-    .unidad {
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-    }
-    .unidad--left .unidad__card { grid-column: 1; text-align: right; }
-    .unidad--left .unidad__dot { grid-column: 2; }
-    .unidad--right .unidad__dot { grid-column: 2; }
-    .unidad--right .unidad__card { grid-column: 3; }
-    .unidad--left .unidad__card-head { justify-content: flex-end; }
+    .un-item { grid-template-columns: 1fr auto 1fr; align-items: center; }
+    .un-item--left .un-item__card { grid-column: 1; text-align: right; }
+    .un-item--left .un-item__dot { grid-column: 2; }
+    .un-item--right .un-item__dot { grid-column: 2; }
+    .un-item--right .un-item__card { grid-column: 3; }
+    .un-item--left .un-item__head { justify-content: flex-end; }
   }
 
-  .unidad__dot {
+  .un-item__dot {
     position: relative;
-    width: 24px;
-    height: 24px;
-    display: grid;
-    place-items: center;
+    width: 24px; height: 24px;
+    display: grid; place-items: center;
     flex-shrink: 0;
     margin-block-start: 1rem;
     z-index: 1;
   }
-  @media (min-width: 960px) {
-    .unidad__dot { margin-block-start: 0; }
-  }
-  .unidad__dot::before {
+  @media (min-width: 960px) { .un-item__dot { margin-block-start: 0; } }
+  .un-item__dot::before {
     content: '';
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     border-radius: 50%;
     background: var(--color-bg);
     border: 2px solid var(--color-border-strong);
     transition: border-color var(--dur-fast), background var(--dur-fast);
   }
-  .unidad__dot-inner {
+  .un-item__dot-inner {
     position: relative;
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--color-border-strong);
     transition: background var(--dur-fast), transform var(--dur-fast);
   }
-  .unidad:hover .unidad__dot::before { border-color: var(--color-brand-500); background: var(--color-brand-50); }
-  .unidad:hover .unidad__dot-inner { background: var(--color-brand-500); transform: scale(1.4); }
+  .un-item--featured .un-item__dot::before { border-color: var(--color-brand-500); background: var(--color-brand-50); }
+  .un-item--featured .un-item__dot-inner { background: var(--color-brand-500); }
+  .un-item--development .un-item__dot::before { border-color: var(--color-text-muted); }
+  .un-item--development .un-item__dot-inner { background: var(--color-text-muted); }
+  .un-item:hover .un-item__dot::before { border-color: var(--color-brand-500); background: var(--color-brand-50); }
+  .un-item:hover .un-item__dot-inner { background: var(--color-brand-500); transform: scale(1.5); }
 
-  .unidad__card {
+  .un-item__card {
     padding: var(--space-5);
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
   }
-  .unidad__card:hover {
+  .un-item__card:hover {
     transform: translateY(-2px);
     border-color: var(--color-brand-300);
     box-shadow: var(--shadow-card);
   }
-  .unidad__card--featured {
-    background: linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.05) 0%, var(--color-bg-elevated) 50%);
-    border-color: oklch(from var(--color-accent-500) l c h / 0.2);
+  .un-item--featured .un-item__card {
+    background: linear-gradient(180deg, oklch(from var(--color-brand-500) l c h / 0.04) 0%, var(--color-bg-elevated) 60%);
+    border-color: oklch(from var(--color-brand-500) l c h / 0.18);
   }
+  .un-item--development .un-item__card { opacity: 0.88; }
 
-  .unidad__card-head {
+  .un-item__head {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     margin-block-end: var(--space-2);
     flex-wrap: wrap;
   }
-  .unidad__num {
+  .un-item__num {
     font-family: var(--font-display);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     font-weight: var(--weight-extrabold);
     color: var(--color-text-brand);
     letter-spacing: -0.02em;
     background: var(--color-brand-50);
-    padding: 0.25rem 0.55rem;
+    padding: 0.3rem 0.55rem;
     border-radius: var(--radius-sm);
   }
-  .unidad__badge {
+  .un-item__badge {
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
     font-weight: var(--weight-bold);
-    padding: 0.25rem 0.55rem;
+    padding: 0.3rem 0.7rem;
     border-radius: var(--radius-pill);
   }
-  .unidad__badge--accent {
+  .un-item__badge--featured {
+    color: var(--color-text-on-brand);
+    background: var(--gradient-brand);
+    box-shadow: 0 4px 10px oklch(42% 0.190 252 / 0.25);
+  }
+  .un-item__badge--active {
     color: var(--color-accent-700);
     background: var(--color-accent-50);
     border: 1px solid oklch(from var(--color-accent-500) l c h / 0.2);
   }
-  .unidad__badge--brand {
-    color: var(--color-text-on-brand);
-    background: var(--gradient-brand);
-    border: 1px solid transparent;
-    box-shadow: 0 4px 12px oklch(42% 0.190 252 / 0.25);
-  }
-  .unidad__badge--neutral {
+  .un-item__badge--development {
     color: var(--color-text-muted);
     background: var(--color-surface-subtle);
     border: 1px solid var(--color-border-subtle);
   }
 
-  .unidad__title-card {
+  .un-item__title {
     font-size: var(--font-size-lg);
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
     margin-block-end: var(--space-2);
   }
-  .unidad__desc {
+  .un-item__desc {
     color: var(--color-text-secondary);
-    line-height: var(--leading-relaxed);
-    max-width: 60ch;
+    line-height: var(--leading-snug);
     font-size: var(--font-size-sm);
   }
   @media (min-width: 960px) {
-    .unidad--left .unidad__desc { margin-inline-start: auto; }
+    .un-item--left .un-item__desc { margin-inline-start: auto; max-width: 36ch; }
+    .un-item--right .un-item__desc { max-width: 36ch; }
   }
 </style>

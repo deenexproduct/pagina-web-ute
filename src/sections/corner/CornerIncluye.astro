@@ -1,4 +1,8 @@
 ---
+/**
+ * Corner QÜEM — qué incluye v2 comprimido.
+ * Items por columna mantenidos (es la propuesta), título y lede comprimidos.
+ */
 const columns = [
   {
     title: 'Infraestructura',
@@ -8,22 +12,22 @@ const columns = [
   {
     title: 'Producto',
     icon: 'product',
-    items: ['Postres y helados', 'Snacks y waffles', 'Ready meals', 'Frutas congeladas', 'Productos de impulso', 'Marcas aliadas'],
+    items: ['Postres y helados', 'Snacks y waffles', 'Ready meals', 'Frutas congeladas', 'Impulso', 'Marcas aliadas'],
   },
   {
     title: 'Operación',
     icon: 'ops',
-    items: ['Logística y distribución', 'Reposición programada', 'Abastecimiento continuo', 'Soporte comercial', 'Acompañamiento operativo'],
+    items: ['Logística y distribución', 'Reposición programada', 'Abastecimiento continuo', 'Soporte comercial', 'Acompañamiento'],
   },
   {
     title: 'Tecnología',
     icon: 'tech',
-    items: ['Integración con plataforma/app', 'Pedidos simplificados', 'Catálogo digital', 'Analytics y control (futuro)'],
+    items: ['Plataforma / app integrada', 'Pedidos simples', 'Catálogo digital', 'Analytics (futuro)'],
   },
   {
     title: 'Capacitación',
     icon: 'training',
-    items: ['Lineamientos de exhibición', 'Sugeridos de surtido', 'Capacitación operativa básica'],
+    items: ['Lineamientos exhibición', 'Sugeridos de surtido', 'Capacitación operativa'],
   },
 ];
 ---
@@ -31,13 +35,12 @@ const columns = [
 <section class="cn-includes section-y" aria-labelledby="cn-includes-title">
   <div class="container-content">
     <header class="cn-includes__head">
-      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">02 · Qué incluye el modelo</p>
+      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">02 · Qué incluye</p>
       <h2 id="cn-includes-title" class="cn-includes__title" data-reveal style="--reveal-delay: 100ms;">
-        Una solución comercial completa — <em>llave en mano</em>
+        Una solución <em>llave en mano</em>.
       </h2>
       <p class="cn-includes__lede" data-reveal style="--reveal-delay: 200ms;">
-        QÜEM aporta producto, marca, logística, experiencia y soporte. El comercio aporta el espacio
-        y el flujo de clientes.
+        Producto, marca, logística, experiencia y soporte. Vos aportás el espacio.
       </p>
     </header>
 
@@ -77,16 +80,16 @@ const columns = [
 </section>
 
 <style>
-  .cn-includes__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .cn-includes__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .cn-includes__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
   }
   .cn-includes__title em {
     font-style: normal;
-    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -94,7 +97,7 @@ const columns = [
   .cn-includes__lede {
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 
   .cn-includes__grid {
@@ -110,24 +113,28 @@ const columns = [
     display: grid;
     gap: var(--space-3);
     align-content: start;
-    transition: border-color var(--dur-fast) var(--ease-standard);
+    transition: border-color var(--dur-fast), box-shadow var(--dur-normal), transform var(--dur-fast);
   }
-  .cn-col:hover { border-color: var(--color-brand-200); }
+  .cn-col:hover {
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+  }
   .cn-col__icon {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.6rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.7rem;
     background: linear-gradient(135deg, var(--color-brand-50), var(--color-bg));
     border: 1px solid var(--color-brand-100);
     color: var(--color-brand-600);
     display: grid;
     place-items: center;
   }
-  .cn-col__icon svg { width: 1.25rem; height: 1.25rem; }
+  .cn-col__icon svg { width: 1.35rem; height: 1.35rem; }
   .cn-col h3 {
     font-size: var(--font-size-md);
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
   }
   .cn-col__list { display: grid; gap: 0.4rem; margin-block-start: 0.25rem; }

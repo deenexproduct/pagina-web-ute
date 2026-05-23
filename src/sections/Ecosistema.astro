@@ -5,21 +5,21 @@ interface Props {
 const { showHead = true } = Astro.props;
 
 /**
- * Bento grid asimétrico — distintos tamaños por importancia.
- * Distribución B2B = HERO (toma 2 cols x 2 rows).
- * Corner QUEM = featured (1x2).
- * Logística, Franquicias, Tecnología = 1x1 destacadas con color.
- * Resto = 1x1 neutrales.
+ * Ecosistema v2 — bento asimétrico, copy comprimido.
+ * Hero card: Distribución B2B (2x2 con gradient brand + badge).
+ * Tall: Corner QÜEM (1x2, accent).
+ * Wide: Logística (2x1).
+ * Resto: cards 1x1 chicas.
  */
 const cards = [
-  { title: 'Distribución B2B', desc: 'Abastecimiento para restaurantes, comercios, cafeterías, hoteles, eventos y operadores gastronómicos. Catálogo pensado para alta rotación.', tone: 'brand-hero', icon: 'b2b', size: 'hero' },
-  { title: 'Corner QÜEM', desc: 'Formato comercial flexible para insertar productos en puntos estratégicos. Modelo destacado de expansión.', tone: 'accent', icon: 'corner', size: 'tall' },
-  { title: 'Logística especializada', desc: 'Distribución de congelados de última milla con foco en AMBA y PBA.', tone: 'brand', icon: 'truck', size: 'wide' },
-  { title: 'Franquicias', desc: 'Modelo replicable para operar unidades QUEM bajo estructura definida.', tone: 'brand', icon: 'building', size: 'normal' },
-  { title: 'Tecnología / App', desc: 'Catálogo digital, pedidos B2B y operación comercial integrada en un canal único.', tone: 'brand', icon: 'app', size: 'normal' },
-  { title: 'Retail B2C', desc: 'Tiendas y canales directos al consumidor final.', tone: 'neutral', icon: 'store', size: 'normal' },
-  { title: 'Fraccionamiento', desc: 'Adaptar productos y presentaciones a cada canal comercial.', tone: 'neutral', icon: 'package', size: 'normal' },
-  { title: 'Representación comercial', desc: 'Línea proyectada para representar marcas de congelados.', tone: 'neutral', icon: 'handshake', size: 'normal' },
+  { title: 'Distribución B2B', desc: 'Abastecimiento para gastronomía, comercios y eventos.', tone: 'brand-hero', icon: 'b2b', size: 'hero', badge: 'Negocio principal' },
+  { title: 'Corner QÜEM', desc: 'Productos QÜEM dentro de espacios existentes.', tone: 'accent', icon: 'corner', size: 'tall', badge: 'Destacado' },
+  { title: 'Logística especializada', desc: 'Última milla AMBA + PBA.', tone: 'brand', icon: 'truck', size: 'wide' },
+  { title: 'Franquicias', desc: 'Modelo replicable bajo marca.', tone: 'brand', icon: 'building', size: 'normal' },
+  { title: 'Tecnología', desc: 'App, catálogo y pedidos B2B.', tone: 'brand', icon: 'app', size: 'normal' },
+  { title: 'Retail B2C', desc: 'Tiendas y venta directa.', tone: 'neutral', icon: 'store', size: 'normal' },
+  { title: 'Fraccionamiento', desc: 'Formatos según canal.', tone: 'neutral', icon: 'package', size: 'normal' },
+  { title: 'Representación', desc: 'Marcas en eventos y puntos.', tone: 'neutral', icon: 'handshake', size: 'normal' },
 ] as const;
 ---
 
@@ -27,14 +27,12 @@ const cards = [
   <div class="container-content">
     {showHead && (
       <header class="eco__head">
-        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">02 · Ecosistema</p>
+        <p class="eyebrow" data-reveal style="--reveal-y: 14px;">02 · Ecosistema</p>
         <h2 id="eco-title" class="eco__title" data-reveal style="--reveal-delay: 100ms;">
-          Un ecosistema diseñado para <em>escalar alimentos congelados</em>
+          Un solo ecosistema. <em>Múltiples canales.</em>
         </h2>
         <p class="eco__lede" data-reveal style="--reveal-delay: 200ms;">
-          QUEM Central integra distintas unidades operativas y comerciales para llevar productos congelados
-          a múltiples canales: negocios gastronómicos, comercios, consumidores finales, eventos, franquicias
-          y corners. Cada unidad cumple un rol dentro de una misma visión.
+          8 unidades operativas para llevar alimentos congelados a cada canal.
         </p>
       </header>
     )}
@@ -44,7 +42,6 @@ const cards = [
         <article
           class:list={['eco-card', `eco-card--${c.tone}`, `eco-card--${c.size}`]}
           data-reveal
-          data-reveal-y="24"
         >
           <div class="eco-card__icon" aria-hidden="true">
             {c.icon === 'b2b' && (
@@ -76,10 +73,10 @@ const cards = [
           <h3 class="eco-card__title">{c.title}</h3>
           <p class="eco-card__desc">{c.desc}</p>
 
-          {c.size === 'hero' && (
-            <div class="eco-card__hero-extra" aria-hidden="true">
-              <span class="eco-card__badge">Negocio principal</span>
-              <span class="eco-card__pattern"></span>
+          {'badge' in c && c.badge && (
+            <div class="eco-card__badge-row" aria-hidden="true">
+              <span class="eco-card__badge">{c.badge}</span>
+              {c.size === 'hero' && <span class="eco-card__pattern"></span>}
             </div>
           )}
         </article>
@@ -91,69 +88,47 @@ const cards = [
 <style>
   .eco {
     position: relative;
-    background:
-      linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 50%, var(--color-bg) 100%);
+    background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 50%, var(--color-bg) 100%);
   }
-
   .eco__head {
-    display: grid;
-    gap: var(--space-3);
-    margin-block-end: var(--space-7);
-    max-width: 64ch;
+    display: grid; gap: var(--space-3); margin-block-end: var(--space-7);
+    max-width: 56ch;
   }
   .eco__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.04;
+    line-height: 1.02;
   }
   .eco__title em {
     font-style: normal;
     background: var(--gradient-text-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
+    -webkit-background-clip: text; background-clip: text;
     color: transparent;
   }
   .eco__lede {
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 
-  /* ===== Bento grid asimétrico ==================================== */
   .eco__bento {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
-  @media (min-width: 640px) {
-    .eco__bento { grid-template-columns: repeat(2, 1fr); }
-  }
+  @media (min-width: 640px) { .eco__bento { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 960px) {
     .eco__bento {
       grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: minmax(170px, auto);
+      grid-auto-rows: minmax(180px, auto);
       grid-auto-flow: dense;
     }
+    .eco-card--hero { grid-column: span 2; grid-row: span 2; }
+    .eco-card--tall { grid-column: span 1; grid-row: span 2; }
+    .eco-card--wide { grid-column: span 2; grid-row: span 1; }
   }
 
-  /* Sizes */
-  @media (min-width: 960px) {
-    .eco-card--hero {
-      grid-column: span 2;
-      grid-row: span 2;
-    }
-    .eco-card--tall {
-      grid-column: span 1;
-      grid-row: span 2;
-    }
-    .eco-card--wide {
-      grid-column: span 2;
-      grid-row: span 1;
-    }
-  }
-
-  /* ===== Card base ================================================= */
   .eco-card {
     position: relative;
     padding: var(--space-5);
@@ -162,64 +137,49 @@ const cards = [
     border: 1px solid var(--color-border-subtle);
     overflow: hidden;
     isolation: isolate;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--space-2);
     transition:
       transform var(--dur-fast) var(--ease-standard),
       border-color var(--dur-fast) var(--ease-standard),
       box-shadow var(--dur-normal) var(--ease-out-expo);
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-    gap: var(--space-2);
-  }
-  .eco-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-card-hover);
-    border-color: var(--color-border-strong);
   }
   .eco-card::before {
     content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
+    position: absolute; inset: 0 0 auto 0;
     height: 3px;
     background: var(--color-neutral-300);
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     transition: height var(--dur-normal) var(--ease-out-expo);
   }
+  .eco-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); border-color: var(--color-border-strong); }
   .eco-card:hover::before { height: 4px; }
 
-  /* ===== Tone variants ============================================ */
   .eco-card--brand::before { background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-400)); }
   .eco-card--accent::before { background: linear-gradient(90deg, var(--color-accent-500), var(--color-accent-400)); }
   .eco-card--brand-hero {
-    background:
-      radial-gradient(60% 80% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.18) 0%, transparent 60%),
-      var(--gradient-brand);
+    background: radial-gradient(60% 80% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.18) 0%, transparent 60%), var(--gradient-brand);
     color: var(--color-text-on-brand);
     border-color: transparent;
   }
   .eco-card--brand-hero::before { display: none; }
-  .eco-card--brand-hero .eco-card__title { color: var(--color-text-on-brand); }
-  .eco-card--brand-hero .eco-card__desc { color: oklch(100% 0 0 / 0.85); }
-  .eco-card--brand-hero .eco-card__icon {
-    background: oklch(100% 0 0 / 0.15);
-    color: var(--color-text-on-brand);
-    border-color: oklch(100% 0 0 / 0.2);
-  }
+  .eco-card--brand-hero .eco-card__title { color: var(--color-text-on-brand); font-size: var(--font-size-2xl); }
+  .eco-card--brand-hero .eco-card__desc { color: oklch(100% 0 0 / 0.85); font-size: var(--font-size-base); }
+  .eco-card--brand-hero .eco-card__icon { background: oklch(100% 0 0 / 0.15); color: var(--color-text-on-brand); border-color: oklch(100% 0 0 / 0.22); }
+
   .eco-card--accent {
-    background:
-      linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.06), var(--color-bg-elevated));
+    background: linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.06), var(--color-bg-elevated));
   }
 
-  /* ===== Card content ============================================= */
   .eco-card__icon {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 2.75rem; height: 2.75rem;
     border-radius: 0.7rem;
-    display: grid;
-    place-items: center;
+    display: grid; place-items: center;
     background: var(--color-surface-subtle);
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border-subtle);
-    transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+    transition: transform var(--dur-fast), background var(--dur-fast), color var(--dur-fast);
   }
   .eco-card:hover .eco-card__icon { transform: scale(1.08); }
   .eco-card__icon svg { width: 1.5rem; height: 1.5rem; }
@@ -228,24 +188,18 @@ const cards = [
 
   .eco-card__title {
     font-size: var(--font-size-md);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-bold);
     color: var(--color-text-primary);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     margin-block-start: var(--space-2);
-  }
-  .eco-card--hero .eco-card__title {
-    font-size: var(--font-size-xl);
-    margin-block-start: var(--space-3);
   }
   .eco-card__desc {
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
-  .eco-card--hero .eco-card__desc { font-size: var(--font-size-base); max-width: 36ch; }
 
-  /* ===== Hero card extras ========================================= */
-  .eco-card__hero-extra {
+  .eco-card__badge-row {
     margin-block-start: auto;
     display: flex;
     align-items: center;
@@ -255,7 +209,7 @@ const cards = [
   .eco-card__badge {
     display: inline-block;
     padding: 0.3rem 0.75rem;
-    background: oklch(100% 0 0 / 0.18);
+    background: oklch(from var(--color-bg-elevated) l c h / 0.18);
     color: var(--color-text-on-brand);
     border-radius: var(--radius-pill);
     font-size: var(--font-size-2xs);
@@ -264,11 +218,14 @@ const cards = [
     letter-spacing: var(--tracking-widest);
     border: 1px solid oklch(100% 0 0 / 0.25);
   }
+  .eco-card--accent .eco-card__badge {
+    background: var(--color-accent-50);
+    color: var(--color-accent-700);
+    border-color: oklch(from var(--color-accent-500) l c h / 0.25);
+  }
   .eco-card__pattern {
-    flex: 1;
-    height: 24px;
-    background-image:
-      radial-gradient(circle, oklch(100% 0 0 / 0.3) 1px, transparent 1px);
+    flex: 1; height: 24px;
+    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.3) 1px, transparent 1px);
     background-size: 10px 10px;
     mask-image: linear-gradient(90deg, transparent 0%, black 30%);
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 30%);

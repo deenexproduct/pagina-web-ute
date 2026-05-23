@@ -6,7 +6,10 @@ interface Props {
 }
 const { showHead = true } = Astro.props;
 
-/** Iconos custom por categoría + hue para tint del fondo. */
+/**
+ * Categorías v2 — copy comprimido + grid mantenido.
+ * Iconos custom + hue por categoría para tint del fondo.
+ */
 const ICONS: Record<string, { svg: string; hue: number }> = {
   bunuelos:     { svg: 'M14 5C10 5 7 8 7 12s3 7 7 7c1 0 2-.3 3-.8M14 5c3 0 6 2 7 5M14 5v3M9 12h3M14 17v3', hue: 35 },
   empanadas:    { svg: 'M5 14c0-5 4-9 9-9s9 4 9 9-4 9-9 9-9-4-9-9Zm5 0 4-4 4 4M9 16h10', hue: 38 },
@@ -30,10 +33,10 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
       <header class="cats__head">
         <p class="eyebrow" data-reveal style="--reveal-y: 16px;">05 · Categorías</p>
         <h2 id="cats-title" class="cats__title" data-reveal style="--reveal-delay: 100ms;">
-          Categorías de <em>productos</em>
+          11 categorías. <em>Un solo catálogo.</em>
         </h2>
         <p class="cats__lede" data-reveal style="--reveal-delay: 200ms;">
-          Explorá nuestras principales líneas de alimentos congelados y comprá online desde el catálogo digital de QUEM Central.
+          Explorá las líneas de congelados y comprá online desde la app.
         </p>
       </header>
     )}
@@ -79,12 +82,12 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
 </section>
 
 <style>
-  .cats__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-6); max-width: 60ch; }
+  .cats__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-6); max-width: 56ch; }
   .cats__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
   }
   .cats__title em {
     font-style: normal;
@@ -96,7 +99,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
   .cats__lede {
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 
   .cats__grid {
@@ -111,14 +114,12 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
     overflow: hidden;
     background-color: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
-    transition: transform var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard);
+    transition: transform var(--dur-fast), box-shadow var(--dur-normal), border-color var(--dur-fast);
   }
   .cat-card:hover {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-brand-200);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-brand-300);
   }
   .cat-card__photo {
     aspect-ratio: 1 / 1;
@@ -181,12 +182,12 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
     border-radius: var(--radius-pill);
     background-color: var(--color-surface-subtle);
     color: var(--color-text-brand);
-    transition: background-color var(--dur-fast) var(--ease-standard),
-                color var(--dur-fast) var(--ease-standard);
+    transition: background-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
   }
   .cat-card:hover .cat-card__arrow {
     background-color: var(--color-brand-500);
     color: var(--color-text-on-brand);
+    transform: translate(2px, -2px);
   }
 
   .cats__cta-row {

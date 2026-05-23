@@ -6,6 +6,10 @@ interface Props {
 }
 const { showHead = true } = Astro.props;
 
+/**
+ * Equipo directivo v2 — copy lede comprimido, cards mantenidas.
+ * Roles tag por orden de listado en config (Liderazgo / Operación / Expansión).
+ */
 const initials = (name: string): string =>
   name.split(' ').slice(0, 2).map((n) => n.charAt(0)).join('').toUpperCase();
 
@@ -18,11 +22,10 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
       <header class="team__head">
         <p class="eyebrow" data-reveal style="--reveal-y: 16px;">09 · Equipo directivo</p>
         <h2 id="team-title" class="team__title" data-reveal style="--reveal-delay: 100ms;">
-          Equipo <em>directivo</em>
+          El equipo detrás de <em>QUEM Central</em>.
         </h2>
         <p class="team__lede" data-reveal style="--reveal-delay: 200ms;">
-          QUEM Central está liderada por un equipo con experiencia en operación gastronómica, desarrollo
-          comercial y crecimiento de unidades de negocio.
+          Experiencia en operación, desarrollo comercial y crecimiento de unidades.
         </p>
       </header>
     )}
@@ -53,12 +56,12 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
 </section>
 
 <style>
-  .team__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .team__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .team__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
   }
   .team__title em {
     font-style: normal;
@@ -67,7 +70,11 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     background-clip: text;
     color: transparent;
   }
-  .team__lede { color: var(--color-text-secondary); font-size: var(--font-size-md); line-height: var(--leading-relaxed); }
+  .team__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+  }
 
   .team__grid {
     display: grid;
@@ -84,9 +91,7 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     display: grid;
     gap: var(--space-4);
     overflow: hidden;
-    transition: transform var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-fast) var(--ease-standard);
+    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
   }
   .team-card::before {
     content: '';
@@ -96,11 +101,15 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     height: 70%;
     background: radial-gradient(circle, oklch(58% 0.155 254 / 0.10) 0%, transparent 70%);
     pointer-events: none;
+    transition: background var(--dur-normal);
   }
   .team-card:hover {
     transform: translateY(-3px);
-    border-color: var(--color-brand-200);
-    box-shadow: var(--shadow-md);
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-card);
+  }
+  .team-card:hover::before {
+    background: radial-gradient(circle, oklch(58% 0.155 254 / 0.16) 0%, transparent 70%);
   }
 
   .team-card__avatar {
@@ -156,8 +165,8 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
   }
   .team-card__body h3 {
     font-size: var(--font-size-lg);
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
   }
   .team-card__title { color: var(--color-text-primary); font-size: var(--font-size-sm); font-weight: var(--weight-medium); }

@@ -1,6 +1,11 @@
 ---
 import { link, whatsappLink } from '../../config/site';
 const waLink = whatsappLink();
+
+/**
+ * Corner QÜEM — hero v2 comprimido.
+ * Subtitle 1 frase, highlights mantenidos, panel mockup conservado.
+ */
 ---
 
 <section class="cn-hero" aria-labelledby="cn-hero-title">
@@ -16,12 +21,11 @@ const waLink = whatsappLink();
         Convertimos espacios en <span class="cn-hero__title-em">nuevas oportunidades de venta</span>.
       </h1>
       <p class="cn-hero__subtitle" data-reveal style="--reveal-delay: 200ms;">
-        Retail congelado listo para operar. Una solución integral de marca, producto, logística y
-        soporte — instalada dentro de tu comercio.
+        Retail congelado llave en mano — instalado dentro de tu comercio.
       </p>
       <div class="cn-hero__cta-row" data-reveal style="--reveal-delay: 300ms;">
         <a class="btn btn-primary cn-hero__cta-main" href={waLink}>
-          Quiero hablar con el equipo comercial
+          Hablar con comercial
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <a class="btn btn-outline" href="#cn-formatos">Ver formatos</a>
@@ -34,11 +38,11 @@ const waLink = whatsappLink();
         </div>
         <div data-reveal style="--reveal-y: 12px;">
           <dt>Operación</dt>
-          <dd>baja complejidad</dd>
+          <dd>baja</dd>
         </div>
         <div data-reveal style="--reveal-y: 12px;">
-          <dt>Producto</dt>
-          <dd>alta rotación</dd>
+          <dt>Rotación</dt>
+          <dd>alta</dd>
         </div>
         <div data-reveal style="--reveal-y: 12px;">
           <dt>Estética</dt>
@@ -80,8 +84,8 @@ const waLink = whatsappLink();
             <div class="cn-hero__panel-meta-value">incluida</div>
           </div>
           <div>
-            <div class="cn-hero__panel-meta-label">Marca y POP</div>
-            <div class="cn-hero__panel-meta-value">aplicados</div>
+            <div class="cn-hero__panel-meta-label">Branding</div>
+            <div class="cn-hero__panel-meta-value">aplicado</div>
           </div>
         </div>
       </div>
@@ -166,7 +170,7 @@ const waLink = whatsappLink();
     max-width: 22ch;
   }
   .cn-hero__title-em {
-    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

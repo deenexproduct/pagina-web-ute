@@ -1,12 +1,13 @@
 ---
 import { APP_BASE_URL } from '../config/site';
 
+/**
+ * Plataforma v2 — copy comprimido a 3 mensajes clave + mockup mantenido.
+ */
 const mensajes = [
   'Catálogo digital siempre disponible',
-  'Compra online desde un único canal',
-  'Acceso directo a categorías',
-  'Experiencia simple para clientes B2B y compradores recurrentes',
-  'Conexión entre web institucional y canal operativo',
+  'Compra online B2B en un canal',
+  'Pedidos simples desde la app',
 ];
 ---
 
@@ -15,14 +16,10 @@ const mensajes = [
     <div class="plat__copy">
       <p class="eyebrow" data-reveal style="--reveal-y: 16px;">06 · Plataforma</p>
       <h2 id="plat-title" class="plat__title" data-reveal style="--reveal-delay: 100ms;">
-        Comprá online desde el <em>catálogo de QUEM Central</em>
+        Catálogo, pedidos y compra en <em>una sola app</em>.
       </h2>
       <p data-reveal style="--reveal-delay: 200ms;">
-        La app de QUEM Central centraliza el catálogo, las categorías de producto y el acceso a compra online.
-      </p>
-      <p data-reveal style="--reveal-delay: 250ms;">
-        Desde allí, clientes gastronómicos, comercios y compradores pueden consultar disponibilidad, explorar
-        productos y realizar pedidos de forma simple.
+        Centralizamos catálogo, categorías y compra B2B en un único canal digital.
       </p>
 
       <ul class="plat__list" data-reveal-stagger>
@@ -65,6 +62,7 @@ const mensajes = [
           <div class="plat__device-cta">Comprar online →</div>
         </div>
       </div>
+      <div class="plat__device-glow" aria-hidden="true"></div>
     </div>
   </div>
 </section>
@@ -84,9 +82,9 @@ const mensajes = [
   .plat__copy { display: grid; gap: var(--space-4); max-width: 56ch; }
   .plat__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
     margin-block-end: var(--space-2);
   }
   .plat__title em {
@@ -99,7 +97,7 @@ const mensajes = [
   .plat__copy p {
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 
   .plat__list { display: grid; gap: var(--space-2); margin-block-start: var(--space-3); }
@@ -129,6 +127,8 @@ const mensajes = [
     padding-block: var(--space-5);
   }
   .plat__device-frame {
+    position: relative;
+    z-index: 1;
     width: min(28rem, 100%);
     background: var(--color-bg-elevated);
     border-radius: 1.5rem;
@@ -194,5 +194,15 @@ const mensajes = [
     border-radius: var(--radius-md);
     font-weight: var(--weight-semibold);
     font-size: var(--font-size-sm);
+  }
+
+  .plat__device-glow {
+    position: absolute;
+    inset: 10% -10% -10% 10%;
+    z-index: 0;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, var(--color-brand-200) 0%, var(--color-accent-200) 100%);
+    filter: blur(50px);
+    opacity: 0.5;
   }
 </style>

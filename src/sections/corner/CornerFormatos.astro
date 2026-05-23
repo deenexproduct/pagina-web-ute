@@ -1,32 +1,36 @@
 ---
+/**
+ * Corner QÜEM — formatos v2 comprimido.
+ * Descripciones ~10 palabras max, mismo grid de 5 cards.
+ */
 const formats = [
   {
     name: 'Freezer vertical',
-    desc: 'Vitrina vertical para puntos con poco espacio horizontal. Ideal en cafeterías, kioscos premium y oficinas.',
+    desc: 'Vitrina vertical para puntos con poco espacio horizontal.',
     icon: 'vertical',
     badge: 'compacto',
   },
   {
     name: 'Freezer exhibidor',
-    desc: 'Exhibidor horizontal con tope visible. Funciona en supermercados de cercanía, autoservicios y estaciones.',
+    desc: 'Horizontal con tope visible — supermercados y autoservicios.',
     icon: 'horizontal',
     badge: 'volumen',
   },
   {
     name: 'Isla',
-    desc: 'Isla central para zonas de mayor tráfico — clubes, hoteles, gimnasios. Permite reposición simple por ambos lados.',
+    desc: 'Reposición doble lado para zonas de alto tráfico.',
     icon: 'island',
     badge: 'alto tráfico',
   },
   {
     name: 'Mini store',
-    desc: 'Unidad modular con identidad de marca completa. Ideal para coworkings, universidades y hospitales.',
+    desc: 'Unidad modular con identidad de marca completa.',
     icon: 'ministore',
     badge: 'identidad',
   },
   {
     name: 'Grab & go',
-    desc: 'Módulo de impulso para retiro rápido — eventos, buffets, espacios con consumo on-the-go.',
+    desc: 'Módulo de impulso para retiro rápido on-the-go.',
     icon: 'grab',
     badge: 'impulso',
   },
@@ -38,11 +42,10 @@ const formats = [
     <header class="cn-formats__head">
       <p class="eyebrow" data-reveal style="--reveal-y: 16px;">01 · Formatos</p>
       <h2 id="cn-formats-title" class="cn-formats__title" data-reveal style="--reveal-delay: 100ms;">
-        Cinco formatos para <em>cinco tipos de espacio</em>
+        5 formatos. <em>Un solo modelo.</em>
       </h2>
       <p class="cn-formats__lede" data-reveal style="--reveal-delay: 200ms;">
-        Cada Corner QÜEM se adapta al espacio y al flujo del comercio. Misma propuesta de marca,
-        formato distinto según el lugar y la operación.
+        Misma propuesta de marca, formato distinto según el espacio.
       </p>
     </header>
 
@@ -83,13 +86,13 @@ const formats = [
   .cn-formats__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .cn-formats__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
   }
   .cn-formats__title em {
     font-style: normal;
-    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -97,7 +100,7 @@ const formats = [
   .cn-formats__lede {
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 
   .cn-formats__grid {
@@ -114,22 +117,20 @@ const formats = [
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
-    transition: transform var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-fast) var(--ease-standard);
+    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
   }
   .cn-format-card::before {
     content: '';
     position: absolute;
     inset: 0 0 auto 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-400));
+    background: var(--gradient-brand);
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }
   .cn-format-card:hover {
     transform: translateY(-3px);
     border-color: var(--color-brand-300);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-card);
   }
   .cn-format-card__icon {
     width: 4rem;
@@ -147,8 +148,8 @@ const formats = [
   .cn-format-card__head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
   .cn-format-card__head h3 {
     font-size: var(--font-size-md);
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.01em;
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
     color: var(--color-text-primary);
   }
   .cn-format-card__badge {
@@ -165,6 +166,6 @@ const formats = [
   .cn-format-card__body p {
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 </style>

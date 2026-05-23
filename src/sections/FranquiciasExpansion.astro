@@ -6,10 +6,13 @@ interface Props {
 }
 const { showHead = true } = Astro.props;
 
+/**
+ * Franquicias v2 — copy comprimido a 1 frase lede + 3 cards con desc cortas.
+ */
 const cards = [
-  { title: 'Franquicias', desc: 'Para operar unidades comerciales bajo la marca QUEM Central.', icon: 'store' },
-  { title: 'Corner QUEM', desc: 'Para incorporar productos congelados dentro de espacios comerciales existentes.', icon: 'corner' },
-  { title: 'Alianzas comerciales', desc: 'Para marcas, operadores y partners que buscan capilaridad comercial.', icon: 'handshake' },
+  { title: 'Franquicias', desc: 'Unidades comerciales operadas bajo marca QUEM Central.', icon: 'store' },
+  { title: 'Corner QÜEM', desc: 'Producto congelado dentro de espacios comerciales existentes.', icon: 'corner' },
+  { title: 'Alianzas comerciales', desc: 'Partners de marca buscando capilaridad y distribución.', icon: 'handshake' },
 ] as const;
 ---
 
@@ -19,15 +22,10 @@ const cards = [
       <header class="franq__head">
         <p class="eyebrow" data-reveal style="--reveal-y: 16px;">07 · Franquicias y expansión</p>
         <h2 id="franq-title" class="franq__title" data-reveal style="--reveal-delay: 100ms;">
-          Modelos comerciales para <em>crecer con QUEM Central</em>
+          3 formatos para <em>crecer con QUEM</em>.
         </h2>
         <p class="franq__lede" data-reveal style="--reveal-delay: 200ms;">
-          QUEM Central desarrolla formatos comerciales pensados para expandir la presencia de alimentos
-          congelados en nuevos puntos de venta.
-        </p>
-        <p class="franq__lede" data-reveal style="--reveal-delay: 250ms;">
-          A través de franquicias, corners y alianzas comerciales, la compañía busca llevar su propuesta a
-          más zonas, más canales y más consumidores.
+          Formatos comerciales pensados para expandir la presencia de congelados.
         </p>
       </header>
     )}
@@ -48,6 +46,9 @@ const cards = [
           </div>
           <h3>{c.title}</h3>
           <p>{c.desc}</p>
+          <span class="franq-card__arrow" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
         </article>
       ))}
     </div>
@@ -59,12 +60,12 @@ const cards = [
 </section>
 
 <style>
-  .franq__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .franq__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .franq__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
   }
   .franq__title em {
     font-style: normal;
@@ -76,7 +77,7 @@ const cards = [
   .franq__lede {
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
   }
 
   .franq__grid {
@@ -86,38 +87,78 @@ const cards = [
   }
 
   .franq-card {
+    position: relative;
     padding: var(--space-6);
     background-color: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
-    transition: transform var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-fast) var(--ease-standard);
+    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
+    overflow: hidden;
+  }
+  .franq-card::after {
+    content: '';
+    position: absolute;
+    inset: auto auto 0 0;
+    width: 100%;
+    height: 0;
+    background: var(--gradient-brand);
+    opacity: 0;
+    transition: height var(--dur-normal), opacity var(--dur-normal);
   }
   .franq-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: var(--color-brand-300);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-card);
   }
+  .franq-card:hover::after { height: 3px; opacity: 1; }
+
   .franq-card__icon {
     display: grid;
     place-items: center;
     width: 3.25rem;
     height: 3.25rem;
     border-radius: var(--radius-lg);
-    background: var(--color-brand-50);
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-bg));
+    border: 1px solid var(--color-brand-100);
     color: var(--color-brand-600);
     margin-block-end: var(--space-4);
+    transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+  }
+  .franq-card:hover .franq-card__icon {
+    background: var(--gradient-brand);
+    color: var(--color-text-on-brand);
+    border-color: transparent;
+    transform: scale(1.05);
   }
   .franq-card__icon svg { width: 1.7rem; height: 1.7rem; }
   .franq-card h3 {
     font-size: var(--font-size-lg);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
     margin-block-end: var(--space-2);
   }
   .franq-card p {
     color: var(--color-text-secondary);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
+    font-size: var(--font-size-sm);
+  }
+  .franq-card__arrow {
+    position: absolute;
+    top: var(--space-5);
+    right: var(--space-5);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-pill);
+    display: grid;
+    place-items: center;
+    background: var(--color-surface-subtle);
+    color: var(--color-text-muted);
+    transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+  }
+  .franq-card:hover .franq-card__arrow {
+    background: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+    transform: translate(2px, -2px);
   }
 
   .franq__cta-row { display: flex; justify-content: center; margin-block-start: var(--space-7); }

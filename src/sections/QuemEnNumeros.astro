@@ -2,10 +2,9 @@
 import { SHOW_METRICS, METRICS } from '../config/site';
 
 /**
- * "QUEM en números"
- * - SHOW_METRICS=false (default): versión institucional suave SIN datos duros.
- *   Diseño visual presente, sin métricas inventadas.
- * - SHOW_METRICS=true: requiere completar METRICS con datos REALES.
+ * "QUEM en números" v2.
+ * - SHOW_METRICS=false: capabilities cards (sin inventar datos).
+ * - SHOW_METRICS=true: requiere METRICS reales.
  *
  * Regla del brief: NO inventar números.
  */
@@ -24,7 +23,7 @@ const items: ReadonlyArray<{ value: string; label: string }> = SHOW_METRICS
 
 const showSoft = !SHOW_METRICS || items.length === 0;
 
-/** Capacidades cualitativas — se muestran cuando aún no hay métricas duras. */
+/** Capacidades cualitativas — sin métricas inventadas. */
 const capabilities = [
   { label: 'Operación', value: 'B2B', meta: 'red comercial activa', tone: 'brand' },
   { label: 'Cobertura', value: 'AMBA + PBA', meta: 'última milla congelados', tone: 'neutral' },
@@ -36,16 +35,10 @@ const capabilities = [
 <section class="num section-y" aria-labelledby="num-title">
   <div class="container-content num__inner">
     <header class="num__head">
-      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">08 · QUEM Central en crecimiento</p>
+      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">08 · QUEM en crecimiento</p>
       <h2 id="num-title" class="num__title" data-reveal style="--reveal-delay: 100ms;">
-        Una compañía en expansión que integra <em>operación, red comercial y tecnología</em>
+        Operación, red comercial y <em>tecnología integradas</em>.
       </h2>
-      {showSoft && (
-        <p class="num__lede" data-reveal style="--reveal-delay: 200ms;">
-          Operación B2B, red comercial, franquicias, corners, logística especializada y tecnología
-          aplicada al abastecimiento de alimentos congelados.
-        </p>
-      )}
     </header>
 
     {showSoft ? (
@@ -59,9 +52,9 @@ const capabilities = [
         ))}
       </ul>
     ) : (
-      <ul class="num__grid" role="list">
+      <ul class="num__grid" role="list" data-reveal-stagger>
         {items.map((it) => (
-          <li class="num-item">
+          <li class="num-item" data-reveal>
             <span class="num-item__value">{it.value}</span>
             <span class="num-item__label">{it.label}</span>
           </li>
@@ -101,7 +94,7 @@ const capabilities = [
   }
 
   .num__inner { display: grid; gap: var(--space-6); }
-  .num__head { display: grid; gap: var(--space-3); max-width: 60ch; }
+  .num__head { display: grid; gap: var(--space-3); max-width: 56ch; }
   .num__head .eyebrow {
     color: oklch(100% 0 0 / 0.62);
     border: none;
@@ -110,9 +103,9 @@ const capabilities = [
   }
   .num__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.1;
+    line-height: 1.05;
     color: var(--color-text-on-brand);
     max-width: 24ch;
   }
@@ -122,12 +115,6 @@ const capabilities = [
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-  }
-  .num__lede {
-    color: oklch(100% 0 0 / 0.78);
-    font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
-    max-width: 60ch;
   }
 
   /* Capabilities (soft state, no métricas inventadas) */
@@ -145,12 +132,12 @@ const capabilities = [
     display: grid;
     gap: 0.35rem;
     backdrop-filter: blur(8px);
-    transition: background var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard);
+    transition: background var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast);
   }
   .capability:hover {
     background: oklch(100% 0 0 / 0.09);
     border-color: oklch(100% 0 0 / 0.22);
+    transform: translateY(-2px);
   }
   .capability__label {
     font-size: var(--font-size-2xs);

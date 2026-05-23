@@ -1,18 +1,22 @@
 ---
+/**
+ * Corner QÜEM — propuesta de valor v2.
+ * Quote final = brief, columnas split mantenidas, items comprimidos.
+ */
 const noNeed = [
-  'No necesitás cocina',
-  'No necesitás desarrollar productos',
-  'No necesitás estructura compleja',
-  'No necesitás conocimiento técnico profundo',
+  'Cocina',
+  'Desarrollar productos',
+  'Estructura compleja',
+  'Conocimiento técnico',
 ];
 
 const quemAporta = [
-  { label: 'Producto', detail: 'mix curado de alta rotación' },
-  { label: 'Marca', detail: 'identidad y material POP' },
-  { label: 'Logística', detail: 'distribución y reposición' },
-  { label: 'Experiencia', detail: 'retail moderno premium' },
+  { label: 'Producto', detail: 'mix curado alta rotación' },
+  { label: 'Marca', detail: 'identidad + POP' },
+  { label: 'Logística', detail: 'distribución + reposición' },
+  { label: 'Experiencia', detail: 'retail moderno' },
   { label: 'Soporte', detail: 'acompañamiento comercial' },
-  { label: 'Operación', detail: 'lineamientos y capacitación' },
+  { label: 'Operación', detail: 'capacitación y lineamientos' },
 ];
 ---
 
@@ -21,14 +25,14 @@ const quemAporta = [
     <header class="cn-value__head">
       <p class="eyebrow" data-reveal style="--reveal-y: 16px;">04 · Propuesta de valor</p>
       <h2 id="cn-value-title" class="cn-value__title" data-reveal style="--reveal-delay: 100ms;">
-        Te ayudamos a sumar facturación <em>sin complejizar tu operación</em>
+        Sumá facturación <em>sin complejizar la operación</em>.
       </h2>
     </header>
 
     <div class="cn-value__split">
       <article class="cn-value__col cn-value__col--no" data-reveal="left" style="--reveal-delay: 100ms;">
         <header>
-          <span class="cn-value__col-tag" data-tone="no">El comercio NO necesita</span>
+          <span class="cn-value__col-tag" data-tone="no">No necesitás</span>
           <h3>Cero fricción operativa</h3>
         </header>
         <ul>
@@ -46,7 +50,7 @@ const quemAporta = [
       <article class="cn-value__col cn-value__col--si" data-reveal="right" style="--reveal-delay: 200ms;">
         <header>
           <span class="cn-value__col-tag" data-tone="si">QÜEM aporta</span>
-          <h3>Solución comercial integral</h3>
+          <h3>Solución integral</h3>
         </header>
         <ul class="cn-value__si-grid">
           {quemAporta.map((q) => (
@@ -64,23 +68,23 @@ const quemAporta = [
       </article>
     </div>
 
-    <blockquote class="cn-value__quote">
-      <p>"Te ayudamos a sumar facturación sin complejizar tu operación."</p>
+    <blockquote class="cn-value__quote" data-reveal="scale" style="--reveal-delay: 200ms;">
+      <p>Sumá facturación sin complejizar tu operación.</p>
     </blockquote>
   </div>
 </section>
 
 <style>
-  .cn-value__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 60ch; }
+  .cn-value__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .cn-value__title {
     font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
   }
   .cn-value__title em {
     font-style: normal;
-    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -204,7 +208,7 @@ const quemAporta = [
 
   .cn-value__quote {
     margin-block-start: var(--space-8);
-    padding: var(--space-6) var(--space-5);
+    padding: var(--space-7) var(--space-5);
     background: linear-gradient(135deg, var(--color-brand-50), var(--color-accent-50));
     border-radius: var(--radius-2xl);
     border: 1px solid var(--color-border-subtle);
@@ -213,10 +217,10 @@ const quemAporta = [
   .cn-value__quote p {
     font-family: var(--font-display);
     font-size: var(--font-size-2xl);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-extrabold);
     color: var(--color-text-primary);
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
     text-wrap: balance;
     max-width: 32ch;
     margin-inline: auto;
