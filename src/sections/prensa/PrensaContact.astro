@@ -1,0 +1,99 @@
+---
+import { EMAILS } from '../../config/site';
+---
+
+<section class="pr-contact section-y" aria-labelledby="pr-contact-title">
+  <div class="container-content pr-contact__inner">
+    <div class="pr-contact__copy">
+      <p class="eyebrow pr-contact__eyebrow">Contacto de prensa</p>
+      <h2 id="pr-contact-title" class="pr-contact__title">
+        ¿Periodista o redacción? <em>Escribinos directo.</em>
+      </h2>
+      <p class="pr-contact__lede">
+        Para entrevistas con el equipo directivo, datos de la compañía, fotos de operación
+        o agenda de prensa, contactá a nuestro equipo comercial.
+      </p>
+    </div>
+
+    <div class="pr-contact__card">
+      <div class="pr-contact__card-row">
+        <span class="pr-contact__card-label">Email</span>
+        <a href={`mailto:${EMAILS.comercial}`} class="pr-contact__card-value">{EMAILS.comercial}</a>
+      </div>
+      <div class="pr-contact__card-row">
+        <span class="pr-contact__card-label">Respuesta</span>
+        <span class="pr-contact__card-value">en menos de 48hs hábiles</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pr-contact {
+    background: linear-gradient(135deg, var(--color-brand-tint), var(--color-bg));
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+  .pr-contact__inner {
+    display: grid;
+    gap: var(--space-6);
+    align-items: center;
+  }
+  @media (min-width: 768px) {
+    .pr-contact__inner { grid-template-columns: 1.3fr 1fr; }
+  }
+  .pr-contact__copy { display: grid; gap: var(--space-3); }
+  .pr-contact__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .pr-contact__title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .pr-contact__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    line-height: var(--leading-relaxed);
+    max-width: 48ch;
+  }
+  .pr-contact__card {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    display: grid;
+    gap: var(--space-3);
+    box-shadow: var(--shadow-sm);
+  }
+  .pr-contact__card-row {
+    display: grid;
+    gap: 0.25rem;
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .pr-contact__card-row:last-child { border-bottom: 0; }
+  .pr-contact__card-label {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+  }
+  .pr-contact__card-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+  }
+  a.pr-contact__card-value {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+    text-decoration-color: oklch(from var(--color-brand-500) l c h / 0.3);
+    text-underline-offset: 3px;
+  }
+  a.pr-contact__card-value:hover { text-decoration-color: var(--color-brand-500); }
+</style>

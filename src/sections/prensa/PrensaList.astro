@@ -1,0 +1,201 @@
+---
+import { PRESS } from '../../config/press';
+
+const fmtDate = (iso: string): string => {
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+};
+---
+
+<section class="pr-list section-y" aria-labelledby="pr-list-title">
+  <div class="container-content">
+    <header class="pr-list__head">
+      <h2 id="pr-list-title" class="sr-only">Notas de prensa</h2>
+    </header>
+
+    <ul class="pr-list__grid" role="list">
+      {PRESS.map((p) => (
+        <li>
+          <a
+            class:list={['pr-card', `pr-card--${p.outletSlug}`, p.featured && 'pr-card--featured']}
+            href={p.url}
+            target="_blank"
+            rel="noopener"
+            aria-label={`${p.title} — ${p.outlet}, ${fmtDate(p.date)}`}
+          >
+            <header class="pr-card__head">
+              <span class="pr-card__outlet" aria-hidden="true">
+                <span class="pr-card__outlet-mark"></span>
+                <span class="pr-card__outlet-name">{p.outlet}</span>
+              </span>
+              <time class="pr-card__date" datetime={p.date}>{fmtDate(p.date)}</time>
+            </header>
+
+            {p.tag && (
+              <div class="pr-card__tag">
+                {p.featured && <span class="pr-card__tag-star" aria-hidden="true">★</span>}
+                {p.tag}
+              </div>
+            )}
+
+            <h3 class="pr-card__title">{p.title}</h3>
+
+            <p class="pr-card__excerpt">{p.excerpt}</p>
+
+            <div class="pr-card__foot">
+              <span class="pr-card__cta">
+                Leer la nota
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="pr-card__domain">{new URL(p.url).hostname.replace(/^www\./, '')}</span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pr-list__head { margin-block-end: var(--space-5); }
+
+  .pr-list__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  }
+
+  .pr-card {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+    overflow: hidden;
+  }
+  .pr-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--color-neutral-300);
+    transition: height var(--dur-normal) var(--ease-out-expo);
+  }
+  .pr-card--la-nacion::before { background: linear-gradient(90deg, #003366, #0066aa); }
+  .pr-card--iprofesional::before { background: linear-gradient(90deg, #d63031, #c0392b); }
+  .pr-card--tn::before { background: linear-gradient(90deg, #ffd600, #ffaa00); }
+  .pr-card--clarin::before { background: linear-gradient(90deg, #ce0000, #a30000); }
+  .pr-card--infobae::before { background: linear-gradient(90deg, #1e88e5, #1565c0); }
+
+  .pr-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-md);
+  }
+  .pr-card:hover::before { height: 4px; }
+
+  .pr-card--featured {
+    background: linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg-elevated) 100%);
+  }
+
+  .pr-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .pr-card__outlet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pr-card__outlet-mark {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .pr-card--la-nacion .pr-card__outlet-mark { background: #003366; }
+  .pr-card--iprofesional .pr-card__outlet-mark { background: #d63031; }
+  .pr-card--tn .pr-card__outlet-mark { background: #ffd600; }
+  .pr-card--clarin .pr-card__outlet-mark { background: #ce0000; }
+  .pr-card--infobae .pr-card__outlet-mark { background: #1e88e5; }
+
+  .pr-card__outlet-name {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: var(--font-size-sm);
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+  }
+  .pr-card__date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .pr-card__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: max-content;
+    padding: 0.2rem 0.55rem;
+    background: var(--color-brand-50);
+    color: var(--color-brand-700);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+  }
+  .pr-card--featured .pr-card__tag {
+    background: oklch(from var(--color-accent-500) l c h / 0.14);
+    color: var(--color-accent-700);
+  }
+  .pr-card__tag-star { color: var(--color-accent-700); }
+
+  .pr-card__title {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-bold);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+    text-wrap: balance;
+  }
+
+  .pr-card__excerpt {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-relaxed);
+  }
+
+  .pr-card__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block-start: var(--space-3);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  .pr-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-brand);
+  }
+  .pr-card:hover .pr-card__cta { text-decoration: underline; text-underline-offset: 3px; }
+  .pr-card__domain {
+    font-size: var(--font-size-2xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: var(--tracking-wide);
+  }
+</style>

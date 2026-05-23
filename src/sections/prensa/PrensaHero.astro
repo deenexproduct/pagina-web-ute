@@ -1,0 +1,187 @@
+---
+import { PRESS } from '../../config/press';
+
+const outlets = Array.from(new Set(PRESS.map((p) => p.outlet)));
+const totalNotes = PRESS.length;
+---
+
+<section class="pr-hero" aria-labelledby="pr-hero-title">
+  <div class="pr-hero__bg" aria-hidden="true"></div>
+
+  <div class="container-content pr-hero__inner">
+    <div class="pr-hero__copy">
+      <p class="pr-hero__tag">
+        <span class="pr-hero__tag-dot" aria-hidden="true"></span>
+        Prensa · QÜEM en los medios
+      </p>
+      <h1 id="pr-hero-title" class="pr-hero__title">
+        Qüem en <span class="pr-hero__title-em">la conversación pública</span>
+      </h1>
+      <p class="pr-hero__lede">
+        Cobertura de los principales medios económicos y de negocios sobre QÜEM Central — historia
+        del equipo, modelos comerciales (franquicias y corners) y escala de operación.
+      </p>
+
+      <dl class="pr-hero__stats">
+        <div>
+          <dt>Notas</dt>
+          <dd>{totalNotes}</dd>
+        </div>
+        <div>
+          <dt>Medios</dt>
+          <dd>{outlets.length}</dd>
+        </div>
+        <div>
+          <dt>Cobertura</dt>
+          <dd>nacional</dd>
+        </div>
+      </dl>
+    </div>
+
+    <aside class="pr-hero__outlets" aria-label="Medios donde aparecemos">
+      <span class="pr-hero__outlets-label">Aparecimos en</span>
+      <ul>
+        {outlets.map((o) => (
+          <li class="pr-outlet-badge">
+            <span class="pr-outlet-badge__wordmark">{o}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .pr-hero {
+    position: relative;
+    padding-block: clamp(3rem, 5vw, 5rem) clamp(2rem, 3vw, 3rem);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .pr-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(50% 60% at 100% 0%, oklch(58% 0.155 254 / 0.14) 0%, transparent 65%),
+      linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg) 100%);
+  }
+  .pr-hero__bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, black 0%, transparent 90%);
+    -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 90%);
+  }
+
+  .pr-hero__inner {
+    display: grid;
+    gap: var(--space-7);
+    align-items: end;
+  }
+  @media (min-width: 960px) {
+    .pr-hero__inner { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+  }
+
+  .pr-hero__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: max-content;
+    padding: 0.4rem 0.85rem;
+    background: oklch(from var(--color-brand-500) l c h / 0.08);
+    color: var(--color-text-brand);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.15);
+  }
+  .pr-hero__tag-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
+  }
+
+  .pr-hero__title {
+    font-size: var(--font-size-4xl);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    font-weight: var(--weight-extrabold);
+    margin-block: var(--space-4) var(--space-3);
+    color: var(--color-text-primary);
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .pr-hero__title-em {
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .pr-hero__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+    max-width: 56ch;
+    margin-block-end: var(--space-6);
+  }
+
+  .pr-hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    padding-block-start: var(--space-4);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  .pr-hero__stats dt {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+    margin-block-end: 0.25rem;
+  }
+  .pr-hero__stats dd {
+    font-family: var(--font-display);
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .pr-hero__outlets {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .pr-hero__outlets-label {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+  }
+  .pr-hero__outlets ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .pr-outlet-badge {
+    padding: 0.5rem 0.9rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+  }
+  .pr-outlet-badge__wordmark {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: var(--font-size-sm);
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+  }
+</style>

@@ -42,6 +42,7 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
         {NAV_PRIMARY.filter((i) => i.href !== '/').slice(0, 4).map((item) => (
           <li><a href={link(item.href)}>{item.label}</a></li>
         ))}
+        <li><a href={link('/prensa')}>Prensa</a></li>
       </ul>
     </nav>
 
