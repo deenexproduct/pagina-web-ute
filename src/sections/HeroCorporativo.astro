@@ -1,167 +1,177 @@
 ---
-import { APP_BASE_URL, link } from '../config/site';
+import { APP_BASE_URL, CATEGORIES } from '../config/site';
 
-/** Letras del título para text-reveal staggered */
-const titleChars = 'QUEM Central'.split('').map((c, i) => ({ char: c === ' ' ? ' ' : c, index: i }));
+/**
+ * Hero v2 — Dirección "Promesa + entrada a la app".
+ *
+ * Reglas de la versión:
+ *  - Una sola promesa fuerte en title.
+ *  - Subtitle = una línea dot-separated.
+ *  - UNA sola CTA primaria dominante + 1 link discreto.
+ *  - Visual = phone mockup grande con preview real de la app
+ *    (categorías reales del config). Floating con animación sutil.
+ *  - Sin chips, sin bars chart, sin sub-grid cargado.
+ *
+ * Objetivo: conversión al click "Comprar online" → app.
+ */
+
+/* 6 categorías visibles en el preview de la app — mix balanceado. */
+const previewCategories = [
+  { slug: 'empanadas',    nombre: 'Empanadas',    hue: 38 },
+  { slug: 'hamburguesas', nombre: 'Hamburguesas', hue: 28 },
+  { slug: 'pizzas',       nombre: 'Pizzas',       hue: 12 },
+  { slug: 'postres',      nombre: 'Postres',      hue: 320 },
+  { slug: 'frutas',       nombre: 'Frutas',       hue: 18 },
+  { slug: 'pescados',     nombre: 'Pescados',     hue: 200 },
+];
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <!-- Background con mesh gradient + dot pattern + grid líneas -->
   <div class="hero__bg" aria-hidden="true">
     <div class="hero__bg-mesh" data-parallax="0.15"></div>
     <div class="hero__bg-dots"></div>
-    <div class="hero__bg-grid"></div>
-    <div class="hero__bg-orb hero__bg-orb--brand" data-parallax="0.2"></div>
-    <div class="hero__bg-orb hero__bg-orb--accent" data-parallax="0.3"></div>
+    <div class="hero__bg-orb hero__bg-orb--brand" data-parallax="0.25"></div>
+    <div class="hero__bg-orb hero__bg-orb--accent" data-parallax="0.35"></div>
   </div>
 
   <div class="hero__inner container-content">
+    <!-- COPY -->
     <div class="hero__copy">
-      <p class="hero__eyebrow" data-reveal="fade" style="--reveal-delay: 100ms;">
-        <span class="hero__eyebrow-dot" aria-hidden="true"></span>
-        <span>Plataforma integral · alimentos congelados</span>
+      <p class="hero__brand-tag" data-reveal="fade" style="--reveal-delay: 100ms;">
+        <span class="hero__brand-mark" aria-hidden="true">Q</span>
+        <span>QUEM Central</span>
       </p>
 
       <h1 id="hero-title" class="hero__title">
-        <span class="text-reveal" aria-label="QUEM Central">
-          {titleChars.map((c) => (
-            c.char === ' ' ? (
-              <span class="text-reveal__char" style={`--char-index: ${c.index};`}>&nbsp;</span>
-            ) : (
-              <span class="text-reveal__char" style={`--char-index: ${c.index};`} aria-hidden="true">{c.char}</span>
-            )
-          ))}
-        </span>
+        <span class="hero__title-line" data-reveal style="--reveal-delay: 250ms; --reveal-duration: 800ms;">Comprá alimentos</span>
+        <span class="hero__title-line hero__title-line--gradient" data-reveal style="--reveal-delay: 400ms; --reveal-duration: 800ms;">congelados</span>
+        <span class="hero__title-line" data-reveal style="--reveal-delay: 550ms; --reveal-duration: 800ms;">con un click.</span>
       </h1>
 
-      <p class="hero__subtitle" data-reveal style="--reveal-delay: 700ms;">
-        Plataforma integral para el <em>abastecimiento y desarrollo comercial</em> de alimentos congelados.
+      <p class="hero__meta" data-reveal style="--reveal-delay: 800ms;">
+        <span>Catálogo digital B2B</span>
+        <span class="hero__meta-dot" aria-hidden="true">·</span>
+        <span>Logística incluida</span>
+        <span class="hero__meta-dot" aria-hidden="true">·</span>
+        <span>AMBA + PBA</span>
       </p>
 
-      <p class="hero__lede" data-reveal style="--reveal-delay: 850ms;">
-        Integramos distribución B2B, logística especializada, franquicias, corners comerciales y tecnología
-        para conectar productos congelados con negocios gastronómicos, comercios y nuevos canales de venta.
-      </p>
-
-      <div class="hero__cta-row" data-reveal style="--reveal-delay: 1000ms;">
-        <a class="btn btn-primary hero__cta-main" href={APP_BASE_URL} target="_blank" rel="noopener">
-          <span>Comprar online</span>
-          <span class="hero__cta-icon" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="hero__actions" data-reveal style="--reveal-delay: 950ms;">
+        <a class="hero__cta-main" href={APP_BASE_URL} target="_blank" rel="noopener">
+          <span class="hero__cta-main-text">Comprar online</span>
+          <span class="hero__cta-main-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 12 12 4M12 4H6M12 4v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </span>
+          <span class="hero__cta-main-shine" aria-hidden="true"></span>
         </a>
-        <a class="btn btn-outline hero__cta-alt" href="#quem-central">
-          <span>Conocer QUEM Central</span>
+        <a class="hero__cta-alt" href="#contacto">
+          Hablar con ventas
+          <span aria-hidden="true">→</span>
         </a>
       </div>
-
-      <ul class="hero__chips" aria-label="Capacidades clave" data-reveal-stagger>
-        <li data-reveal style="--reveal-y: 12px;">
-          <span class="hero__chip-mark" aria-hidden="true"></span>
-          Distribución B2B
-        </li>
-        <li data-reveal style="--reveal-y: 12px;">
-          <span class="hero__chip-mark" aria-hidden="true"></span>
-          Logística especializada
-        </li>
-        <li data-reveal style="--reveal-y: 12px;">
-          <span class="hero__chip-mark" aria-hidden="true"></span>
-          Franquicias y Corners
-        </li>
-        <li data-reveal style="--reveal-y: 12px;">
-          <span class="hero__chip-mark" aria-hidden="true"></span>
-          Catálogo digital
-        </li>
-      </ul>
     </div>
 
-    <!-- Panel mockup: cards de stats animadas + freezer-shelves preview -->
-    <aside class="hero__showcase" aria-hidden="true" data-reveal="right" style="--reveal-delay: 600ms; --reveal-duration: 1200ms;">
-      <div class="hero__showcase-glow"></div>
+    <!-- PHONE MOCKUP -->
+    <aside class="hero__phone" aria-hidden="true" data-reveal="right" style="--reveal-delay: 600ms; --reveal-duration: 1100ms;">
+      <div class="hero__phone-glow"></div>
 
-      <div class="hero__showcase-frame">
-        <!-- Mini-header del panel -->
-        <div class="hero__showcase-bar">
-          <div class="hero__showcase-bar-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="hero__showcase-bar-label">QÜEM · panel operativo</div>
+      <div class="hero__phone-device">
+        <!-- Dynamic island -->
+        <div class="hero__phone-island" aria-hidden="true"></div>
+
+        <!-- Status bar -->
+        <div class="hero__phone-status">
+          <span class="hero__phone-status-time">9:41</span>
+          <span class="hero__phone-status-icons">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M7 2.5c1.5 0 2.9.5 4 1.5l1.4-1.4C10.9 1.1 9 0.5 7 0.5S3.1 1.1 1.6 2.6L3 4c1.1-1 2.5-1.5 4-1.5Z" fill="currentColor"/><circle cx="7" cy="8" r="1.5" fill="currentColor"/></svg>
+            <svg width="22" height="10" viewBox="0 0 22 10" fill="none"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="currentColor"/><rect x="2" y="2" width="14" height="6" rx="1" fill="currentColor"/><rect x="19.5" y="3.5" width="1.5" height="3" rx="0.5" fill="currentColor"/></svg>
+          </span>
         </div>
 
-        <!-- Top stat card destacada -->
-        <div class="hero__showcase-hero-card">
-          <div class="hero__showcase-hero-card-label">
-            <span class="hero__showcase-pulse" aria-hidden="true"></span>
-            Operación en vivo
-          </div>
-          <div class="hero__showcase-hero-card-value">AMBA + PBA</div>
-          <div class="hero__showcase-hero-card-meta">Última milla congelados · 24/7</div>
-
-          <!-- mini chart bars decorativo -->
-          <div class="hero__showcase-bars" aria-hidden="true">
-            <span style="--h: 35%; --d: 0ms;"></span>
-            <span style="--h: 60%; --d: 80ms;"></span>
-            <span style="--h: 45%; --d: 160ms;"></span>
-            <span style="--h: 80%; --d: 240ms;"></span>
-            <span style="--h: 70%; --d: 320ms;"></span>
-            <span style="--h: 90%; --d: 400ms;"></span>
-            <span style="--h: 75%; --d: 480ms;"></span>
-          </div>
-        </div>
-
-        <!-- Sub-grid -->
-        <div class="hero__showcase-sub">
-          <div class="hero__showcase-card">
-            <div class="hero__showcase-card-icon" data-tone="brand">
-              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18M8 14h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <!-- App screen -->
+        <div class="hero__phone-screen">
+          <!-- App header -->
+          <header class="hero__phone-header">
+            <div class="hero__phone-header-brand">
+              <span class="hero__phone-header-mark">Q</span>
+              <span class="hero__phone-header-name">QUEM</span>
             </div>
-            <div class="hero__showcase-card-label">Catálogo</div>
-            <div class="hero__showcase-card-value">Digital · App</div>
-          </div>
-          <div class="hero__showcase-card">
-            <div class="hero__showcase-card-icon" data-tone="brand-2">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V8l8-4 8 4v11" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="currentColor" stroke-width="1.6"/></svg>
-            </div>
-            <div class="hero__showcase-card-label">Modelos</div>
-            <div class="hero__showcase-card-value">Franquicia · Corner</div>
-          </div>
-        </div>
+            <span class="hero__phone-header-cart" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 3h2l2 9h10l2-7H5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="7" cy="15" r="1.2" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="14" cy="15" r="1.2" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+              <span class="hero__phone-header-cart-dot"></span>
+            </span>
+          </header>
 
-        <!-- Accent strip: CTA principal en el panel -->
-        <div class="hero__showcase-cta">
-          <div class="hero__showcase-cta-text">
-            <div class="hero__showcase-cta-label">Compra B2B</div>
-            <div class="hero__showcase-cta-meta">desde un único canal</div>
+          <!-- Search bar -->
+          <div class="hero__phone-search">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="m12.5 12.5-3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <span>Buscar productos</span>
           </div>
-          <div class="hero__showcase-cta-arrow" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12 12 4M12 4H6M12 4v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+          <!-- Section title -->
+          <div class="hero__phone-section">
+            <span class="hero__phone-section-label">Categorías</span>
+            <span class="hero__phone-section-more">Ver todas →</span>
+          </div>
+
+          <!-- Categorías grid -->
+          <ul class="hero__phone-cats">
+            {previewCategories.map((c, i) => (
+              <li class="hero__phone-cat" style={`--cat-hue: ${c.hue}; --cat-delay: ${i * 90 + 1400}ms;`}>
+                <div class="hero__phone-cat-thumb">
+                  <span class="hero__phone-cat-mark"></span>
+                </div>
+                <span class="hero__phone-cat-name">{c.nombre}</span>
+              </li>
+            ))}
+          </ul>
+
+          <!-- Floating CTA dentro de la app -->
+          <div class="hero__phone-cta" aria-hidden="true">
+            <span class="hero__phone-cta-pulse"></span>
+            <span class="hero__phone-cta-text">Comprar online</span>
+            <span class="hero__phone-cta-icon">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 7h6m0 0L7 4m3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
           </div>
         </div>
+      </div>
+
+      <!-- Floating chip 1: stock status -->
+      <div class="hero__phone-chip hero__phone-chip--stock" data-reveal="scale" style="--reveal-delay: 1600ms;" aria-hidden="true">
+        <span class="hero__phone-chip-dot"></span>
+        <span>Stock en línea</span>
+      </div>
+
+      <!-- Floating chip 2: cobertura -->
+      <div class="hero__phone-chip hero__phone-chip--coverage" data-reveal="scale" style="--reveal-delay: 1800ms;" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/></svg>
+        <span>AMBA + PBA</span>
       </div>
     </aside>
   </div>
-
-  <a href="#quem-central" class="hero__scroll-hint" aria-label="Ir a Qué es QUEM Central">
-    <span class="hero__scroll-hint-label">Conocer el ecosistema</span>
-    <span class="hero__scroll-hint-icon" aria-hidden="true">
-      <svg width="14" height="20" viewBox="0 0 14 20" fill="none"><path d="M7 2v14m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </span>
-  </a>
 </section>
 
 <style>
-  /* ===== Hero ===================================================== */
+  /* ===== Hero shell =============================================== */
   .hero {
     position: relative;
-    padding-block: clamp(3rem, 6vw, 6rem) clamp(3rem, 5vw, 5rem);
+    padding-block: clamp(3rem, 6vw, 5.5rem) clamp(3rem, 5vw, 5rem);
     overflow: hidden;
     isolation: isolate;
-    min-height: clamp(640px, 88vh, 920px);
+    min-height: clamp(620px, 86vh, 880px);
     display: flex;
     align-items: center;
   }
 
-  /* ===== Background layers ========================================= */
+  /* ===== Background ================================================ */
   .hero__bg {
     position: absolute;
     inset: 0;
@@ -172,8 +182,8 @@ const titleChars = 'QUEM Central'.split('').map((c, i) => ({ char: c === ' ' ? '
     position: absolute;
     inset: -20%;
     background:
-      radial-gradient(40% 50% at 80% 10%, oklch(58% 0.155 254 / 0.18) 0%, transparent 60%),
-      radial-gradient(35% 45% at 10% 90%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%);
+      radial-gradient(45% 55% at 80% 10%, oklch(58% 0.155 254 / 0.18) 0%, transparent 60%),
+      radial-gradient(40% 50% at 10% 90%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%);
     transform: translateY(var(--parallax-y, 0));
     will-change: transform;
   }
@@ -185,40 +195,26 @@ const titleChars = 'QUEM Central'.split('').map((c, i) => ({ char: c === ' ' ? '
     mask-image: linear-gradient(180deg, transparent 0%, black 25%, black 75%, transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 25%, black 75%, transparent 100%);
   }
-  .hero__bg-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(90deg, oklch(42% 0.190 252 / 0.025) 1px, transparent 1px),
-      linear-gradient(0deg, oklch(42% 0.190 252 / 0.025) 1px, transparent 1px);
-    background-size: 80px 80px;
-    mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, black 20%, transparent 90%);
-    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, black 20%, transparent 90%);
-  }
   .hero__bg-orb {
     position: absolute;
     border-radius: 50%;
     filter: blur(var(--blur-xl));
     transform: translateY(var(--parallax-y, 0));
     will-change: transform;
-    opacity: 0.5;
+    opacity: 0.45;
   }
   .hero__bg-orb--brand {
-    width: 50rem;
-    height: 50rem;
-    top: -25rem;
-    right: -20rem;
+    width: 50rem; height: 50rem;
+    top: -25rem; right: -18rem;
     background: var(--color-brand-300);
   }
   .hero__bg-orb--accent {
-    width: 30rem;
-    height: 30rem;
-    bottom: -15rem;
-    left: -10rem;
+    width: 32rem; height: 32rem;
+    bottom: -15rem; left: -10rem;
     background: var(--color-accent-300);
   }
 
-  /* ===== Layout grid =============================================== */
+  /* ===== Grid layout ============================================== */
   .hero__inner {
     display: grid;
     gap: var(--space-7);
@@ -226,405 +222,501 @@ const titleChars = 'QUEM Central'.split('').map((c, i) => ({ char: c === ' ' ? '
     width: 100%;
   }
   @media (min-width: 960px) {
-    .hero__inner { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--space-8); }
+    .hero__inner {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: var(--space-8);
+    }
   }
 
-  /* ===== Eyebrow ==================================================== */
-  .hero__eyebrow {
+  /* ===== Brand tag ================================================= */
+  .hero__brand-tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.5rem 0.95rem 0.5rem 0.7rem;
-    background: oklch(from var(--color-brand-500) l c h / 0.08);
-    color: var(--color-text-brand);
+    gap: 0.6rem;
+    padding: 0.4rem 0.85rem 0.4rem 0.45rem;
+    background: oklch(from var(--color-bg-elevated) l c h / 0.7);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-pill);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.18);
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-bold);
     backdrop-filter: blur(8px);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
     width: max-content;
+    letter-spacing: -0.005em;
   }
-  .hero__eyebrow-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.20);
-    animation: hero-eyebrow-pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes hero-eyebrow-pulse {
-    0%, 100% { box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.20); }
-    50%      { box-shadow: 0 0 0 8px oklch(62% 0.150 155 / 0.05); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__eyebrow-dot { animation: none; }
+  .hero__brand-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 0.4rem;
+    background: var(--gradient-brand);
+    color: var(--color-text-on-brand);
+    font-family: var(--font-display);
+    font-weight: var(--weight-extrabold);
+    font-size: 0.7rem;
+    letter-spacing: -0.06em;
+    box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.2);
   }
 
-  /* ===== Title gigante con text-reveal ============================== */
+  /* ===== Title — 3 líneas grandes ================================== */
   .hero__title {
-    font-size: var(--font-size-display);
-    line-height: 0.94;
+    margin-block: var(--space-5) var(--space-4);
+    font-size: clamp(2.75rem, 1.8rem + 4.5vw, 5.5rem);
+    line-height: 0.96;
     letter-spacing: -0.045em;
     font-weight: var(--weight-extrabold);
-    margin-block: var(--space-5) var(--space-3);
     color: var(--color-text-primary);
     text-wrap: balance;
   }
-
-  /* Las primeras 4 letras (QUEM) en color primary, después " Central" en gradient brand */
-  .hero__title .text-reveal__char:nth-child(n+5) {
+  .hero__title-line {
+    display: block;
+  }
+  .hero__title-line--gradient {
     background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* ===== Subtitle ================================================== */
-  .hero__subtitle {
-    font-size: var(--font-size-lg);
-    color: var(--color-text-primary);
-    line-height: var(--leading-snug);
-    font-weight: var(--weight-medium);
-    max-width: 32ch;
-    margin-block-end: var(--space-4);
-  }
-  .hero__subtitle em {
-    font-style: normal;
-    background: var(--gradient-text-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: var(--weight-semibold);
-  }
-
-  /* ===== Lede ====================================================== */
-  .hero__lede {
-    max-width: 52ch;
+  /* ===== Meta line ================================================ */
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
     color: var(--color-text-secondary);
-    font-size: var(--font-size-base);
-    line-height: var(--leading-relaxed);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-medium);
     margin-block-end: var(--space-6);
   }
+  .hero__meta-dot {
+    color: var(--color-text-muted);
+    font-weight: var(--weight-bold);
+  }
 
-  /* ===== CTAs ====================================================== */
-  .hero__cta-row {
+  /* ===== Actions =================================================== */
+  .hero__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-block-end: var(--space-7);
+    align-items: center;
+    gap: var(--space-5);
   }
+
   .hero__cta-main {
-    padding: 1rem 1.6rem;
-    font-size: var(--font-size-sm);
-    box-shadow:
-      0 6px 18px oklch(62% 0.150 155 / 0.32),
-      inset 0 1px 0 oklch(100% 0 0 / 0.2);
     position: relative;
-    overflow: hidden;
-  }
-  .hero__cta-main::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, oklch(100% 0 0 / 0) 0%, oklch(100% 0 0 / 0.12) 50%, oklch(100% 0 0 / 0) 100%);
-    transform: translateX(-110%);
-    transition: transform 600ms var(--ease-out-expo);
-  }
-  .hero__cta-main:hover::before { transform: translateX(110%); }
-  .hero__cta-main:hover { box-shadow: 0 8px 24px oklch(62% 0.150 155 / 0.40), inset 0 1px 0 oklch(100% 0 0 / 0.25); }
-  .hero__cta-icon { display: inline-flex; transition: transform var(--dur-fast) var(--ease-standard); }
-  .hero__cta-main:hover .hero__cta-icon { transform: translate(2px, -2px); }
-  .hero__cta-alt { padding: 1rem 1.4rem; font-size: var(--font-size-sm); }
-
-  /* ===== Chips de capacidades ====================================== */
-  .hero__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-  .hero__chips li {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    background-color: oklch(from var(--color-bg-elevated) l c h / 0.7);
-    border: 1px solid var(--color-border-subtle);
-    padding: 0.45rem 0.85rem;
+    gap: 0.65rem;
+    padding: 1.05rem 1.6rem 1.05rem 1.75rem;
     border-radius: var(--radius-pill);
-    font-weight: var(--weight-medium);
-    backdrop-filter: blur(6px);
-    transition: transform var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
-  }
-  .hero__chips li:hover { transform: translateY(-1px); border-color: var(--color-brand-300); }
-  .hero__chip-mark {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-brand-500);
-    flex-shrink: 0;
-  }
-  .hero__chips li:nth-child(2) .hero__chip-mark { background: var(--color-accent-500); }
-  .hero__chips li:nth-child(4) .hero__chip-mark { background: var(--color-accent-500); }
-
-  /* ===== Showcase panel ============================================ */
-  .hero__showcase {
-    position: relative;
-    perspective: 1200px;
-  }
-  .hero__showcase-glow {
-    position: absolute;
-    inset: 8% -12% -12% 4%;
-    z-index: 0;
-    border-radius: 1.5rem;
-    background: var(--gradient-mixed);
-    filter: blur(60px);
-    opacity: 0.30;
-  }
-  .hero__showcase-frame {
-    position: relative;
-    z-index: 1;
-    padding: 1.25rem;
-    background: oklch(from var(--color-bg-elevated) l c h / 0.95);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 1.5rem;
-    box-shadow: var(--shadow-elevated);
-    display: grid;
-    gap: var(--space-3);
-    transform: rotateY(-2deg) rotateX(2deg);
-    transform-style: preserve-3d;
-    transition: transform var(--dur-slow) var(--ease-premium);
-  }
-  .hero__showcase:hover .hero__showcase-frame { transform: rotateY(0deg) rotateX(0deg); }
-
-  .hero__showcase-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0.6rem 0.7rem;
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-  .hero__showcase-bar-dots {
-    display: flex;
-    gap: 6px;
-  }
-  .hero__showcase-bar-dots span {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--color-border-strong);
-  }
-  .hero__showcase-bar-dots span:nth-child(1) { background: oklch(70% 0.16 25); }
-  .hero__showcase-bar-dots span:nth-child(2) { background: oklch(78% 0.14 80); }
-  .hero__showcase-bar-dots span:nth-child(3) { background: var(--color-accent-500); }
-  .hero__showcase-bar-label {
-    font-size: var(--font-size-2xs);
-    color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-  }
-
-  /* Hero card (top) — gradient brand con stats */
-  .hero__showcase-hero-card {
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    border-radius: 1rem;
-    padding: 1.2rem 1.3rem;
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .hero__showcase-hero-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.08) 1px, transparent 1px);
-    background-size: 16px 16px;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
-    z-index: -1;
-  }
-  .hero__showcase-hero-card-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-bold);
-    color: oklch(100% 0 0 / 0.85);
-    margin-block-end: 0.4rem;
-  }
-  .hero__showcase-pulse {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--color-accent-300);
-    box-shadow: 0 0 0 3px oklch(76% 0.125 155 / 0.25);
-    animation: hero-eyebrow-pulse 2.4s ease-in-out infinite;
-  }
-  .hero__showcase-hero-card-value {
-    font-family: var(--font-display);
-    font-size: var(--font-size-2xl);
-    font-weight: var(--weight-extrabold);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-  }
-  .hero__showcase-hero-card-meta {
-    font-size: var(--font-size-xs);
-    color: oklch(100% 0 0 / 0.78);
-    margin-block-start: 0.25rem;
-  }
-  .hero__showcase-bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 32px;
-    margin-block-start: 0.9rem;
-  }
-  .hero__showcase-bars span {
-    flex: 1;
-    background: oklch(100% 0 0 / 0.4);
-    border-radius: 2px 2px 0 0;
-    height: var(--h, 50%);
-    animation: hero-bar-grow var(--dur-cinematic-long) var(--ease-out-expo) backwards;
-    animation-delay: calc(1200ms + var(--d, 0ms));
-    transform-origin: bottom;
-  }
-  @keyframes hero-bar-grow {
-    from { transform: scaleY(0); }
-    to   { transform: scaleY(1); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__showcase-bars span { animation: none; }
-  }
-
-  /* Sub-grid de 2 cards */
-  .hero__showcase-sub {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.7rem;
-  }
-  .hero__showcase-card {
-    background: var(--color-surface-subtle);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 0.9rem;
-    padding: 0.95rem 1rem;
-    display: grid;
-    gap: 0.3rem;
-    align-content: start;
-    transition: background var(--dur-fast), border-color var(--dur-fast);
-  }
-  .hero__showcase-card:hover {
-    background: var(--color-bg-elevated);
-    border-color: var(--color-brand-200);
-  }
-  .hero__showcase-card-icon {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.5rem;
-    display: grid;
-    place-items: center;
-    margin-block-end: 0.3rem;
-  }
-  .hero__showcase-card-icon[data-tone="brand"] { background: var(--color-brand-50); color: var(--color-brand-600); }
-  .hero__showcase-card-icon[data-tone="brand-2"] { background: oklch(from var(--color-brand-500) l c h / 0.08); color: var(--color-brand-700); }
-  .hero__showcase-card-icon svg { width: 1.1rem; height: 1.1rem; }
-  .hero__showcase-card-label {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    color: var(--color-text-muted);
-    font-weight: var(--weight-semibold);
-  }
-  .hero__showcase-card-value {
-    font-family: var(--font-display);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-primary);
-    letter-spacing: -0.01em;
-  }
-
-  /* CTA strip */
-  .hero__showcase-cta {
-    margin-block-start: 0.2rem;
-    padding: 0.95rem 1.1rem;
     background: var(--gradient-accent);
     color: var(--color-text-on-accent);
-    border-radius: 0.9rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: transform var(--dur-fast);
-  }
-  .hero__showcase-cta:hover { transform: translateY(-2px); }
-  .hero__showcase-cta-label {
-    font-family: var(--font-display);
     font-size: var(--font-size-base);
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.01em;
-    line-height: 1;
-  }
-  .hero__showcase-cta-meta {
-    font-size: var(--font-size-2xs);
-    color: oklch(100% 0 0 / 0.85);
-    margin-block-start: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
     font-weight: var(--weight-semibold);
+    letter-spacing: -0.005em;
+    overflow: hidden;
+    transition: transform var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-normal) var(--ease-out-expo);
+    box-shadow:
+      0 1px 0 oklch(100% 0 0 / 0.2) inset,
+      0 10px 28px oklch(62% 0.150 155 / 0.35),
+      0 2px 6px oklch(62% 0.150 155 / 0.18);
+    min-height: 56px;
   }
-  .hero__showcase-cta-arrow {
-    width: 2rem; height: 2rem;
+  .hero__cta-main:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 1px 0 oklch(100% 0 0 / 0.25) inset,
+      0 14px 36px oklch(62% 0.150 155 / 0.45),
+      0 4px 12px oklch(62% 0.150 155 / 0.22);
+  }
+  .hero__cta-main:active { transform: translateY(0); }
+  .hero__cta-main-icon {
+    display: inline-flex;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
-    background: oklch(100% 0 0 / 0.18);
-    display: grid;
+    background: oklch(100% 0 0 / 0.22);
     place-items: center;
     transition: transform var(--dur-fast) var(--ease-standard);
   }
-  .hero__showcase-cta:hover .hero__showcase-cta-arrow { transform: translate(2px, -2px); }
+  .hero__cta-main-icon svg { display: block; }
+  .hero__cta-main:hover .hero__cta-main-icon { transform: translate(2px, -2px) rotate(0); }
+  .hero__cta-main-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, oklch(100% 0 0 / 0) 0%, oklch(100% 0 0 / 0.18) 50%, oklch(100% 0 0 / 0) 100%);
+    transform: translateX(-110%);
+    pointer-events: none;
+    transition: transform 720ms var(--ease-out-expo);
+  }
+  .hero__cta-main:hover .hero__cta-main-shine { transform: translateX(110%); }
 
-  /* ===== Scroll hint =============================================== */
-  .hero__scroll-hint {
-    display: none;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
+  .hero__cta-alt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
     font-weight: var(--weight-semibold);
+    padding-block: 0.5rem;
+    border-bottom: 1.5px solid transparent;
+    transition: color var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
   }
-  .hero__scroll-hint:hover { color: var(--color-text-primary); }
-  .hero__scroll-hint-icon {
-    display: inline-grid;
+  .hero__cta-alt:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-brand-500);
+  }
+  .hero__cta-alt:hover span { transform: translateX(3px); }
+  .hero__cta-alt span {
+    transition: transform var(--dur-fast) var(--ease-standard);
+    display: inline-block;
+  }
+
+  /* ===== PHONE MOCKUP ============================================== */
+  .hero__phone {
+    position: relative;
+    display: grid;
     place-items: center;
-    width: 1.8rem;
-    height: 2.4rem;
-    border: 1px solid var(--color-border-strong);
-    border-radius: 1rem;
-    margin-inline-start: 0.6rem;
-    vertical-align: middle;
+    padding: var(--space-5) 0;
+    isolation: isolate;
   }
-  .hero__scroll-hint-icon svg { animation: hero-scroll-bounce 2s ease-in-out infinite; }
-  @keyframes hero-scroll-bounce {
-    0%, 100% { transform: translateY(-2px); opacity: 0.6; }
-    50%      { transform: translateY(3px); opacity: 1; }
+
+  .hero__phone-glow {
+    position: absolute;
+    inset: 5% 5%;
+    z-index: -1;
+    background: var(--gradient-mixed);
+    filter: blur(72px);
+    opacity: 0.35;
+    border-radius: 50%;
+  }
+
+  .hero__phone-device {
+    position: relative;
+    width: clamp(260px, 24vw, 320px);
+    aspect-ratio: 9 / 19.5;
+    background: linear-gradient(180deg, oklch(20% 0.012 240) 0%, oklch(14% 0.014 240) 100%);
+    border-radius: 2.6rem;
+    padding: 0.55rem;
+    box-shadow:
+      0 0 0 1.5px oklch(28% 0.018 240) inset,
+      0 0 0 8px oklch(8% 0.008 240),
+      0 30px 60px oklch(15% 0.018 240 / 0.45),
+      0 60px 120px oklch(42% 0.190 252 / 0.30);
+    animation: hero-phone-float 6s ease-in-out infinite;
+  }
+  @keyframes hero-phone-float {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50%      { transform: translateY(-10px) rotate(-0.4deg); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero__scroll-hint-icon svg { animation: none; }
+    .hero__phone-device { animation: none; }
   }
-  @media (min-width: 960px) {
-    .hero__scroll-hint {
-      display: inline-flex;
-      align-items: center;
-      position: absolute;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      animation: hero-scroll-fade-in 600ms 1800ms forwards ease-out;
-    }
+
+  /* Dynamic island */
+  .hero__phone-island {
+    position: absolute;
+    top: 0.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5.5rem;
+    height: 1.2rem;
+    background: oklch(6% 0.006 240);
+    border-radius: 0.7rem;
+    z-index: 3;
   }
-  @keyframes hero-scroll-fade-in {
-    to { opacity: 1; }
+
+  /* Status bar */
+  .hero__phone-status {
+    position: absolute;
+    top: 0.65rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: oklch(100% 0 0 / 0.9);
+    font-size: 0.65rem;
+    font-weight: var(--weight-bold);
+    z-index: 2;
+    letter-spacing: -0.02em;
+  }
+  .hero__phone-status-time {
+    width: 4rem;
+    text-align: left;
+  }
+  .hero__phone-status-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 4rem;
+    justify-content: flex-end;
+  }
+  .hero__phone-status-icons svg { width: 14px; height: auto; }
+
+  /* App screen */
+  .hero__phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(60% 50% at 0% 0%, oklch(75% 0.110 252 / 0.10) 0%, transparent 60%),
+      radial-gradient(50% 40% at 100% 100%, oklch(62% 0.150 155 / 0.08) 0%, transparent 60%),
+      var(--color-bg-elevated);
+    border-radius: 2.05rem;
+    padding: 2.5rem 0.9rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    overflow: hidden;
+  }
+
+  .hero__phone-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 0.2rem;
+  }
+  .hero__phone-header-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .hero__phone-header-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.4rem;
+    background: var(--gradient-brand);
+    color: var(--color-text-on-brand);
+    font-family: var(--font-display);
+    font-weight: var(--weight-extrabold);
+    font-size: 0.75rem;
+    letter-spacing: -0.06em;
+  }
+  .hero__phone-header-name {
+    font-family: var(--font-display);
+    font-weight: var(--weight-extrabold);
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+  .hero__phone-header-cart {
+    position: relative;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    background: var(--color-surface-subtle);
+    border-radius: 0.5rem;
+    color: var(--color-text-primary);
+  }
+  .hero__phone-header-cart-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 7px;
+    height: 7px;
+    background: var(--color-accent-500);
+    border-radius: 50%;
+    border: 1.5px solid var(--color-bg-elevated);
+  }
+
+  /* Search */
+  .hero__phone-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    background: var(--color-surface-subtle);
+    border-radius: 0.6rem;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-weight: var(--weight-medium);
+  }
+
+  /* Section title */
+  .hero__phone-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 0.2rem;
+    margin-block-start: 0.3rem;
+  }
+  .hero__phone-section-label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: 0.78rem;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+  }
+  .hero__phone-section-more {
+    font-size: 0.65rem;
+    color: var(--color-text-brand);
+    font-weight: var(--weight-semibold);
+  }
+
+  /* Categories grid */
+  .hero__phone-cats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    flex: 1;
+  }
+  .hero__phone-cat {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 0.7rem;
+    padding: 0.55rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: hero-phone-cat-in 500ms var(--ease-out-expo) forwards;
+    animation-delay: var(--cat-delay, 1400ms);
+  }
+  @keyframes hero-phone-cat-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__phone-cat { opacity: 1; transform: none; animation: none; }
+  }
+  .hero__phone-cat-thumb {
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 0.4rem;
+    background:
+      radial-gradient(circle at 30% 30%, oklch(95% 0.05 var(--cat-hue) / 0.8), transparent),
+      linear-gradient(135deg, oklch(94% 0.030 var(--cat-hue)), oklch(86% 0.070 var(--cat-hue)));
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .hero__phone-cat-mark {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: oklch(45% 0.16 var(--cat-hue));
+  }
+  .hero__phone-cat-name {
+    font-size: 0.7rem;
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  /* Floating CTA dentro de la app */
+  .hero__phone-cta {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.8rem 1rem;
+    background: var(--gradient-accent);
+    color: var(--color-text-on-accent);
+    border-radius: 0.8rem;
+    font-size: 0.78rem;
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.01em;
+    box-shadow: 0 6px 16px oklch(62% 0.150 155 / 0.4);
+    margin-block-start: 0.3rem;
+  }
+  .hero__phone-cta-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.8rem;
+    box-shadow: 0 0 0 0 oklch(62% 0.150 155 / 0.6);
+    animation: hero-phone-cta-pulse 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes hero-phone-cta-pulse {
+    0%   { box-shadow: 0 0 0 0 oklch(62% 0.150 155 / 0.45); }
+    70%  { box-shadow: 0 0 0 12px oklch(62% 0.150 155 / 0); }
+    100% { box-shadow: 0 0 0 0 oklch(62% 0.150 155 / 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__phone-cta-pulse { animation: none; }
+  }
+  .hero__phone-cta-icon {
+    display: inline-flex;
+    width: 1.2rem;
+    height: 1.2rem;
+    background: oklch(100% 0 0 / 0.25);
+    border-radius: 50%;
+    place-items: center;
+  }
+  .hero__phone-cta-icon svg { display: block; }
+
+  /* ===== Floating chips alrededor del phone ======================= */
+  .hero__phone-chip {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 0.95rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    box-shadow:
+      0 8px 20px oklch(15% 0.018 240 / 0.12),
+      0 2px 4px oklch(15% 0.018 240 / 0.06);
+    z-index: 2;
+    backdrop-filter: blur(8px);
+  }
+  .hero__phone-chip-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    box-shadow: 0 0 0 3px oklch(62% 0.150 155 / 0.25);
+    animation: hero-eyebrow-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes hero-eyebrow-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px oklch(62% 0.150 155 / 0.25); }
+    50%      { box-shadow: 0 0 0 6px oklch(62% 0.150 155 / 0.05); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__phone-chip-dot { animation: none; }
+  }
+
+  .hero__phone-chip--stock {
+    top: 14%;
+    left: -8%;
+    animation: hero-chip-float-a 7s ease-in-out infinite;
+  }
+  .hero__phone-chip--coverage {
+    bottom: 22%;
+    right: -10%;
+    color: var(--color-text-brand);
+    animation: hero-chip-float-b 8s ease-in-out infinite;
+  }
+  .hero__phone-chip--coverage svg { color: var(--color-text-brand); }
+  @keyframes hero-chip-float-a {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(-6px, -8px); }
+  }
+  @keyframes hero-chip-float-b {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(6px, -10px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__phone-chip--stock,
+    .hero__phone-chip--coverage { animation: none; }
+  }
+
+  @media (max-width: 640px) {
+    .hero__phone-chip--stock { top: 6%; left: 2%; }
+    .hero__phone-chip--coverage { bottom: 8%; right: 2%; }
   }
 </style>
