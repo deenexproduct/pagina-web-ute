@@ -1,45 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CornerQuem from '../sections/CornerQuem.astro';
-import Contacto from '../sections/Contacto.astro';
+import CornerHero from '../sections/corner/CornerHero.astro';
+import CornerFormatos from '../sections/corner/CornerFormatos.astro';
+import CornerIncluye from '../sections/corner/CornerIncluye.astro';
+import CornerDonde from '../sections/corner/CornerDonde.astro';
+import CornerValor from '../sections/corner/CornerValor.astro';
+import CornerCTA from '../sections/corner/CornerCTA.astro';
 ---
 
 <BaseLayout
-  title="Corner QUEM"
-  description="Corner QUEM es un modelo flexible para incorporar productos congelados QUEM en espacios comerciales existentes — comercios, cafeterías, mercados, clubes, estaciones y puntos gastronómicos."
+  title="Corner QÜEM — Retail congelado listo para operar"
+  description="Corner QÜEM transforma metros cuadrados subutilizados en una nueva unidad de facturación. Cafeterías, supermercados, gimnasios, hoteles, clubes, estaciones, oficinas. Producto, marca, logística y soporte — solución integral lista para operar."
 >
-  <header class="page-hero">
-    <div class="container-content">
-      <p class="eyebrow">Corner QUEM</p>
-      <h1>Un modelo flexible para llevar congelados a nuevos puntos de venta</h1>
-      <p class="page-hero__lede">
-        Corner QUEM permite incorporar una unidad comercial de alimentos congelados dentro de espacios
-        existentes — con una propuesta simple, escalable y pensada para generar una nueva fuente de ingresos.
-      </p>
-    </div>
-  </header>
-
-  <CornerQuem showHead={false} />
-  <Contacto showHead={true} defaultTipo="Corner QUEM" />
+  <CornerHero />
+  <CornerFormatos />
+  <CornerIncluye />
+  <CornerDonde />
+  <CornerValor />
+  <CornerCTA />
 </BaseLayout>
-
-<style>
-  .page-hero {
-    padding-block: clamp(3rem, 6vw, 6rem) clamp(2rem, 4vw, 4rem);
-    background: linear-gradient(180deg, var(--color-surface-subtle), var(--color-bg));
-  }
-  .page-hero h1 {
-    font-size: var(--font-size-4xl);
-    font-weight: var(--weight-bold);
-    letter-spacing: var(--tracking-tightest);
-    line-height: 1.06;
-    margin-block: var(--space-3) var(--space-4);
-    max-width: 24ch;
-  }
-  .page-hero__lede {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-md);
-    line-height: var(--leading-relaxed);
-    max-width: 60ch;
-  }
-</style>

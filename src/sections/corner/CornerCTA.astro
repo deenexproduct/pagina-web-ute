@@ -1,0 +1,147 @@
+---
+import { whatsappLink, link } from '../../config/site';
+const waLink = whatsappLink();
+---
+
+<section class="cn-cta section-y" id="cn-cta" aria-labelledby="cn-cta-title">
+  <div class="cn-cta__bg" aria-hidden="true"></div>
+
+  <div class="container-content cn-cta__inner">
+    <header class="cn-cta__head">
+      <p class="cn-cta__eyebrow">Próximo paso</p>
+      <h2 id="cn-cta-title" class="cn-cta__title">
+        ¿Tenés un espacio?<br />
+        <span class="cn-cta__title-em">Pensemos un Corner QÜEM juntos.</span>
+      </h2>
+      <p class="cn-cta__lede">
+        Te llevamos el modelo, el producto y la operación. Vos sumás una nueva línea de facturación
+        sin desarrollar nada desde cero. Pocas semanas entre la primera charla y el corner operativo.
+      </p>
+    </header>
+
+    <div class="cn-cta__actions">
+      <a class="btn btn-primary cn-cta__main" href={waLink}>
+        Quiero hablar con el equipo comercial
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="btn btn-outline cn-cta__alt cn-cta__alt--dark" href={link('/contacto?tipo=Corner QUEM')}>
+        Completar formulario
+      </a>
+    </div>
+
+    <ul class="cn-cta__bullets">
+      <li><span aria-hidden="true">→</span> Respuesta del equipo comercial en menos de 48hs hábiles.</li>
+      <li><span aria-hidden="true">→</span> Análisis de tu espacio y formato sugerido.</li>
+      <li><span aria-hidden="true">→</span> Propuesta de mix, layout y proyección comercial.</li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cn-cta {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(135deg, var(--color-brand-700) 0%, var(--color-brand-900) 100%);
+    color: var(--color-text-on-brand);
+  }
+  .cn-cta__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .cn-cta__bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+  }
+  .cn-cta__bg::after {
+    content: '';
+    position: absolute;
+    inset: -30% -10% auto auto;
+    width: 60%;
+    height: 100%;
+    background: radial-gradient(circle, oklch(62% 0.150 155 / 0.30) 0%, transparent 60%);
+    filter: blur(50px);
+  }
+
+  .cn-cta__inner { display: grid; gap: var(--space-6); }
+  .cn-cta__head { display: grid; gap: var(--space-3); max-width: 60ch; }
+  .cn-cta__eyebrow {
+    display: inline-block;
+    width: max-content;
+    padding: 0.35rem 0.85rem;
+    background: oklch(from var(--color-accent-500) l c h / 0.2);
+    color: var(--color-accent-300);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    border: 1px solid oklch(from var(--color-accent-500) l c h / 0.4);
+  }
+  .cn-cta__title {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--color-text-on-brand);
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .cn-cta__title-em {
+    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .cn-cta__lede {
+    color: oklch(100% 0 0 / 0.78);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    max-width: 56ch;
+  }
+
+  .cn-cta__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .cn-cta__main {
+    padding-inline: 1.6rem;
+    padding-block: 1.1rem;
+    font-size: var(--font-size-base);
+    box-shadow: 0 8px 24px oklch(62% 0.150 155 / 0.40);
+  }
+  .cn-cta__main:hover { box-shadow: 0 12px 32px oklch(62% 0.150 155 / 0.50); }
+  .cn-cta__alt--dark {
+    background: oklch(100% 0 0 / 0.06);
+    color: var(--color-text-on-brand);
+    border-color: oklch(100% 0 0 / 0.22);
+    padding-inline: 1.4rem;
+    padding-block: 1.1rem;
+  }
+  .cn-cta__alt--dark:hover {
+    background: oklch(100% 0 0 / 0.12);
+    border-color: oklch(100% 0 0 / 0.35);
+  }
+
+  .cn-cta__bullets {
+    display: grid;
+    gap: var(--space-2);
+    padding-block-start: var(--space-4);
+    border-top: 1px solid oklch(100% 0 0 / 0.10);
+    margin-block-start: var(--space-4);
+  }
+  .cn-cta__bullets li {
+    color: oklch(100% 0 0 / 0.78);
+    font-size: var(--font-size-sm);
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .cn-cta__bullets li span {
+    color: var(--color-accent-300);
+    font-weight: var(--weight-bold);
+  }
+</style>

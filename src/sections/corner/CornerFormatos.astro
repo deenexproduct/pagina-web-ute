@@ -1,0 +1,170 @@
+---
+const formats = [
+  {
+    name: 'Freezer vertical',
+    desc: 'Vitrina vertical para puntos con poco espacio horizontal. Ideal en cafeterías, kioscos premium y oficinas.',
+    icon: 'vertical',
+    badge: 'compacto',
+  },
+  {
+    name: 'Freezer exhibidor',
+    desc: 'Exhibidor horizontal con tope visible. Funciona en supermercados de cercanía, autoservicios y estaciones.',
+    icon: 'horizontal',
+    badge: 'volumen',
+  },
+  {
+    name: 'Isla',
+    desc: 'Isla central para zonas de mayor tráfico — clubes, hoteles, gimnasios. Permite reposición simple por ambos lados.',
+    icon: 'island',
+    badge: 'alto tráfico',
+  },
+  {
+    name: 'Mini store',
+    desc: 'Unidad modular con identidad de marca completa. Ideal para coworkings, universidades y hospitales.',
+    icon: 'ministore',
+    badge: 'identidad',
+  },
+  {
+    name: 'Grab & go',
+    desc: 'Módulo de impulso para retiro rápido — eventos, buffets, espacios con consumo on-the-go.',
+    icon: 'grab',
+    badge: 'impulso',
+  },
+];
+---
+
+<section class="cn-formats section-y" id="cn-formatos" aria-labelledby="cn-formats-title">
+  <div class="container-content">
+    <header class="cn-formats__head">
+      <p class="eyebrow">01 · Formatos</p>
+      <h2 id="cn-formats-title" class="cn-formats__title">
+        Cinco formatos para <em>cinco tipos de espacio</em>
+      </h2>
+      <p class="cn-formats__lede">
+        Cada Corner QÜEM se adapta al espacio y al flujo del comercio. Misma propuesta de marca,
+        formato distinto según el lugar y la operación.
+      </p>
+    </header>
+
+    <ul class="cn-formats__grid" role="list">
+      {formats.map((f) => (
+        <li class="cn-format-card">
+          <div class="cn-format-card__icon" aria-hidden="true">
+            {f.icon === 'vertical' && (
+              <svg viewBox="0 0 48 60" fill="none"><rect x="9" y="4" width="30" height="52" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M9 20h30M9 36h30" stroke="currentColor" stroke-width="1.4"/><circle cx="33" cy="10" r="1.1" fill="currentColor"/><path d="M13 11h7M13 27h12M13 43h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
+            )}
+            {f.icon === 'horizontal' && (
+              <svg viewBox="0 0 64 48" fill="none"><rect x="4" y="12" width="56" height="32" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M16 12V4h32v8M4 28h56" stroke="currentColor" stroke-width="1.4"/><path d="M10 22h6M22 22h8M36 22h6M48 22h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
+            )}
+            {f.icon === 'island' && (
+              <svg viewBox="0 0 64 48" fill="none"><rect x="6" y="14" width="52" height="28" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M6 28h52M22 14V6h20v8" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="38" r="1.2" fill="currentColor"/><circle cx="50" cy="38" r="1.2" fill="currentColor"/><path d="M11 22h12M28 22h8M41 22h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
+            )}
+            {f.icon === 'ministore' && (
+              <svg viewBox="0 0 64 48" fill="none"><path d="M8 16h48l-3-8H11l-3 8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 16v28h44V16" stroke="currentColor" stroke-width="1.6"/><path d="M18 44V30h10v14M36 30h12v8H36z" stroke="currentColor" stroke-width="1.4"/><circle cx="48" cy="42" r="0.8" fill="currentColor"/></svg>
+            )}
+            {f.icon === 'grab' && (
+              <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="34" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M6 20h36" stroke="currentColor" stroke-width="1.4"/><path d="M15 28h10M15 33h18M15 38h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="35" cy="14" r="1.2" fill="currentColor"/></svg>
+            )}
+          </div>
+          <div class="cn-format-card__body">
+            <div class="cn-format-card__head">
+              <h3>{f.name}</h3>
+              <span class="cn-format-card__badge">{f.badge}</span>
+            </div>
+            <p>{f.desc}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cn-formats__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
+  .cn-formats__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.05;
+  }
+  .cn-formats__title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .cn-formats__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+
+  .cn-formats__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+  .cn-format-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .cn-format-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-400));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+  .cn-format-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-md);
+  }
+  .cn-format-card__icon {
+    width: 4rem;
+    height: 4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-bg));
+    border: 1px solid var(--color-brand-100);
+    color: var(--color-brand-600);
+    flex-shrink: 0;
+  }
+  .cn-format-card__icon svg { width: 2.4rem; height: 2.4rem; }
+  .cn-format-card__body { display: grid; gap: var(--space-2); align-content: start; }
+  .cn-format-card__head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .cn-format-card__head h3 {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
+    color: var(--color-text-primary);
+  }
+  .cn-format-card__badge {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    color: var(--color-accent-700);
+    background: var(--color-accent-50);
+    border: 1px solid oklch(from var(--color-accent-500) l c h / 0.18);
+    padding: 0.18rem 0.5rem;
+    border-radius: var(--radius-pill);
+  }
+  .cn-format-card__body p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-relaxed);
+  }
+</style>
