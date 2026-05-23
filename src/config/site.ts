@@ -183,16 +183,22 @@ export const link = (path: string): string => {
   return `${base}${p}` || '/';
 };
 
-/** Menú principal del header. Orden del brief. */
-export const NAV_PRIMARY: ReadonlyArray<NavItem> = [
-  { label: 'Inicio',              href: '/' },
-  { label: 'QUEM Central',        href: '/#quem-central' },
-  { label: 'Ecosistema',          href: '/ecosistema' },
-  { label: 'Unidades de negocio', href: '/unidades-de-negocio' },
-  { label: 'Corner QUEM',         href: '/corner-quem' },
-  { label: 'Productos',           href: '/productos' },
-  { label: 'Franquicias',         href: '/franquicias' },
-  { label: 'Contacto',            href: '/contacto' },
+/**
+ * Menú principal del header. Modo LANDING PAGE: todo es anchor a una
+ * sección de la home. El sectionId debe coincidir con el `id` del
+ * `<section>` correspondiente para que el scroll-spy del header lo
+ * detecte e ilumine.
+ */
+export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
+  { label: 'Inicio',              href: '/',                       sectionId: 'top' },
+  { label: 'QUEM Central',        href: '/#quem-central',          sectionId: 'quem-central' },
+  { label: 'Ecosistema',          href: '/#ecosistema',            sectionId: 'ecosistema' },
+  { label: 'Unidades de negocio', href: '/#unidades-de-negocio',   sectionId: 'unidades-de-negocio' },
+  { label: 'Corner QÜEM',         href: '/#corner-quem',           sectionId: 'corner-quem' },
+  { label: 'Productos',           href: '/#productos',             sectionId: 'productos' },
+  { label: 'Franquicias',         href: '/#franquicias',           sectionId: 'franquicias' },
+  { label: 'Prensa',              href: '/#prensa',                sectionId: 'prensa' },
+  { label: 'Contacto',            href: '/#contacto',              sectionId: 'contacto' },
 ] as const;
 
 /* -------------------------------------------------------------------------- */

@@ -1,15 +1,5 @@
 ---
 import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
-
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, '') || '';
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isActive = (href: string): boolean => {
-  // href es relativo al sitio (sin base). Lo normalizamos contra basePath.
-  const target = href === '/' ? basePath || '/' : `${basePath}${href}`;
-  if (href === '/') return pathname === '/' || pathname === basePath;
-  if (href.startsWith('/#')) return pathname === '/' || pathname === basePath;
-  return pathname === target || pathname.startsWith(target + '/');
-};
 ---
 
 <header class="site-header" data-header>
@@ -25,8 +15,9 @@ const isActive = (href: string): boolean => {
           <li>
             <a
               href={link(item.href)}
-              class:list={['nav-link', isActive(item.href) && 'nav-link--active']}
-              aria-current={isActive(item.href) ? 'page' : undefined}
+              class="nav-link"
+              data-section={item.sectionId}
+              data-nav-link
             >
               {item.label}
             </a>
@@ -56,7 +47,12 @@ const isActive = (href: string): boolean => {
       <ul>
         {NAV_PRIMARY.map((item) => (
           <li>
-            <a href={link(item.href)} class="mobile-nav__link" data-menu-link>
+            <a
+              href={link(item.href)}
+              class="mobile-nav__link"
+              data-menu-link
+              data-section={item.sectionId}
+            >
               {item.label}
             </a>
           </li>
@@ -72,11 +68,17 @@ const isActive = (href: string): boolean => {
 </header>
 
 <script>
+  /* ─────────────────────────────────────────────────────────────────────
+   * Header behavior — sticky scroll-class + mobile menu + scroll-spy
+   * activo del nav según la sección visible en viewport.
+   * ───────────────────────────────────────────────────────────────────── */
   const header = document.querySelector('[data-header]');
   const toggle = document.querySelector('[data-menu-toggle]') as HTMLButtonElement | null;
   const menu = document.querySelector('[data-mobile-nav]') as HTMLElement | null;
-  const links = document.querySelectorAll<HTMLAnchorElement>('[data-menu-link]');
+  const menuLinks = document.querySelectorAll<HTMLAnchorElement>('[data-menu-link]');
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link], [data-menu-link]');
 
+  /* mobile toggle */
   if (toggle && menu) {
     toggle.addEventListener('click', () => {
       const open = toggle.getAttribute('aria-expanded') === 'true';
@@ -84,7 +86,7 @@ const isActive = (href: string): boolean => {
       menu.hidden = open;
       document.body.classList.toggle('has-mobile-nav-open', !open);
     });
-    links.forEach((l) =>
+    menuLinks.forEach((l) =>
       l.addEventListener('click', () => {
         toggle.setAttribute('aria-expanded', 'false');
         menu.hidden = true;
@@ -93,12 +95,69 @@ const isActive = (href: string): boolean => {
     );
   }
 
+  /* sticky scroll class */
   if (header) {
     const setScrolled = (): void => {
       header.classList.toggle('site-header--scrolled', window.scrollY > 8);
     };
     setScrolled();
     window.addEventListener('scroll', setScrolled, { passive: true });
+  }
+
+  /* scroll-spy: ilumina el nav según la sección visible */
+  const sectionIds = Array.from(navLinks)
+    .map((l) => l.dataset.section)
+    .filter((s): s is string => Boolean(s) && s !== 'top');
+
+  const sections = sectionIds
+    .map((id) => document.getElementById(id))
+    .filter((s): s is HTMLElement => Boolean(s));
+
+  if (sections.length > 0 && 'IntersectionObserver' in window) {
+    const setActive = (sectionId: string): void => {
+      navLinks.forEach((l) => {
+        const match = l.dataset.section === sectionId;
+        l.classList.toggle('nav-link--active', match);
+        l.classList.toggle('mobile-nav__link--active', match);
+        if (match) {
+          l.setAttribute('aria-current', 'true');
+        } else {
+          l.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    /* Observamos cada sección. Cuando una entra al "carril" central del
+     * viewport (rootMargin -25% top, -55% bottom = ~20% del viewport), la
+     * marcamos como activa. Esto evita saltos al cambiar de sección. */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        /* Quedamos con la entrada más cercana al top del carril visible. */
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible && visible.target.id) {
+          setActive(visible.target.id);
+        }
+      },
+      { rootMargin: '-25% 0px -55% 0px', threshold: 0 },
+    );
+
+    sections.forEach((s) => observer.observe(s));
+
+    /* Si estamos al tope, ningún item activo (limpio). */
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (window.scrollY < 120) {
+          navLinks.forEach((l) => {
+            l.classList.remove('nav-link--active', 'mobile-nav__link--active');
+            l.removeAttribute('aria-current');
+          });
+        }
+      },
+      { passive: true },
+    );
   }
 </script>
 
@@ -266,6 +325,12 @@ const isActive = (href: string): boolean => {
     border-radius: var(--radius-md);
   }
   .mobile-nav__link:hover { background-color: var(--color-surface-subtle); }
+  .mobile-nav__link--active {
+    background-color: var(--color-surface-subtle);
+    color: var(--color-text-brand);
+    box-shadow: inset 3px 0 0 var(--color-brand-500);
+    font-weight: var(--weight-semibold);
+  }
   .mobile-nav__cta {
     margin-block-start: var(--space-3);
     width: 100%;

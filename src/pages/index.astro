@@ -1,28 +1,118 @@
 ---
+/**
+ * Landing page única de QUEM Central.
+ *
+ * Modo single-page: el header nav (definido en `src/config/site.ts`)
+ * usa anchors a los `id` de cada `<section>`. El scroll-spy en
+ * `components/layout/Header.astro` ilumina el item visible.
+ *
+ * Orden: respeta el brief original (12 puntos) + Corner QÜEM expandido
+ * (las 6 sub-secciones del brief comercial) + sección Prensa al final.
+ *
+ * IDs canónicos (NO renombrar sin actualizar NAV_PRIMARY):
+ *   #quem-central · #ecosistema · #unidades-de-negocio · #corner-quem
+ *   #productos · #franquicias · #prensa · #contacto
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+/* Secciones principales (orden brief) */
 import HeroCorporativo from '../sections/HeroCorporativo.astro';
 import QueEsQuemCentral from '../sections/QueEsQuemCentral.astro';
 import Ecosistema from '../sections/Ecosistema.astro';
 import UnidadesDeNegocio from '../sections/UnidadesDeNegocio.astro';
-import CornerQuem from '../sections/CornerQuem.astro';
+
+/* Corner QÜEM — sección destacada expandida (los 5 bloques del brief comercial) */
+import CornerHero from '../sections/corner/CornerHero.astro';
+import CornerFormatos from '../sections/corner/CornerFormatos.astro';
+import CornerIncluye from '../sections/corner/CornerIncluye.astro';
+import CornerDonde from '../sections/corner/CornerDonde.astro';
+import CornerValor from '../sections/corner/CornerValor.astro';
+
 import CategoriasProducto from '../sections/CategoriasProducto.astro';
 import PlataformaApp from '../sections/PlataformaApp.astro';
 import FranquiciasExpansion from '../sections/FranquiciasExpansion.astro';
 import QuemEnNumeros from '../sections/QuemEnNumeros.astro';
 import EquipoDirectivo from '../sections/EquipoDirectivo.astro';
+
+/* Prensa (sección al final, antes del contacto) */
+import PrensaList from '../sections/prensa/PrensaList.astro';
+
+/* Contacto */
 import Contacto from '../sections/Contacto.astro';
 ---
 
 <BaseLayout>
+  <span id="top" class="sr-only" aria-hidden="true"></span>
+
   <HeroCorporativo />
   <QueEsQuemCentral />
   <Ecosistema />
   <UnidadesDeNegocio />
-  <CornerQuem />
+
+  <!--
+    Corner QÜEM: el primer bloque (`CornerHero`) tiene un `<section>` con
+    su propio id. Envolvemos en un wrapper marcado #corner-quem para que el
+    ancla del nav lleve al inicio de toda la zona Corner.
+  -->
+  <div id="corner-quem" class="corner-block-wrap">
+    <CornerHero />
+    <CornerFormatos />
+    <CornerIncluye />
+    <CornerDonde />
+    <CornerValor />
+  </div>
+
   <CategoriasProducto />
   <PlataformaApp />
   <FranquiciasExpansion />
   <QuemEnNumeros />
   <EquipoDirectivo />
+
+  <section id="prensa" class="prensa-anchor-section section-y" aria-labelledby="prensa-anchor-title">
+    <div class="container-content prensa-anchor-section__head">
+      <p class="eyebrow">11 · Prensa</p>
+      <h2 id="prensa-anchor-title" class="prensa-anchor-section__title">
+        QÜEM en <em>los medios</em>
+      </h2>
+      <p class="prensa-anchor-section__lede">
+        Cobertura de los principales medios económicos y de negocios sobre QUEM Central — historia
+        del equipo, modelos comerciales y escala de operación.
+      </p>
+    </div>
+    <PrensaList />
+  </section>
+
   <Contacto />
 </BaseLayout>
+
+<style>
+  /* Display: contents preserva el flow de los hijos sin agregar wrapper visual. */
+  .corner-block-wrap { display: contents; }
+
+  /* Header de la sección Prensa embedded en home. */
+  .prensa-anchor-section { padding-block-end: 0; }
+  .prensa-anchor-section__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 60ch;
+    margin-block-end: var(--space-6);
+  }
+  .prensa-anchor-section__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.05;
+  }
+  .prensa-anchor-section__title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .prensa-anchor-section__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+</style>
