@@ -1,0 +1,78 @@
+---
+/**
+ * Prueba social — quote display + dos referencias breves.
+ * Tipografía editorial gigante para el quote principal.
+ */
+---
+
+<section class="prueba section-y" aria-labelledby="prueba-title">
+  <div class="container-content prueba__inner">
+    <p class="eyebrow">03 · Voces</p>
+    <h2 id="prueba-title" class="sr-only">Lo que dicen sobre UTE</h2>
+
+    <blockquote class="prueba__quote">
+      <p>
+        <span aria-hidden="true">“</span>Una propuesta que entiende la cocina como lenguaje:
+        precisa en la técnica, generosa en la intención.<span aria-hidden="true">”</span>
+      </p>
+      <footer>
+        <cite>— Cita en preparación · medio TBD</cite>
+      </footer>
+    </blockquote>
+
+    <div class="prueba__refs">
+      <article>
+        <p>“Los detalles del servicio se sienten cuidados al milímetro.”</p>
+        <footer><cite>Comensal 01</cite></footer>
+      </article>
+      <article>
+        <p>“Un proyecto que se toma el tiempo de hacer las cosas en serio.”</p>
+        <footer><cite>Comensal 02</cite></footer>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .prueba__inner {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .prueba__quote p {
+    font-family: var(--font-display);
+    font-size: var(--font-size-3xl);
+    line-height: 1.18;
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-light);
+    max-width: 22ch;
+  }
+  .prueba__quote footer {
+    margin-block-start: var(--space-5);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-style: italic;
+  }
+  .prueba__refs {
+    display: grid;
+    gap: var(--space-6);
+    padding-block-start: var(--space-6);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  @media (min-width: 768px) {
+    .prueba__refs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-7);
+    }
+  }
+  .prueba__refs article p {
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    max-width: 38ch;
+  }
+  .prueba__refs footer {
+    margin-block-start: var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-style: italic;
+  }
+</style>

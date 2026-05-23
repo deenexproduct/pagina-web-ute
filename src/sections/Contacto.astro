@@ -1,0 +1,93 @@
+---
+/**
+ * Contacto / reservas — CTA grande tipo final-statement.
+ * Bloque alto contraste para cerrar la página.
+ */
+---
+
+<section class="contacto section-y" id="reservas" aria-labelledby="contacto-title">
+  <div class="container-content contacto__inner">
+    <p class="eyebrow contacto__eyebrow">04 · Reservas</p>
+
+    <h2 id="contacto-title" class="contacto__title">
+      Querés ser de los primeros en sentarse,<br />
+      <em>escribinos.</em>
+    </h2>
+
+    <p class="contacto__lede">
+      Estamos terminando los detalles de apertura. Dejanos un mensaje para reservar mesa
+      cuando abramos las primeras fechas — sin filas, sin formularios largos.
+    </p>
+
+    <div class="contacto__actions">
+      <a href="mailto:hola@ute.example.com" class="cta cta--primary cta--invert">
+        hola@ute.example.com
+      </a>
+      <a href="https://wa.me/" class="cta cta--ghost cta--invert">WhatsApp</a>
+    </div>
+
+    <footer class="contacto__foot">
+      <span>UTE · proyecto Deenex · 2026</span>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .contacto {
+    background-color: var(--color-bg-inverted);
+    color: var(--color-text-inverted);
+  }
+  .contacto__inner {
+    display: grid;
+    gap: var(--space-6);
+    padding-block: var(--space-7);
+  }
+  .contacto__eyebrow { color: oklch(90% 0.01 80 / 0.6); }
+
+  .contacto__title {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-light);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-tighter);
+    max-width: 22ch;
+  }
+  .contacto__title em {
+    font-style: italic;
+    color: var(--color-brand-300);
+  }
+  .contacto__lede {
+    max-width: 44ch;
+    color: oklch(90% 0.01 80 / 0.7);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+  }
+  .contacto__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-start: var(--space-4);
+  }
+  .cta--invert.cta--primary {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+  }
+  .cta--invert.cta--primary:hover {
+    background-color: var(--color-brand-300);
+  }
+  .cta--invert.cta--ghost {
+    border-color: oklch(90% 0.01 80 / 0.3);
+    color: var(--color-text-inverted);
+  }
+  .cta--invert.cta--ghost:hover {
+    background-color: oklch(90% 0.01 80 / 0.08);
+  }
+  .contacto__foot {
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-5);
+    border-top: 1px solid oklch(90% 0.01 80 / 0.15);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: oklch(90% 0.01 80 / 0.5);
+  }
+</style>

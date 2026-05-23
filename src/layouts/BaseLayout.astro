@@ -1,0 +1,87 @@
+---
+import '../styles/global.css';
+import SmoothScroll from '../components/SmoothScroll';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description = 'UTE — experiencia gastronómica.',
+  image = '/og-default.jpg',
+  noindex = false,
+  canonicalPath,
+} = Astro.props;
+
+const siteName = 'UTE';
+const fullTitle = title.includes(siteName) ? title : `${title} · ${siteName}`;
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const ogImage = new URL(image, Astro.site ?? Astro.url).toString();
+---
+
+<!doctype html>
+<html lang="es-AR" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    <meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d0d0c" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Favicons (placeholders — reemplazar cuando haya brand kit) -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Preconnect / DNS -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- JSON-LD Restaurant (placeholder; completar con datos reales de UTE) -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Restaurant',
+      name: 'UTE',
+      url: canonical,
+      image: ogImage,
+      description,
+      servesCuisine: 'Contemporánea',
+      priceRange: '$$$',
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'AR',
+      },
+    })} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+    <SmoothScroll client:idle />
+    <main id="main">
+      <slot />
+    </main>
+  </body>
+</html>

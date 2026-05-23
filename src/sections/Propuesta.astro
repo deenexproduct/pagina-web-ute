@@ -1,0 +1,93 @@
+---
+/**
+ * Propuesta — manifiesto / valores. Grilla editorial 12 cols con
+ * párrafos de ancho controlado y un quote display.
+ */
+---
+
+<section class="propuesta section-y" aria-labelledby="propuesta-title">
+  <div class="container-content propuesta__inner">
+    <p class="eyebrow">01 · Propuesta</p>
+
+    <h2 id="propuesta-title" class="propuesta__title">
+      Cocina de autor con<br />
+      <em>producto, paciencia</em> y lugar.
+    </h2>
+
+    <div class="propuesta__columns">
+      <p class="propuesta__lede">
+        Trabajamos con productores locales, fermentaciones propias y un menú que cambia
+        con la temporada. Cada plato es un capítulo: empieza por el producto y termina en
+        la conversación que se arma alrededor.
+      </p>
+
+      <div class="propuesta__pillars">
+        <article>
+          <h3>Producto</h3>
+          <p>Relación directa con productores. Lo que está en la huerta esta semana, está en la carta.</p>
+        </article>
+        <article>
+          <h3>Fuego</h3>
+          <p>La cocina pivota en brasa, horno y fermentación. Tres técnicas, una sola voz.</p>
+        </article>
+        <article>
+          <h3>Mesa</h3>
+          <p>Espacio cuidado al detalle. Vajilla, luz y música pensadas como parte del menú.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .propuesta__inner {
+    display: grid;
+    gap: var(--space-7);
+  }
+  .propuesta__title {
+    font-size: var(--font-size-4xl);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-tighter);
+    font-weight: var(--weight-light);
+    max-width: 18ch;
+  }
+  .propuesta__title em {
+    font-style: italic;
+    color: var(--color-text-brand);
+  }
+  .propuesta__columns {
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 768px) {
+    .propuesta__columns {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: start;
+    }
+  }
+  .propuesta__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-relaxed);
+    max-width: 36ch;
+  }
+  .propuesta__pillars {
+    display: grid;
+    gap: var(--space-6);
+  }
+  @media (min-width: 640px) {
+    .propuesta__pillars {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .propuesta__pillars h3 {
+    font-size: var(--font-size-lg);
+    margin-block-end: var(--space-2);
+    font-weight: var(--weight-medium);
+  }
+  .propuesta__pillars p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-relaxed);
+  }
+</style>
