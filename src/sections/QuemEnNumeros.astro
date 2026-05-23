@@ -4,7 +4,8 @@ import { SHOW_METRICS, METRICS } from '../config/site';
 /**
  * "QUEM en números"
  * - SHOW_METRICS=false (default): versión institucional suave SIN datos duros.
- * - SHOW_METRICS=true: requiere completar METRICS con datos REALES del cliente.
+ *   Diseño visual presente, sin métricas inventadas.
+ * - SHOW_METRICS=true: requiere completar METRICS con datos REALES.
  *
  * Regla del brief: NO inventar números.
  */
@@ -22,20 +23,41 @@ const items: ReadonlyArray<{ value: string; label: string }> = SHOW_METRICS
   : [];
 
 const showSoft = !SHOW_METRICS || items.length === 0;
+
+/** Capacidades cualitativas — se muestran cuando aún no hay métricas duras. */
+const capabilities = [
+  { label: 'Operación', value: 'B2B', meta: 'red comercial activa', tone: 'brand' },
+  { label: 'Cobertura', value: 'AMBA + PBA', meta: 'última milla congelados', tone: 'neutral' },
+  { label: 'Expansión', value: 'Franquicias · Corners', meta: 'modelos replicables', tone: 'accent' },
+  { label: 'Tecnología', value: 'Catálogo digital', meta: 'compra online B2B', tone: 'brand' },
+] as const;
 ---
 
 <section class="num section-y" aria-labelledby="num-title">
-  <div class="container-content">
-    <p class="eyebrow">08 · QUEM Central en crecimiento</p>
-    <h2 id="num-title" class="num__title">
-      Una compañía en expansión que integra operación, red comercial y tecnología
-    </h2>
+  <div class="container-content num__inner">
+    <header class="num__head">
+      <p class="eyebrow">08 · QUEM Central en crecimiento</p>
+      <h2 id="num-title" class="num__title">
+        Una compañía en expansión que integra <em>operación, red comercial y tecnología</em>
+      </h2>
+      {showSoft && (
+        <p class="num__lede">
+          Operación B2B, red comercial, franquicias, corners, logística especializada y tecnología
+          aplicada al abastecimiento de alimentos congelados.
+        </p>
+      )}
+    </header>
 
     {showSoft ? (
-      <p class="num__lede">
-        Una compañía en expansión, con operación B2B, red comercial, franquicias, corners, logística
-        especializada y tecnología aplicada al abastecimiento de alimentos congelados.
-      </p>
+      <ul class="num__capabilities" role="list">
+        {capabilities.map((c) => (
+          <li class:list={['capability', `capability--${c.tone}`]}>
+            <span class="capability__label">{c.label}</span>
+            <span class="capability__value">{c.value}</span>
+            <span class="capability__meta">{c.meta}</span>
+          </li>
+        ))}
+      </ul>
     ) : (
       <ul class="num__grid" role="list">
         {items.map((it) => (
@@ -51,50 +73,138 @@ const showSoft = !SHOW_METRICS || items.length === 0;
 
 <style>
   .num {
-    background:
-      linear-gradient(135deg,
-        oklch(from var(--color-brand-50) l c h / 0.6) 0%,
-        var(--color-bg) 100%);
+    position: relative;
+    background: linear-gradient(135deg, var(--color-brand-700) 0%, var(--color-brand-900) 100%);
+    color: var(--color-text-on-brand);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .num::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
+  }
+  .num::after {
+    content: '';
+    position: absolute;
+    inset: -40% -10% auto auto;
+    width: 60%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle, oklch(62% 0.150 155 / 0.20) 0%, transparent 60%);
+    filter: blur(60px);
+  }
+
+  .num__inner { display: grid; gap: var(--space-6); }
+  .num__head { display: grid; gap: var(--space-3); max-width: 60ch; }
+  .num__head .eyebrow {
+    color: oklch(100% 0 0 / 0.62);
+    border: none;
+    padding: 0;
+    background: none;
   }
   .num__title {
-    font-size: var(--font-size-2xl);
-    font-weight: var(--weight-semibold);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-tighter);
     line-height: 1.1;
-    margin-block: var(--space-3) var(--space-4);
-    max-width: 36ch;
+    color: var(--color-text-on-brand);
+    max-width: 24ch;
+  }
+  .num__title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .num__lede {
-    color: var(--color-text-secondary);
+    color: oklch(100% 0 0 / 0.78);
     font-size: var(--font-size-md);
     line-height: var(--leading-relaxed);
     max-width: 60ch;
   }
 
+  /* Capabilities (soft state, no métricas inventadas) */
+  .num__capabilities {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    margin-block-start: var(--space-4);
+  }
+  .capability {
+    padding: var(--space-5);
+    background: oklch(100% 0 0 / 0.05);
+    border: 1px solid oklch(100% 0 0 / 0.12);
+    border-radius: var(--radius-xl);
+    display: grid;
+    gap: 0.35rem;
+    backdrop-filter: blur(8px);
+    transition: background var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard);
+  }
+  .capability:hover {
+    background: oklch(100% 0 0 / 0.09);
+    border-color: oklch(100% 0 0 / 0.22);
+  }
+  .capability__label {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: oklch(100% 0 0 / 0.62);
+    font-weight: var(--weight-semibold);
+  }
+  .capability__value {
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    color: var(--color-text-on-brand);
+    line-height: 1.1;
+  }
+  .capability__meta {
+    font-size: var(--font-size-xs);
+    color: oklch(100% 0 0 / 0.62);
+  }
+  .capability--accent .capability__value {
+    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Métricas duras (cuando SHOW_METRICS=true) */
   .num__grid {
     display: grid;
     gap: var(--space-4);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-    margin-block-start: var(--space-5);
+    margin-block-start: var(--space-4);
   }
   .num-item {
     padding: var(--space-5);
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-subtle);
+    background: oklch(100% 0 0 / 0.05);
+    border: 1px solid oklch(100% 0 0 / 0.15);
     border-radius: var(--radius-xl);
     text-align: center;
+    backdrop-filter: blur(8px);
   }
   .num-item__value {
     display: block;
     font-family: var(--font-display);
-    font-size: var(--font-size-3xl);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-brand);
-    letter-spacing: var(--tracking-tightest);
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-accent-300);
+    letter-spacing: -0.03em;
+    line-height: 1;
     margin-block-end: var(--space-2);
   }
   .num-item__label {
-    color: var(--color-text-secondary);
+    color: oklch(100% 0 0 / 0.78);
     font-size: var(--font-size-sm);
   }
 </style>

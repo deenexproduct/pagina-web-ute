@@ -25,21 +25,26 @@
   --color-neutral-900: oklch(15%  0.018 240);        /* primary text — #111623 */
   --color-neutral-950: oklch(9%   0.016 240);        /* inverted bg */
 
-  /* ---------- COLOR — Brand (azul corporativo) -----------------------------
-   * Comunica tecnología, confianza, escala. Acento principal sobre crema.
-   * 500 ≈ #2854C5. Se usa en CTA principal, links, iconos, acentos.
+  /* ---------- COLOR — Brand (azul corporativo profundo) -------------------
+   * Comunica seriedad institucional, escala y operación. NO es el azul de
+   * "SaaS landing" — más oscuro, más presencia, más cerca a marina/cobalto.
+   * 500 ≈ #1E3E9C. Aparece en CTA secundario, links, iconos, eyebrow.
    * Si el brand kit oficial pide otro hue, ajustar acá y propaga.
    * ----------------------------------------------------------------------- */
-  --color-brand-50:  oklch(97% 0.014 245);
-  --color-brand-100: oklch(93% 0.034 248);
-  --color-brand-200: oklch(85% 0.066 250);
-  --color-brand-300: oklch(75% 0.110 252);
-  --color-brand-400: oklch(62% 0.150 252);
-  --color-brand-500: oklch(50% 0.180 250);   /* primario — azul corporate */
-  --color-brand-600: oklch(43% 0.170 250);   /* hover */
-  --color-brand-700: oklch(36% 0.150 250);   /* pressed */
-  --color-brand-800: oklch(28% 0.110 250);
-  --color-brand-900: oklch(20% 0.078 250);
+  --color-brand-50:  oklch(97% 0.012 248);
+  --color-brand-100: oklch(93% 0.030 250);
+  --color-brand-200: oklch(85% 0.060 252);
+  --color-brand-300: oklch(73% 0.105 254);
+  --color-brand-400: oklch(58% 0.155 254);
+  --color-brand-500: oklch(42% 0.190 252);   /* primario — azul profundo institucional */
+  --color-brand-600: oklch(35% 0.170 252);   /* hover */
+  --color-brand-700: oklch(28% 0.140 252);   /* pressed / dark surfaces */
+  --color-brand-800: oklch(22% 0.105 252);
+  --color-brand-900: oklch(15% 0.072 250);   /* footer-grade dark */
+
+  /* ---------- COLOR — Brand DEEP (overlay decorativo, hero gradient) ------ */
+  --color-brand-deep: oklch(22% 0.110 252);
+  --color-brand-tint: oklch(96% 0.018 252);  /* tint para backgrounds calmados */
 
   /* ---------- COLOR — Acento (verde alimentos / crecimiento) ---------------
    * Acento secundario. Comunica producto fresco, crecimiento, "Comprar online".
@@ -107,9 +112,10 @@
   --font-size-lg:   clamp(1.25rem,  1.13rem + 0.6vw,  1.5rem);     /* 20 → 24 */
   --font-size-xl:   clamp(1.5rem,   1.31rem + 0.94vw, 1.875rem);   /* 24 → 30 */
   --font-size-2xl:  clamp(1.875rem, 1.55rem + 1.6vw,  2.5rem);     /* 30 → 40 */
-  --font-size-3xl:  clamp(2.25rem,  1.72rem + 2.66vw, 3.25rem);    /* 36 → 52 */
-  --font-size-4xl:  clamp(2.75rem,  2.06rem + 3.45vw, 4rem);       /* 44 → 64 */
-  --font-size-5xl:  clamp(3.25rem,  2.34rem + 4.55vw, 5rem);       /* 52 → 80 */
+  --font-size-3xl:  clamp(2.25rem,  1.72rem + 2.66vw, 3.5rem);     /* 36 → 56 */
+  --font-size-4xl:  clamp(2.75rem,  2.0rem  + 3.75vw, 4.5rem);     /* 44 → 72 */
+  --font-size-5xl:  clamp(3.5rem,   2.4rem  + 5.5vw,  6rem);       /* 56 → 96 */
+  --font-size-display: clamp(3.75rem, 2.4rem + 6.75vw, 7.5rem);    /* 60 → 120 */
 
   /* ---------- TIPOGRAFÍA — Line height & tracking -------------------------- */
   --leading-tight: 1.08;
@@ -148,7 +154,7 @@
   --space-11: 12rem;     /* 192 */
   --space-12: 16rem;     /* 256 */
 
-  --space-section: clamp(4rem, 7vw, 8rem);
+  --space-section: clamp(3rem, 4.5vw, 5.5rem);
   --space-gutter:  clamp(1.25rem, 4vw, 3rem);
 
   /* ---------- LAYOUT — Container & grid ----------------------------------- */

@@ -7,26 +7,51 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
 ---
 
 <footer class="site-footer">
+  <div class="site-footer__pitch container-content">
+    <div class="site-footer__pitch-copy">
+      <p class="eyebrow site-footer__pitch-eyebrow">Empezá a operar con QUEM Central</p>
+      <h2 class="site-footer__pitch-title">
+        Pedidos, abastecimiento y expansión <em>desde un único canal</em>.
+      </h2>
+    </div>
+    <div class="site-footer__pitch-cta">
+      <a class="btn btn-primary site-footer__pitch-btn" href={APP_BASE_URL} target="_blank" rel="noopener">
+        Comprar online
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="btn btn-outline site-footer__pitch-btn site-footer__pitch-btn--dark" href={link('/contacto')}>
+        Hablar con ventas
+      </a>
+    </div>
+  </div>
+
   <div class="container-content site-footer__inner">
     <div class="site-footer__brand">
       <a href={link('/')} class="site-footer__logo" aria-label="QUEM Central · inicio">
         <span class="brand-mark" aria-hidden="true">Q</span>
         <span class="brand-name">QUEM Central</span>
       </a>
-      <p class="site-footer__pitch">
+      <p class="site-footer__pitch-line">
         Plataforma integral para el abastecimiento, distribución y desarrollo comercial de alimentos congelados.
       </p>
-      <a class="btn btn-primary site-footer__cta" href={APP_BASE_URL} target="_blank" rel="noopener">
-        Comprar online
-      </a>
     </div>
 
     <nav class="site-footer__links" aria-label="Links del sitio">
-      <h2>Sitio</h2>
+      <h2>Compañía</h2>
       <ul>
-        {NAV_PRIMARY.map((item) => (
+        {NAV_PRIMARY.filter((i) => i.href !== '/').slice(0, 4).map((item) => (
           <li><a href={link(item.href)}>{item.label}</a></li>
         ))}
+      </ul>
+    </nav>
+
+    <nav class="site-footer__links" aria-label="Productos y modelos">
+      <h2>Productos y modelos</h2>
+      <ul>
+        {NAV_PRIMARY.filter((i) => ['/corner-quem','/productos','/franquicias'].includes(i.href)).map((item) => (
+          <li><a href={link(item.href)}>{item.label}</a></li>
+        ))}
+        <li><a href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online ↗</a></li>
       </ul>
     </nav>
 
@@ -58,32 +83,130 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
 
 <style>
   .site-footer {
+    position: relative;
     background-color: var(--color-bg-inverted);
     color: var(--color-text-inverted);
-    padding-block: var(--space-8) var(--space-5);
+    padding-block: var(--space-6) var(--space-5);
     margin-top: var(--space-9);
+    overflow: hidden;
+    isolation: isolate;
   }
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: linear-gradient(180deg, black 0%, transparent 80%);
+    -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 80%);
+  }
+  .site-footer::after {
+    content: '';
+    position: absolute;
+    inset: -20% -10% auto auto;
+    width: 60%;
+    height: 80%;
+    z-index: -1;
+    background: radial-gradient(circle, oklch(42% 0.190 252 / 0.20) 0%, transparent 60%);
+    filter: blur(50px);
+  }
+
+  /* Pitch final */
+  .site-footer__pitch {
+    display: grid;
+    gap: var(--space-5);
+    padding-block-end: var(--space-7);
+    border-bottom: 1px solid oklch(100% 0 0 / 0.10);
+    margin-block-end: var(--space-7);
+  }
+  @media (min-width: 768px) {
+    .site-footer__pitch {
+      grid-template-columns: minmax(0, 1.4fr) auto;
+      align-items: center;
+    }
+  }
+  .site-footer__pitch-eyebrow {
+    color: var(--color-accent-300);
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .site-footer__pitch-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.0;
+    color: var(--color-text-on-brand);
+    margin-block-start: var(--space-3);
+    max-width: 24ch;
+  }
+  .site-footer__pitch-title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .site-footer__pitch-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .site-footer__pitch-btn { padding-inline: 1.5rem; padding-block: 1rem; font-size: var(--font-size-sm); }
+  .site-footer__pitch-btn--dark {
+    background: oklch(100% 0 0 / 0.06);
+    color: var(--color-text-on-brand);
+    border-color: oklch(100% 0 0 / 0.18);
+  }
+  .site-footer__pitch-btn--dark:hover {
+    background: oklch(100% 0 0 / 0.12);
+    border-color: oklch(100% 0 0 / 0.3);
+  }
+
+  /* Columnas */
   .site-footer__inner {
     display: grid;
-    gap: var(--space-7);
+    gap: var(--space-6);
   }
   @media (min-width: 768px) {
     .site-footer__inner {
-      grid-template-columns: 1.4fr 1fr 1fr;
+      grid-template-columns: 1.3fr 0.8fr 1fr 1fr;
     }
   }
   .site-footer h2 {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-2xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
-    color: oklch(from var(--color-text-inverted) l c h / 0.6);
-    font-weight: var(--weight-semibold);
-    margin-block-end: var(--space-4);
+    color: oklch(100% 0 0 / 0.5);
+    font-weight: var(--weight-bold);
+    margin-block-end: var(--space-3);
   }
-  .site-footer__brand .brand-name { color: var(--color-text-inverted); font-size: var(--font-size-lg); }
+  .site-footer__brand .brand-name { color: var(--color-text-on-brand); font-size: var(--font-size-md); font-weight: var(--weight-bold); }
   .site-footer__brand .brand-mark {
-    background: var(--color-brand-500);
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.6rem;
+    background: linear-gradient(135deg, var(--color-brand-400) 0%, var(--color-brand-600) 100%);
     color: var(--color-text-on-brand);
+    display: inline-grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: var(--weight-extrabold);
+    font-size: 1.05rem;
+    letter-spacing: -0.06em;
+    position: relative;
+    box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.2);
+  }
+  .site-footer__brand .brand-mark::after {
+    content: '';
+    position: absolute;
+    inset: 4px 4px auto auto;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    box-shadow: 0 0 0 2px var(--color-bg-inverted);
   }
   .site-footer__logo {
     display: inline-flex;
@@ -91,16 +214,15 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
     gap: 0.6rem;
     font-family: var(--font-display);
     font-weight: var(--weight-bold);
-    color: var(--color-text-inverted);
+    color: var(--color-text-on-brand);
   }
-  .site-footer__pitch {
-    margin-block: var(--space-4);
-    color: oklch(from var(--color-text-inverted) l c h / 0.72);
+  .site-footer__pitch-line {
+    margin-block-start: var(--space-3);
+    color: oklch(100% 0 0 / 0.62);
     line-height: var(--leading-relaxed);
-    max-width: 38ch;
+    max-width: 36ch;
+    font-size: var(--font-size-sm);
   }
-  .site-footer__cta { background-color: var(--color-accent-500); }
-  .site-footer__cta:hover { background-color: var(--color-accent-600); }
 
   .site-footer__links ul,
   .site-footer__contact ul {
@@ -109,12 +231,12 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
   }
   .site-footer__links a,
   .site-footer__contact a {
-    color: oklch(from var(--color-text-inverted) l c h / 0.82);
+    color: oklch(100% 0 0 / 0.78);
     font-size: var(--font-size-sm);
     transition: color var(--dur-fast) var(--ease-standard);
   }
   .site-footer__links a:hover,
-  .site-footer__contact a:hover { color: var(--color-text-inverted); }
+  .site-footer__contact a:hover { color: var(--color-text-on-brand); }
 
   .site-footer__social-title { margin-block-start: var(--space-5); }
 
@@ -122,18 +244,20 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: var(--space-8);
-    padding-top: var(--space-5);
-    border-top: 1px solid oklch(from var(--color-text-inverted) l c h / 0.12);
+    margin-top: var(--space-7);
+    padding-top: var(--space-4);
+    border-top: 1px solid oklch(100% 0 0 / 0.10);
     font-size: var(--font-size-xs);
-    color: oklch(from var(--color-text-inverted) l c h / 0.6);
+    color: oklch(100% 0 0 / 0.5);
     gap: var(--space-3);
     flex-wrap: wrap;
   }
   .site-footer__credit a {
-    color: var(--color-text-inverted);
+    color: var(--color-text-on-brand);
     text-decoration: underline;
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;
+    text-decoration-color: oklch(62% 0.150 155);
   }
+  .site-footer__credit a:hover { color: var(--color-accent-300); }
 </style>

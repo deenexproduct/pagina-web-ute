@@ -7,10 +7,10 @@ interface Props {
 const { showHead = true } = Astro.props;
 
 const bloques = [
-  { t: 'Qué resuelve', d: 'Permite sumar una unidad de venta de congelados con menor complejidad operativa.' },
-  { t: 'Para quién es', d: 'Comercios, cafeterías, mercados, clubes, instituciones, estaciones, puntos gastronómicos y espacios con tráfico comercial.' },
-  { t: 'Qué puede incluir', d: 'Productos, freezer, reposición, catálogo digital, soporte comercial, materiales de marca y logística.' },
-  { t: 'Por qué QUEM Central', d: 'Porque combina producto, distribución, operación y tecnología en una misma estructura.' },
+  { t: 'Qué resuelve', d: 'Permite sumar una unidad de venta de congelados con menor complejidad operativa.', icon: 'solve' },
+  { t: 'Para quién es', d: 'Comercios, cafeterías, mercados, clubes, instituciones, estaciones, puntos gastronómicos y espacios con tráfico comercial.', icon: 'audience' },
+  { t: 'Qué puede incluir', d: 'Productos, freezer, reposición, catálogo digital, soporte comercial, materiales de marca y logística.', icon: 'includes' },
+  { t: 'Por qué QUEM Central', d: 'Porque combina producto, distribución, operación y tecnología en una misma estructura.', icon: 'why' },
 ];
 
 const cornerCta = whatsappLink();
@@ -20,8 +20,14 @@ const cornerCta = whatsappLink();
   <div class="container-content corner__inner">
     {showHead && (
       <header class="corner__head">
+        <div class="corner__head-tag">
+          <span class="corner__head-tag-dot" aria-hidden="true"></span>
+          Sección destacada
+        </div>
         <p class="eyebrow corner__eyebrow">04 · Corner QUEM</p>
-        <h2 id="corner-title" class="corner__title">Corner QUEM</h2>
+        <h2 id="corner-title" class="corner__title">
+          Corner <span class="corner__title-accent">QUEM</span>
+        </h2>
         <p class="corner__subtitle">
           Un modelo flexible para llevar productos congelados de alta rotación a nuevos puntos de venta.
         </p>
@@ -42,6 +48,20 @@ const cornerCta = whatsappLink();
     <div class="corner__grid">
       {bloques.map((b) => (
         <article class="corner-block">
+          <div class="corner-block__icon" aria-hidden="true">
+            {b.icon === 'solve' && (
+              <svg viewBox="0 0 28 28" fill="none"><path d="M14 4v3M5 9l2 2M23 9l-2 2M14 7a7 7 0 0 0-3 13.5V22h6v-1.5A7 7 0 0 0 14 7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            )}
+            {b.icon === 'audience' && (
+              <svg viewBox="0 0 28 28" fill="none"><circle cx="9" cy="10" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="10" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 22c0-3 3-6 6-6s6 3 6 6M13 22c0-3 3-6 6-6s6 3 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            )}
+            {b.icon === 'includes' && (
+              <svg viewBox="0 0 28 28" fill="none"><rect x="4" y="6" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 11h20M8 16h4M8 19h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            )}
+            {b.icon === 'why' && (
+              <svg viewBox="0 0 28 28" fill="none"><path d="M14 4 5 9v10l9 5 9-5V9l-9-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9 14 3 3 6-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            )}
+          </div>
           <h3>{b.t}</h3>
           <p>{b.d}</p>
         </article>
@@ -49,7 +69,10 @@ const cornerCta = whatsappLink();
     </div>
 
     <div class="corner__cta-row">
-      <a class="btn btn-secondary" href={cornerCta}>Quiero conocer el modelo Corner QUEM</a>
+      <a class="btn btn-secondary corner__cta" href={cornerCta}>
+        Quiero conocer el modelo Corner QUEM
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
       <a class="btn btn-ghost" href={link('/corner-quem')}>Ver detalle</a>
     </div>
   </div>
@@ -57,32 +80,82 @@ const cornerCta = whatsappLink();
 
 <style>
   .corner {
+    position: relative;
     background:
-      radial-gradient(ellipse at 100% 0%, oklch(75% 0.110 252 / 0.10) 0%, transparent 50%),
-      var(--color-bg);
+      linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg) 100%);
+    overflow: hidden;
+    isolation: isolate;
   }
+  .corner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(40% 50% at 100% 0%, oklch(58% 0.155 254 / 0.18) 0%, transparent 60%),
+      radial-gradient(35% 40% at 0% 100%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%);
+  }
+  .corner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
   .corner__inner { display: grid; gap: var(--space-7); }
   .corner__head { display: grid; gap: var(--space-2); max-width: 60ch; }
+  .corner__head-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: max-content;
+    padding: 0.35rem 0.8rem;
+    background: oklch(from var(--color-accent-500) l c h / 0.12);
+    color: var(--color-accent-700);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    border: 1px solid oklch(from var(--color-accent-500) l c h / 0.18);
+  }
+  .corner__head-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+  }
   .corner__title {
     font-size: var(--font-size-4xl);
-    font-weight: var(--weight-bold);
-    letter-spacing: var(--tracking-tightest);
-    line-height: 1.04;
+    font-weight: var(--weight-extrabold);
+    letter-spacing: -0.04em;
+    line-height: 1.0;
+    margin-block-start: var(--space-2);
+  }
+  .corner__title-accent {
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .corner__subtitle {
     color: var(--color-text-secondary);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-md);
     max-width: 50ch;
     line-height: var(--leading-snug);
-    margin-block-start: var(--space-2);
+    margin-block-start: var(--space-3);
   }
 
   .corner__copy {
     display: grid;
-    gap: var(--space-4);
-    max-width: 70ch;
+    gap: var(--space-3);
+    max-width: 64ch;
     color: var(--color-text-secondary);
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-base);
     line-height: var(--leading-relaxed);
   }
 
@@ -93,21 +166,42 @@ const cornerCta = whatsappLink();
   }
 
   .corner-block {
+    position: relative;
     padding: var(--space-5);
     background-color: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                border-color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard);
   }
+  .corner-block:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-brand-200);
+  }
+  .corner-block__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.7rem;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-bg));
+    color: var(--color-brand-600);
+    margin-block-end: var(--space-4);
+    border: 1px solid var(--color-brand-100);
+  }
+  .corner-block__icon svg { width: 1.4rem; height: 1.4rem; }
   .corner-block h3 {
-    font-size: var(--font-size-sm);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    color: var(--color-text-brand);
-    margin-block-end: var(--space-3);
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    margin-block-end: var(--space-2);
     font-weight: var(--weight-semibold);
+    letter-spacing: -0.01em;
   }
   .corner-block p {
     color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
     line-height: var(--leading-relaxed);
   }
 
@@ -115,5 +209,11 @@ const cornerCta = whatsappLink();
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+  .corner__cta {
+    padding-inline: 1.5rem;
+    padding-block: 0.95rem;
+    font-size: var(--font-size-sm);
+    box-shadow: 0 4px 12px oklch(42% 0.190 252 / 0.25);
   }
 </style>
