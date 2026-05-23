@@ -1,5 +1,5 @@
 ---
-import { whatsappLink } from '../config/site';
+import { whatsappLink, link } from '../config/site';
 
 interface Props {
   showHead?: boolean;
@@ -50,7 +50,7 @@ const cornerCta = whatsappLink();
 
     <div class="corner__cta-row">
       <a class="btn btn-secondary" href={cornerCta}>Quiero conocer el modelo Corner QUEM</a>
-      <a class="btn btn-ghost" href="/corner-quem">Ver detalle</a>
+      <a class="btn btn-ghost" href={link('/corner-quem')}>Ver detalle</a>
     </div>
   </div>
 </section>

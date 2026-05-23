@@ -4,11 +4,18 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// TODO: reemplazar por el dominio definitivo de QUEM Central antes de deploy a prod.
-const SITE_URL = 'https://quem-central.com';
+// Sitio definitivo: https://quem-central.com (TODO confirmar compra y switch DNS).
+// Mientras tanto, GitHub Pages preview en https://deenexproduct.github.io/pagina-web-ute/
+// Toggle vía env: GITHUB_PAGES=1 en el workflow de CI.
+const IS_GH_PAGES = process.env.GITHUB_PAGES === '1';
+const SITE_URL = IS_GH_PAGES
+  ? 'https://deenexproduct.github.io'
+  : 'https://quem-central.com';
+const BASE = IS_GH_PAGES ? '/pagina-web-ute' : '/';
 
 export default defineConfig({
   site: SITE_URL,
+  base: BASE,
   trailingSlash: 'never',
   prefetch: {
     prefetchAll: true,

@@ -163,16 +163,36 @@ export interface NavItem {
   href: string;
 }
 
+/**
+ * Helper para prefijar links internos con el base de Astro (GitHub Pages
+ * project page usa `/pagina-web-ute/`; en prod custom domain usa `/`).
+ *
+ * - `link('/contacto')` → `/pagina-web-ute/contacto` (en GH Pages)
+ * - `link('/#quem-central')` → `/pagina-web-ute/#quem-central` (en GH Pages)
+ * - Anchors puros (`'#tipo'`) o externos (`https://...`) pasan tal cual.
+ */
+export const link = (path: string): string => {
+  if (!path) return path;
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('mailto:') || path.startsWith('tel:')) {
+    return path;
+  }
+  if (path.startsWith('#')) return path;
+
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${p}` || '/';
+};
+
 /** Menú principal del header. Orden del brief. */
 export const NAV_PRIMARY: ReadonlyArray<NavItem> = [
-  { label: 'Inicio',            href: '/' },
-  { label: 'QUEM Central',      href: '/#quem-central' },
-  { label: 'Ecosistema',        href: '/ecosistema' },
+  { label: 'Inicio',              href: '/' },
+  { label: 'QUEM Central',        href: '/#quem-central' },
+  { label: 'Ecosistema',          href: '/ecosistema' },
   { label: 'Unidades de negocio', href: '/unidades-de-negocio' },
-  { label: 'Corner QUEM',       href: '/corner-quem' },
-  { label: 'Productos',         href: '/productos' },
-  { label: 'Franquicias',       href: '/franquicias' },
-  { label: 'Contacto',          href: '/contacto' },
+  { label: 'Corner QUEM',         href: '/corner-quem' },
+  { label: 'Productos',           href: '/productos' },
+  { label: 'Franquicias',         href: '/franquicias' },
+  { label: 'Contacto',            href: '/contacto' },
 ] as const;
 
 /* -------------------------------------------------------------------------- */

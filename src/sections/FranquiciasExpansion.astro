@@ -1,4 +1,6 @@
 ---
+import { link } from '../config/site';
+
 interface Props {
   showHead?: boolean;
 }
@@ -49,7 +51,7 @@ const cards = [
     </div>
 
     <div class="franq__cta-row">
-      <a class="btn btn-secondary" href="/contacto?tipo=Franquicias">Consultar por expansión comercial</a>
+      <a class="btn btn-secondary" href={link('/contacto?tipo=Franquicias')}>Consultar por expansión comercial</a>
     </div>
   </div>
 </section>
