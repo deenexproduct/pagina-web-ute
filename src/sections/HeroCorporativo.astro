@@ -781,6 +781,10 @@ const previewCategories = [
     left: -8%;
     animation: hero-chip-float-a 7s ease-in-out infinite;
   }
+  /* Prevent chip from clipping on mid-range viewports */
+  @media (min-width: 641px) and (max-width: 1120px) {
+    .hero__phone-chip--stock { left: 2%; }
+  }
   .hero__phone-chip--coverage {
     bottom: 22%;
     right: -10%;

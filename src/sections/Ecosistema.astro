@@ -29,10 +29,10 @@ const cards = [
       <header class="eco__head">
         <p class="eyebrow" data-reveal style="--reveal-y: 14px;">Ecosistema</p>
         <h2 id="eco-title" class="eco__title" data-reveal style="--reveal-delay: 100ms;">
-          Un solo ecosistema. <em>Múltiples canales.</em>
+          Todos los canales, <em>una sola empresa.</em>
         </h2>
         <p class="eco__lede" data-reveal style="--reveal-delay: 200ms;">
-          8 unidades operativas para llevar alimentos congelados a cada canal.
+          Distribución, retail, logística y tecnología coordinados desde una operación central.
         </p>
       </header>
     )}
@@ -93,6 +93,14 @@ const cards = [
         </article>
       ))}
     </div>
+
+    <div class="eco__cta" data-reveal style="--reveal-delay:320ms;">
+      <a class="btn btn-primary" href="https://app.quem-central.com" target="_blank" rel="noopener">
+        Comprar online
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="btn btn-secondary" href="#contacto">Hablar con ventas ↗</a>
+    </div>
   </div>
 </section>
 
@@ -121,6 +129,12 @@ const cards = [
     color: var(--color-text-secondary);
     font-size: var(--font-size-md);
     line-height: var(--leading-snug);
+  }
+  .eco__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-start: var(--space-8);
   }
 
   .eco__bento {
