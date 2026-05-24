@@ -39,7 +39,7 @@ const previewCategories = [
     <div class="hero__copy">
       <p class="hero__brand-tag" data-reveal="fade" style="--reveal-delay: 100ms;">
         <span class="hero__brand-mark" aria-hidden="true">Q</span>
-        <span>QUEM Central</span>
+        <span>Qüem Central</span>
       </p>
 
       <h1 id="hero-title" class="hero__title">
@@ -97,7 +97,7 @@ const previewCategories = [
           <header class="hero__phone-header">
             <div class="hero__phone-header-brand">
               <span class="hero__phone-header-mark">Q</span>
-              <span class="hero__phone-header-name">QUEM</span>
+              <span class="hero__phone-header-name">Qüem</span>
             </div>
             <span class="hero__phone-header-cart" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -157,19 +157,73 @@ const previewCategories = [
       </div>
     </aside>
   </div>
+
+  <!-- Scroll cue -->
+  <a class="hero__cue" href="#quem-central" aria-label="Bajar a Qüem Central" data-reveal style="--reveal-delay: 1400ms;">
+    <span class="hero__cue-line" aria-hidden="true"></span>
+    <span class="hero__cue-text">Conocé Qüem</span>
+  </a>
 </section>
 
 <style>
   /* ===== Hero shell =============================================== */
   .hero {
     position: relative;
-    padding-block: clamp(3rem, 6vw, 5.5rem) clamp(3rem, 5vw, 5rem);
+    padding-block: clamp(3rem, 6vw, 5.5rem) clamp(4rem, 6vw, 6rem);
     overflow: hidden;
     isolation: isolate;
     min-height: clamp(620px, 86vh, 880px);
     display: flex;
     align-items: center;
   }
+
+  /* ===== Scroll cue ================================================ */
+  .hero__cue {
+    position: absolute;
+    bottom: clamp(1rem, 3vw, 1.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.6rem;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+    transition: color var(--dur-fast);
+    z-index: 2;
+  }
+  .hero__cue:hover { color: var(--color-text-brand); }
+  .hero__cue-line {
+    width: 1.5px;
+    height: 36px;
+    background: linear-gradient(180deg, transparent 0%, var(--color-border-strong) 100%);
+    position: relative;
+    overflow: hidden;
+    border-radius: 99px;
+  }
+  .hero__cue-line::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(180deg, transparent 0%, var(--color-brand-500) 100%);
+    border-radius: 99px;
+    animation: hero-cue-trickle 2s ease-in-out infinite;
+  }
+  @keyframes hero-cue-trickle {
+    0%   { transform: translateY(-100%); opacity: 0; }
+    25%  { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { transform: translateY(150%); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue-line::after { animation: none; opacity: 0.6; transform: none; }
+  }
+  @media (max-width: 640px) { .hero__cue { display: none; } }
 
   /* ===== Background ================================================ */
   .hero__bg {

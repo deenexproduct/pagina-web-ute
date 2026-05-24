@@ -80,7 +80,7 @@ export interface TeamMember {
 
 export const TEAM: ReadonlyArray<TeamMember> = [
   { name: 'Walter Giaccaglia', title: 'Presidente', org: 'QUEM S.A.' },
-  { name: 'Matías Giaccaglia', title: 'CEO', org: 'QUEM Central' },
+  { name: 'Matías Giaccaglia', title: 'CEO', org: 'Qüem Central' },
   { name: 'Joaquín Sepúlveda', title: JOAQUIN_TITLE },
 ] as const;
 
@@ -191,10 +191,10 @@ export const link = (path: string): string => {
  */
 export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
   { label: 'Inicio',              href: '/',                       sectionId: 'top' },
-  { label: 'QUEM Central',        href: '/#quem-central',          sectionId: 'quem-central' },
+  { label: 'Qüem Central',        href: '/#quem-central',          sectionId: 'quem-central' },
   { label: 'Ecosistema',          href: '/#ecosistema',            sectionId: 'ecosistema' },
   { label: 'Unidades de negocio', href: '/#unidades-de-negocio',   sectionId: 'unidades-de-negocio' },
-  { label: 'Corner QÜEM',         href: '/#corner-quem',           sectionId: 'corner-quem' },
+  { label: 'Corner Qüem',         href: '/#corner-quem',           sectionId: 'corner-quem' },
   { label: 'Productos',           href: '/#productos',             sectionId: 'productos' },
   { label: 'Franquicias',         href: '/#franquicias',           sectionId: 'franquicias' },
   { label: 'Prensa',              href: '/#prensa',                sectionId: 'prensa' },
@@ -206,11 +206,11 @@ export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
 /* -------------------------------------------------------------------------- */
 
 export const SEO = {
-  siteName: 'QUEM Central',
-  defaultTitle: 'QUEM Central | Plataforma integral de alimentos congelados',
-  titleTemplate: '%s · QUEM Central',
+  siteName: 'Qüem Central',
+  defaultTitle: 'Qüem Central | Plataforma integral de alimentos congelados',
+  titleTemplate: '%s · Qüem Central',
   defaultDescription:
-    'QUEM Central integra abastecimiento B2B, distribución, logística especializada, franquicias, corners y tecnología para el desarrollo comercial de alimentos congelados.',
+    'Qüem Central integra abastecimiento B2B, distribución, logística especializada, franquicias, corners y tecnología para el desarrollo comercial de alimentos congelados.',
   keywords: [
     'alimentos congelados B2B',
     'distribución de congelados',
@@ -219,7 +219,8 @@ export const SEO = {
     'corner de congelados',
     'logística de alimentos congelados',
     'comprar congelados online',
-    'QUEM Central',
+    'Qüem Central',
+    'Qüem',
   ],
   defaultOgImage: '/og-default.jpg', // TODO og-default con marca real (1200×630)
   locale: 'es_AR',

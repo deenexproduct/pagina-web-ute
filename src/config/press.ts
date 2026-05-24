@@ -58,7 +58,7 @@ export const PRESS: ReadonlyArray<PressItem> = [
     date: '2025-11-01', // TODO confirmar fecha exacta
     title: 'Boom de franquicias low cost: cuánta plata hay que invertir y qué ventajas ofrecen',
     excerpt:
-      'Análisis del crecimiento de las microfranquicias en Argentina. Inversión inicial, modelos operativos y ventajas comerciales — contexto del modelo Corner QÜEM.',
+      'Análisis del crecimiento de las microfranquicias en Argentina. Inversión inicial, modelos operativos y ventajas comerciales — contexto del modelo Corner Qüem.',
     url: 'https://www.iprofesional.com/negocios/435719-cuanto-salen-las-microfranquicias-y-que-ventajas-ofrecen',
     tag: 'Microfranquicias',
   },
@@ -71,7 +71,7 @@ export const PRESS: ReadonlyArray<PressItem> = [
     excerpt:
       'Walter Giaccaglia invirtió US$250.000 en 2018 para adquirir el 60% de Qüem. En 2022 sumó el paquete accionario completo junto a Matías Giaccaglia y Joaquín Sepúlveda. Hoy: 21 tiendas (15 franquiciadas) y expansión proyectada a Colombia.',
     url: 'https://www.lanacion.com.ar/economia/se-hizo-socio-para-ayudar-a-un-amigo-y-termino-adquiriendo-un-emprendimiento-de-congelados-que-nid16102023/',
-    tag: 'Historia de QÜEM',
+    tag: 'Historia de Qüem',
     featured: true,
   },
 ] as const;

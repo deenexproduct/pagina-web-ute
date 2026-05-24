@@ -13,7 +13,7 @@ const { showHead = true, defaultTipo = '' } = Astro.props;
  */
 const tipos = [
   'Compra B2B',
-  'Corner QÜEM',
+  'Corner Qüem',
   'Franquicias',
   'Proveedores / marcas',
   'Inversores',
@@ -31,7 +31,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
         <header>
           <p class="eyebrow">11 · Contacto</p>
           <h2 id="contact-title" class="contact__title">
-            Trabajemos con <em>QUEM</em>.
+            Trabajemos con <em>Qüem</em>.
           </h2>
         </header>
       )}
@@ -136,7 +136,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
       }
       const data = new FormData(form);
       const params = new URLSearchParams();
-      const subject = `Consulta web QUEM Central · ${String(data.get('tipo') ?? '')}`;
+      const subject = `Consulta web Qüem Central · ${String(data.get('tipo') ?? '')}`;
       const body =
         `Nombre: ${data.get('nombre')}\n` +
         `Empresa: ${data.get('empresa') ?? '-'}\n` +
