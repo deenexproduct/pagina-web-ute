@@ -2,7 +2,9 @@
 import '../styles/global.css';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
-import SmoothScroll from '../components/SmoothScroll';
+import SmoothScrollLenis from '../components/SmoothScrollLenis.astro';
+// @ts-ignore — woff2 importado como URL hashed por Vite para preload dinámico
+import interFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import ScrollToTop from '../components/ui/ScrollToTop.astro';
 import { SEO, SITE_URL, ADDRESS } from '../config/site';
 
@@ -112,6 +114,11 @@ const localBusinessJsonLd = {
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.webmanifest" />
 
+    <!--
+      Preload Inter Variable latin para que arranque a descargar antes de que
+      el CSS procese el @font-face. Elimina el FOIT en above-the-fold.
+    -->
+    <link rel="preload" href={interFontUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
@@ -123,7 +130,7 @@ const localBusinessJsonLd = {
     <!-- Scroll progress bar (top of viewport) -->
     <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
 
-    <SmoothScroll client:idle />
+    <SmoothScrollLenis />
     <Header />
     <main id="main">
       <slot />

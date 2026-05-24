@@ -1,0 +1,43 @@
+---
+/**
+ * Lenis smooth scroll — vanilla Astro, sin React.
+ *
+ * Reemplaza SmoothScroll.tsx (React island → 186KB de React+ReactDOM).
+ * Aquí Lenis se importa como módulo ES via <script>, Vite lo bundlea
+ * solo (~18KB vs 204KB anterior). Sin ninguna dependencia de React.
+ *
+ * El script se ejecuta cuando el módulo ES se resuelve (post-parse).
+ * Respeta prefers-reduced-motion.
+ */
+---
+
+<script>
+  import Lenis from 'lenis';
+
+  /* Esperar a que el DOM esté listo pero no bloquear el FCP */
+  const init = (): void => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const lenis = new Lenis({
+      lerp: 0.1,
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.2,
+      syncTouch: false,
+    });
+
+    document.documentElement.classList.add('has-lenis');
+
+    const raf = (time: number): void => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+    requestAnimationFrame(raf);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>

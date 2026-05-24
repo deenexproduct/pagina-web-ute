@@ -13,8 +13,19 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
-@import '@fontsource-variable/inter/index.css';
-@import '@fontsource-variable/fraunces/index.css';
+/*
+ * Fuentes — solo subset LATIN (AR no necesita cirílico / griego / vietnamita).
+ * Inter Variable: inline @font-face apuntando directo al woff2 latin.
+ * Fraunces eliminada — reservada pero nunca activa en el diseño actual.
+ */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 
 /* -------- Tailwind v4 @theme — expone los tokens como utilidades ----------- */
 @theme inline {
@@ -117,6 +128,13 @@ html {
 
 html.has-lenis { scroll-behavior: auto; }
 
+/* Smooth scroll nativo como base — Lenis lo sobreescribe cuando está activo */
+@media (prefers-reduced-motion: no-preference) {
+  :root { scroll-behavior: smooth; }
+  /* Cuando Lenis está corriendo, quitar el nativo para evitar conflicto */
+  html.has-lenis { scroll-behavior: auto; }
+}
+
 body {
   min-height: 100svh;
   background-color: var(--color-bg);
@@ -216,11 +234,11 @@ p { text-wrap: pretty; }
  * el contenido nunca queda invisible. */
 html[data-reveal-ready] [data-reveal] {
   opacity: 0;
-  transform: translateY(var(--reveal-y, 24px));
+  transform: translateY(var(--reveal-y, 18px));
   transition:
-    opacity var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
-    transform var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
-    filter var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms);
+    opacity var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
+    transform var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
+    filter var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
 html[data-reveal-ready] [data-reveal="fade"]  { transform: none; }
@@ -239,14 +257,14 @@ html:not([data-reveal-ready]) [data-reveal] {
 /* Stagger automático para hijos de un wrapper con data-reveal-stagger.
  * Cada hijo se anima con un delay incremental basado en su nth-child. */
 [data-reveal-stagger] > [data-reveal]:nth-child(1)  { --reveal-delay: 0ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(2)  { --reveal-delay: 80ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(3)  { --reveal-delay: 160ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(4)  { --reveal-delay: 240ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(5)  { --reveal-delay: 320ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(6)  { --reveal-delay: 400ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(7)  { --reveal-delay: 480ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(8)  { --reveal-delay: 560ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(n+9) { --reveal-delay: 640ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(2)  { --reveal-delay: 55ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(3)  { --reveal-delay: 110ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(4)  { --reveal-delay: 165ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(5)  { --reveal-delay: 220ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(6)  { --reveal-delay: 275ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(7)  { --reveal-delay: 330ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(8)  { --reveal-delay: 385ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(n+9) { --reveal-delay: 420ms; }
 
 /* Hero text reveal — letra por letra al cargar */
 .text-reveal {
