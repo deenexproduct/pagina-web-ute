@@ -247,7 +247,8 @@ html[data-reveal-ready] [data-reveal="right"] { transform: translateX(var(--reve
 html[data-reveal-ready] [data-reveal="scale"] { transform: scale(0.96); }
 html[data-reveal-ready] [data-reveal="blur"]  { filter: blur(8px); transform: translateY(16px); }
 
-[data-reveal][data-revealed],
+/* Specificity must beat html[data-reveal-ready] [data-reveal] (0-2-1) */
+html[data-reveal-ready] [data-reveal][data-revealed],
 html:not([data-reveal-ready]) [data-reveal] {
   opacity: 1;
   transform: none;
