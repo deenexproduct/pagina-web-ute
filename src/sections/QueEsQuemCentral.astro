@@ -242,6 +242,9 @@ const pilares = [
     gap: var(--space-4);
     margin-block-start: var(--space-6);
   }
+  @media (max-width: 639px) {
+    .qe__pillars { margin-block-start: 0; }
+  }
   @media (min-width: 640px) {
     .qe__pillars { grid-template-columns: repeat(2, 1fr); }
   }

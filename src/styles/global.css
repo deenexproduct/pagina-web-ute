@@ -124,6 +124,7 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-height) + 1rem);
   hanging-punctuation: first last;
+  overflow-x: clip; /* prevents fixed children (scroll-progress) from widening the initial containing block */
 }
 
 html.has-lenis { scroll-behavior: auto; }
