@@ -9,7 +9,7 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
 <footer class="site-footer">
   <div class="site-footer__pitch container-content">
     <div class="site-footer__pitch-copy">
-      <p class="eyebrow site-footer__pitch-eyebrow">Empezá a operar con Qüem Central</p>
+      <p class="eyebrow site-footer__pitch-eyebrow">Empezá a operar hoy</p>
       <h2 class="site-footer__pitch-title">
         Pedidos, abastecimiento y expansión <em>desde un único canal</em>.
       </h2>
@@ -175,7 +175,12 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
       grid-template-columns: 1.3fr 0.8fr 1fr 1fr;
     }
   }
-  .site-footer h2 {
+  /**
+   * Headings de columnas (Compañía / Productos y modelos / Contacto)
+   * Importante: selector específico para NO matchear el pitch-title h2.
+   */
+  .site-footer__links h2,
+  .site-footer__contact h2 {
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);

@@ -137,7 +137,16 @@ const localBusinessJsonLd = {
        * =============================================================== */
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      /* 1) Reveal on scroll */
+      /* 1) Reveal on scroll
+       *
+       * Observer con rootMargin generoso (preload) — dispara cuando el elemento
+       * está aún 200px por debajo del viewport. Garantiza que el usuario nunca
+       * ve un elemento sin revelar, incluso scrolleando rápido.
+       *
+       * Safety net adicional: tras 1.5s, cualquier elemento aún no revelado
+       * cuyo bounding rect ya pasó el viewport (rect.bottom < 0) se fuerza a
+       * revealed — esto evita huecos por scroll rapidísimo o teleport vía
+       * anchor click. */
       const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
       if (revealEls.length > 0 && !reduceMotion && 'IntersectionObserver' in window) {
         const obs = new IntersectionObserver(
@@ -149,9 +158,26 @@ const localBusinessJsonLd = {
               }
             });
           },
-          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+          { rootMargin: '0px 0px 200px 0px', threshold: 0 },
         );
         revealEls.forEach((el) => obs.observe(el));
+
+        /* Safety net: si el usuario teletransporta vía anchor o scrollea
+         * muy rápido, fuerza reveal de cualquier elemento ya pasado. */
+        const flushPassed = (): void => {
+          revealEls.forEach((el) => {
+            if (el.dataset.revealed === undefined) {
+              const r = el.getBoundingClientRect();
+              if (r.bottom < 0 || r.top < window.innerHeight) {
+                el.dataset.revealed = '';
+                obs.unobserve(el);
+              }
+            }
+          });
+        };
+        window.addEventListener('scroll', flushPassed, { passive: true });
+        window.addEventListener('hashchange', () => setTimeout(flushPassed, 100));
+        setTimeout(flushPassed, 1500);
       } else {
         /* Si no hay IntersectionObserver o reduce-motion, mostrar todo */
         revealEls.forEach((el) => { el.dataset.revealed = ''; });
