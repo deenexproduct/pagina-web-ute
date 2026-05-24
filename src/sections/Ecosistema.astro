@@ -12,7 +12,7 @@ const { showHead = true } = Astro.props;
  * Resto: cards 1x1 chicas.
  */
 const cards = [
-  { title: 'Distribución B2B', desc: 'Abastecimiento para gastronomía, comercios y eventos.', tone: 'brand-hero', icon: 'b2b', size: 'hero', badge: 'Negocio principal' },
+  { title: 'Distribución B2B', desc: 'Abastecimiento para gastronomía, comercios y eventos.', tone: 'brand-hero', icon: 'b2b', size: 'hero', badge: 'Negocio principal', features: ['Catálogo premium', 'Pedidos online B2B', 'Entrega en zona'] },
   { title: 'Corner Qüem', desc: 'Productos Qüem dentro de espacios existentes.', tone: 'accent', icon: 'corner', size: 'tall', badge: 'Destacado' },
   { title: 'Logística especializada', desc: 'Última milla AMBA + PBA.', tone: 'brand', icon: 'truck', size: 'wide' },
   { title: 'Franquicias', desc: 'Modelo replicable bajo marca.', tone: 'brand', icon: 'building', size: 'normal' },
@@ -72,6 +72,17 @@ const cards = [
 
           <h3 class="eco-card__title">{c.title}</h3>
           <p class="eco-card__desc">{c.desc}</p>
+
+          {'features' in c && c.features && (
+            <ul class="eco-card__features" aria-label="Incluye">
+              {(c.features as readonly string[]).map((f) => (
+                <li>
+                  <span class="eco-card__feat-dot" aria-hidden="true"></span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          )}
 
           {'badge' in c && c.badge && (
             <div class="eco-card__badge-row" aria-hidden="true">
@@ -145,19 +156,24 @@ const cards = [
       border-color var(--dur-fast) var(--ease-standard),
       box-shadow var(--dur-normal) var(--ease-out-expo);
   }
+  /* Stripe arriba — solo en cards destacados (hero + accent), no en normales */
   .eco-card::before {
     content: '';
     position: absolute; inset: 0 0 auto 0;
-    height: 3px;
-    background: var(--color-neutral-300);
+    height: 0;
+    background: transparent;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     transition: height var(--dur-normal) var(--ease-out-expo);
   }
-  .eco-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); border-color: var(--color-border-strong); }
-  .eco-card:hover::before { height: 4px; }
+  .eco-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); border-color: var(--color-brand-300); }
 
-  .eco-card--brand::before { background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-400)); }
+  /* Stripe visible solo en destacados */
+  .eco-card--brand-hero::before,
+  .eco-card--accent::before { height: 3px; }
+  .eco-card--brand-hero::before { background: var(--gradient-brand); }
   .eco-card--accent::before { background: linear-gradient(90deg, var(--color-accent-500), var(--color-accent-400)); }
+  .eco-card--brand-hero:hover::before,
+  .eco-card--accent:hover::before { height: 4px; }
   /* Hero card de Distribución B2B — fondo claro brand-tint, sin oscuro */
   .eco-card--brand-hero {
     background:
@@ -214,6 +230,30 @@ const cards = [
     font-size: var(--font-size-sm);
     line-height: var(--leading-snug);
   }
+
+  /* EC2: Feature micro-list — only shown on hero card */
+  .eco-card__features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .eco-card__features li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+  .eco-card__feat-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-brand-500);
+    flex-shrink: 0;
+  }
+
+  /* EC3: Corner Qüem tall card — compact padding */
+  .eco-card--tall { padding: var(--space-4); }
 
   .eco-card__badge-row {
     margin-block-start: auto;

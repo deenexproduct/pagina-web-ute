@@ -154,7 +154,7 @@
   --space-11: 12rem;     /* 192 */
   --space-12: 16rem;     /* 256 */
 
-  --space-section: clamp(3rem, 4.5vw, 5.5rem);
+  --space-section: clamp(2rem, 3.5vw, 4rem);
   --space-gutter:  clamp(1.25rem, 4vw, 3rem);
 
   /* ---------- LAYOUT — Container & grid ----------------------------------- */

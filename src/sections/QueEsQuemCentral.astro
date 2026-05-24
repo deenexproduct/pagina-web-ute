@@ -281,30 +281,25 @@ const pilares = [
   }
   .qe-pillar:hover::before { opacity: 1; }
 
+  /* Pillar accent (Logística) — light theme con tint brand sutil + border destacado */
   .qe-pillar--accent {
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    border-color: transparent;
-    box-shadow: 0 12px 32px oklch(42% 0.190 252 / 0.25);
+    background:
+      radial-gradient(60% 80% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.08) 0%, transparent 60%),
+      linear-gradient(180deg, var(--color-brand-50) 0%, var(--color-bg-elevated) 70%);
+    border-color: oklch(from var(--color-brand-500) l c h / 0.30);
   }
-  .qe-pillar--accent::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.08) 1px, transparent 1px);
-    background-size: 18px 18px;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+  .qe-pillar--accent::before {
+    background: radial-gradient(80% 60% at 50% 0%, oklch(from var(--color-brand-500) l c h / 0.10) 0%, transparent 60%);
+    opacity: 0.6;
   }
   .qe-pillar--accent:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 48px oklch(42% 0.190 252 / 0.40);
+    border-color: var(--color-brand-400);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .qe-pillar__icon {
-    width: 3rem;
-    height: 3rem;
+    width: 3.25rem;
+    height: 3.25rem;
     border-radius: 0.7rem;
     display: grid;
     place-items: center;
@@ -314,12 +309,12 @@ const pilares = [
     transition: transform var(--dur-fast) var(--ease-standard);
   }
   .qe-pillar:hover .qe-pillar__icon { transform: scale(1.08) rotate(-2deg); }
-  .qe-pillar__icon svg { width: 1.6rem; height: 1.6rem; }
+  .qe-pillar__icon svg { width: 1.75rem; height: 1.75rem; }
 
   .qe-pillar--accent .qe-pillar__icon {
-    background: oklch(100% 0 0 / 0.15);
-    color: var(--color-text-on-brand);
-    border-color: oklch(100% 0 0 / 0.22);
+    background: linear-gradient(135deg, var(--color-brand-100), var(--color-brand-50));
+    color: var(--color-brand-700);
+    border-color: oklch(from var(--color-brand-500) l c h / 0.25);
   }
 
   .qe-pillar__title {
@@ -329,7 +324,7 @@ const pilares = [
     color: var(--color-text-primary);
   }
   .qe-pillar--accent .qe-pillar__title {
-    color: var(--color-text-on-brand);
+    color: var(--color-text-primary);
   }
 
   .qe-pillar__desc {
@@ -339,7 +334,7 @@ const pilares = [
     max-width: 28ch;
   }
   .qe-pillar--accent .qe-pillar__desc {
-    color: oklch(100% 0 0 / 0.85);
+    color: var(--color-text-secondary);
   }
 
   /* ===== Footer mini-stat ======================================== */

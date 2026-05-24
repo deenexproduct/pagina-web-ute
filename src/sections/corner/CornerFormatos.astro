@@ -106,7 +106,13 @@ const formats = [
   .cn-formats__grid {
     display: grid;
     gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 540px) {
+    .cn-formats__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 960px) {
+    .cn-formats__grid { grid-template-columns: repeat(5, 1fr); }
   }
   .cn-format-card {
     position: relative;
@@ -118,6 +124,14 @@ const formats = [
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
+  }
+  @media (min-width: 960px) {
+    /* Vertical layout for 5-col row */
+    .cn-format-card {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      gap: var(--space-3);
+    }
   }
   .cn-format-card::before {
     content: '';

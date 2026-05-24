@@ -8,6 +8,7 @@ const mensajes = [
   'Catálogo digital siempre disponible',
   'Compra online B2B en un canal',
   'Pedidos simples desde la app',
+  'Reposición programada y con seguimiento',
 ];
 ---
 
@@ -41,16 +42,15 @@ const mensajes = [
       </div>
     </div>
 
-    <div class="plat__device" aria-hidden="true" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
-      <div class="plat__device-frame">
-        <div class="plat__device-bar">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="plat__device-screen">
+    <div class="plat__phone-wrap" aria-hidden="true" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
+      <div class="plat__phone">
+        <div class="plat__phone-notch"></div>
+        <div class="plat__phone-screen">
           <div class="plat__device-header">
-            <div class="plat__device-logo">Q · Central</div>
-            <div class="plat__device-pill">App</div>
+            <div class="plat__device-logo">Qüem Central</div>
+            <div class="plat__device-pill">B2B</div>
           </div>
+          <p class="plat__screen-label">Categorías</p>
           <div class="plat__device-grid">
             <span>Empanadas</span>
             <span>Pizzas</span>
@@ -61,6 +61,7 @@ const mensajes = [
           </div>
           <div class="plat__device-cta">Comprar online →</div>
         </div>
+        <div class="plat__phone-bar"></div>
       </div>
       <div class="plat__device-glow" aria-hidden="true"></div>
     </div>
@@ -120,40 +121,40 @@ const mensajes = [
   }
   .plat__cta-row { margin-block-start: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
-  .plat__device {
+  /* PL2: Mobile phone mockup */
+  .plat__phone-wrap {
     position: relative;
     display: grid;
     place-items: center;
     padding-block: var(--space-5);
   }
-  .plat__device-frame {
+  .plat__phone {
     position: relative;
     z-index: 1;
-    width: min(28rem, 100%);
+    width: min(18rem, 100%);
     background: var(--color-bg-elevated);
-    border-radius: 1.5rem;
-    border: 1px solid var(--color-border-subtle);
-    box-shadow: var(--shadow-xl);
+    border-radius: 2.5rem;
+    border: 2px solid var(--color-border-strong);
+    box-shadow: var(--shadow-xl), 0 0 0 6px var(--color-surface-subtle);
     overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
   }
-  .plat__device-bar {
+  .plat__phone-notch {
+    height: 2rem;
     display: flex;
-    gap: 0.4rem;
-    padding: 0.7rem 1rem;
-    background-color: var(--color-surface-subtle);
-    border-bottom: 1px solid var(--color-border-subtle);
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-elevated);
   }
-  .plat__device-bar span {
-    width: 10px;
-    height: 10px;
+  .plat__phone-notch::after {
+    content: '';
+    width: 5rem;
+    height: 0.75rem;
     border-radius: 999px;
-    background-color: var(--color-border-strong);
+    background: var(--color-border-strong);
   }
-  .plat__device-bar span:nth-child(1) { background-color: oklch(70% 0.16 25); }
-  .plat__device-bar span:nth-child(2) { background-color: oklch(80% 0.14 80); }
-  .plat__device-bar span:nth-child(3) { background-color: oklch(70% 0.14 155); }
-
-  .plat__device-screen { padding: var(--space-5); display: grid; gap: var(--space-4); }
+  .plat__phone-screen { padding: var(--space-4); display: grid; gap: var(--space-3); }
   .plat__device-header {
     display: flex;
     justify-content: space-between;
@@ -196,13 +197,35 @@ const mensajes = [
     font-size: var(--font-size-sm);
   }
 
+  .plat__phone-bar {
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-elevated);
+  }
+  .plat__phone-bar::after {
+    content: '';
+    width: 4rem;
+    height: 0.3rem;
+    border-radius: 999px;
+    background: var(--color-border-strong);
+  }
+  .plat__screen-label {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+  }
+
   .plat__device-glow {
     position: absolute;
     inset: 10% -10% -10% 10%;
     z-index: 0;
-    border-radius: 1.5rem;
+    border-radius: 2.5rem;
     background: linear-gradient(135deg, var(--color-brand-200) 0%, var(--color-accent-200) 100%);
     filter: blur(50px);
-    opacity: 0.5;
+    opacity: 0.45;
   }
 </style>

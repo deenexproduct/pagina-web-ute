@@ -210,7 +210,11 @@ p { text-wrap: pretty; }
  *
  * Cuando entra: agrega data-revealed por IntersectionObserver (en BaseLayout).
  * --------------------------------------------------------------------------*/
-[data-reveal] {
+/* Progressive enhancement:
+ * Contenido SIEMPRE visible por default. Solo se oculta cuando JS marca <html data-reveal-ready>.
+ * Esto garantiza que si JS falla, el observer no carga, o el user scrollea ultra-rápido,
+ * el contenido nunca queda invisible. */
+html[data-reveal-ready] [data-reveal] {
   opacity: 0;
   transform: translateY(var(--reveal-y, 24px));
   transition:
@@ -219,13 +223,14 @@ p { text-wrap: pretty; }
     filter var(--reveal-duration, 700ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
-[data-reveal="fade"]  { transform: none; }
-[data-reveal="left"]  { transform: translateX(calc(-1 * var(--reveal-y, 32px))); }
-[data-reveal="right"] { transform: translateX(var(--reveal-y, 32px)); }
-[data-reveal="scale"] { transform: scale(0.96); }
-[data-reveal="blur"]  { filter: blur(8px); transform: translateY(16px); }
+html[data-reveal-ready] [data-reveal="fade"]  { transform: none; }
+html[data-reveal-ready] [data-reveal="left"]  { transform: translateX(calc(-1 * var(--reveal-y, 32px))); }
+html[data-reveal-ready] [data-reveal="right"] { transform: translateX(var(--reveal-y, 32px)); }
+html[data-reveal-ready] [data-reveal="scale"] { transform: scale(0.96); }
+html[data-reveal-ready] [data-reveal="blur"]  { filter: blur(8px); transform: translateY(16px); }
 
-[data-reveal][data-revealed] {
+[data-reveal][data-revealed],
+html:not([data-reveal-ready]) [data-reveal] {
   opacity: 1;
   transform: none;
   filter: none;

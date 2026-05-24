@@ -29,6 +29,47 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
       </div>
     </header>
 
+    {/* Pull-quote destacado — La Nación (datos del artículo oct 2023) */}
+    <a
+      class="pr-pullquote"
+      href="https://www.lanacion.com.ar/economia/se-hizo-socio-para-ayudar-a-un-amigo-y-termino-adquiriendo-un-emprendimiento-de-congelados-que-nid16102023/"
+      target="_blank"
+      rel="noopener"
+      data-reveal
+      aria-label="Leer nota completa en La Nación"
+    >
+      <div class="pr-pullquote__left">
+        <div class="pr-pullquote__outlet">
+          <span class="pr-pullquote__dot" aria-hidden="true"></span>
+          <span class="pr-pullquote__outlet-name">La Nación</span>
+          <time class="pr-pullquote__date" datetime="2023-10-16">Oct 2023</time>
+        </div>
+        <blockquote class="pr-pullquote__text">
+          "Factura $800 millones al año. 21 tiendas, 15 franquiciadas. Expansión proyectada a Colombia."
+        </blockquote>
+        <span class="pr-pullquote__cta" aria-hidden="true">
+          Leer nota completa
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+      <div class="pr-pullquote__stats" aria-hidden="true">
+        <div class="pr-pullquote__stat">
+          <span class="pr-pullquote__stat-val">$800M</span>
+          <span class="pr-pullquote__stat-label">facturación anual</span>
+        </div>
+        <span class="pr-pullquote__divider"></span>
+        <div class="pr-pullquote__stat">
+          <span class="pr-pullquote__stat-val">21</span>
+          <span class="pr-pullquote__stat-label">tiendas activas</span>
+        </div>
+        <span class="pr-pullquote__divider"></span>
+        <div class="pr-pullquote__stat">
+          <span class="pr-pullquote__stat-val">15</span>
+          <span class="pr-pullquote__stat-label">franquiciadas</span>
+        </div>
+      </div>
+    </a>
+
     <ul class="pr-list__grid" role="list" data-reveal-stagger>
       {PRESS.map((p) => (
         <li data-reveal>
@@ -123,6 +164,112 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
     font-size: var(--font-size-sm);
     letter-spacing: -0.02em;
     color: var(--color-text-primary);
+  }
+
+  /* Pull-quote La Nación */
+  .pr-pullquote {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    margin-block-end: var(--space-6);
+    background: linear-gradient(135deg, #eef3fa 0%, var(--color-bg-elevated) 100%);
+    border: 1px solid #c5d4e8;
+    border-inline-start: 4px solid #003366;
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    transition: transform var(--dur-fast), box-shadow var(--dur-fast), border-color var(--dur-fast);
+  }
+  .pr-pullquote:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #003366;
+  }
+
+  .pr-pullquote__left {
+    display: grid;
+    gap: var(--space-2);
+    flex: 1;
+    min-width: 18rem;
+  }
+  .pr-pullquote__outlet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pr-pullquote__dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #003366;
+    flex-shrink: 0;
+  }
+  .pr-pullquote__outlet-name {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: var(--font-size-sm);
+    letter-spacing: -0.02em;
+    color: #003366;
+  }
+  .pr-pullquote__date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: var(--tracking-wide);
+  }
+  .pr-pullquote__text {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    font-style: italic;
+    margin: 0;
+  }
+  .pr-pullquote__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    color: #003366;
+    margin-block-start: var(--space-1);
+  }
+  .pr-pullquote:hover .pr-pullquote__cta { text-decoration: underline; text-underline-offset: 3px; }
+
+  .pr-pullquote__stats {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .pr-pullquote__stat {
+    display: grid;
+    gap: 0.15rem;
+    text-align: center;
+  }
+  .pr-pullquote__stat-val {
+    font-family: var(--font-display);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: -0.04em;
+    color: #003366;
+    line-height: 1;
+  }
+  .pr-pullquote__stat-label {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+  }
+  .pr-pullquote__divider {
+    width: 1px;
+    height: 2.5rem;
+    background: #c5d4e8;
+    flex-shrink: 0;
   }
 
   .pr-list__grid {
@@ -238,7 +385,12 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
   .pr-card__excerpt {
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
-    line-height: var(--leading-relaxed);
+    line-height: var(--leading-snug);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .pr-card__foot {

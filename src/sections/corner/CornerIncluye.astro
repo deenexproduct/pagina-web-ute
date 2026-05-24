@@ -12,22 +12,17 @@ const columns = [
   {
     title: 'Producto',
     icon: 'product',
-    items: ['Postres y helados', 'Snacks y waffles', 'Ready meals', 'Frutas congeladas', 'Impulso', 'Marcas aliadas'],
+    items: ['Postres y helados', 'Snacks y waffles', 'Ready meals y frutas', 'Impulso y marcas aliadas'],
   },
   {
     title: 'Operación',
     icon: 'ops',
-    items: ['Logística y distribución', 'Reposición programada', 'Abastecimiento continuo', 'Soporte comercial', 'Acompañamiento'],
+    items: ['Logística y distribución', 'Reposición programada', 'Capacitación operativa', 'Soporte y acompañamiento'],
   },
   {
     title: 'Tecnología',
     icon: 'tech',
     items: ['Plataforma / app integrada', 'Pedidos simples', 'Catálogo digital', 'Analytics (futuro)'],
-  },
-  {
-    title: 'Capacitación',
-    icon: 'training',
-    items: ['Lineamientos exhibición', 'Sugeridos de surtido', 'Capacitación operativa'],
   },
 ];
 ---
@@ -59,9 +54,6 @@ const columns = [
             )}
             {c.icon === 'tech' && (
               <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M9 21h6M12 17v4M7 9l3 2-3 2M13 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            )}
-            {c.icon === 'training' && (
-              <svg viewBox="0 0 24 24" fill="none"><path d="m12 4 9 4-9 4-9-4 9-4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 11v5c0 2 3 3 5 3s5-1 5-3v-5M21 9v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
             )}
           </div>
           <h3>{c.title}</h3>
@@ -103,7 +95,13 @@ const columns = [
   .cn-includes__grid {
     display: grid;
     gap: var(--space-3);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 540px) {
+    .cn-includes__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 960px) {
+    .cn-includes__grid { grid-template-columns: repeat(4, 1fr); }
   }
   .cn-col {
     padding: var(--space-5);

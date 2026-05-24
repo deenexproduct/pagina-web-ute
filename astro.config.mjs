@@ -5,13 +5,11 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 // Sitio definitivo: https://quem-central.com (TODO confirmar compra y switch DNS).
-// Mientras tanto, GitHub Pages preview en https://deenexproduct.github.io/pagina-web-ute/
-// Toggle vía env: GITHUB_PAGES=1 en el workflow de CI.
-const IS_GH_PAGES = process.env.GITHUB_PAGES === '1';
-const SITE_URL = IS_GH_PAGES
-  ? 'https://deenexproduct.github.io'
-  : 'https://quem-central.com';
-const BASE = IS_GH_PAGES ? '/pagina-web-ute' : '/';
+// Para preview en GitHub Pages, exportar antes del build:
+//   PUBLIC_SITE=https://<owner>.github.io PUBLIC_BASE=/<repo>/ pnpm build
+// Defaults caen al dominio final.
+const SITE_URL = process.env.PUBLIC_SITE || 'https://quem-central.com';
+const BASE = process.env.PUBLIC_BASE || '/';
 
 export default defineConfig({
   site: SITE_URL,
