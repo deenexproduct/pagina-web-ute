@@ -185,7 +185,15 @@ const localBusinessJsonLd = {
             if (el.dataset.revealed === undefined) {
               const r = el.getBoundingClientRect();
               if (r.bottom < 0 || r.top < window.innerHeight) {
-                el.dataset.revealed = '';
+                if (r.bottom < 0) {
+                  /* Ya pasó por encima — reveal instantáneo, sin transición
+                   * (evita el blank de 800-1200ms en navegación por anchor). */
+                  (el as HTMLElement).style.transition = 'none';
+                  el.dataset.revealed = '';
+                  requestAnimationFrame(() => { (el as HTMLElement).style.transition = ''; });
+                } else {
+                  el.dataset.revealed = '';
+                }
                 obs.unobserve(el);
               }
             }
