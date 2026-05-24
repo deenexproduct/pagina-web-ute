@@ -290,6 +290,11 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
     flex-wrap: wrap;
     flex-shrink: 0;
   }
+  /* Hide stats on small screens to prevent horizontal overflow */
+  @media (max-width: 580px) {
+    .pr-pullquote__stats { display: none; }
+    .pr-pullquote__left { min-width: 0; }
+  }
   .pr-pullquote__stat {
     display: grid;
     gap: 0.15rem;

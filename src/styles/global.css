@@ -137,6 +137,7 @@ html.has-lenis { scroll-behavior: auto; }
 
 body {
   min-height: 100svh;
+  overflow-x: clip; /* prevent decorative elements (orbs, etc.) from triggering horizontal scroll */
   background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-sans);

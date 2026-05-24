@@ -294,6 +294,10 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
     gap: var(--space-3);
     margin-inline-start: auto;
   }
+  /* Hide CTA from header on small screens — the mobile nav dropdown already has it */
+  @media (max-width: 639px) {
+    .site-header__cta { display: none; }
+  }
   .site-header__cta {
     padding: 0.7rem 1.1rem;
     font-size: var(--font-size-sm);
