@@ -58,7 +58,7 @@ export const PRESS: ReadonlyArray<PressItem> = [
     date: '2025-11-01', // TODO confirmar fecha exacta
     title: 'Boom de franquicias low cost: cuánta plata hay que invertir y qué ventajas ofrecen',
     excerpt:
-      'Crecimiento de las microfranquicias en Argentina — contexto del modelo Corner Qüem.',
+      'Crecimiento de las microfranquicias en Argentina. Contexto del modelo Corner Qüem.',
     url: 'https://www.iprofesional.com/negocios/435719-cuanto-salen-las-microfranquicias-y-que-ventajas-ofrecen',
     tag: 'Microfranquicias',
   },

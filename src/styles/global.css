@@ -321,17 +321,19 @@ p { text-wrap: pretty; }
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
 
+/* btn-primary = brand color (azul Qüem), no verde accent */
 .btn-primary {
-  background-color: var(--color-accent-500);
-  color: var(--color-text-on-accent);
-}
-.btn-primary:hover { background-color: var(--color-accent-600); }
-
-.btn-secondary {
   background-color: var(--color-brand-500);
   color: var(--color-text-on-brand);
 }
-.btn-secondary:hover { background-color: var(--color-brand-600); }
+.btn-primary:hover { background-color: var(--color-brand-600); }
+
+/* btn-secondary = accent verde (queda como contraste cuando hace falta) */
+.btn-secondary {
+  background-color: var(--color-accent-500);
+  color: var(--color-text-on-accent);
+}
+.btn-secondary:hover { background-color: var(--color-accent-600); }
 
 .btn-outline {
   background-color: transparent;

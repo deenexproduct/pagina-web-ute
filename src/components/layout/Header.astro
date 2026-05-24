@@ -258,26 +258,35 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
     padding: 0.5rem 0;
     white-space: nowrap;
     transition: color var(--dur-fast) var(--ease-standard);
+    /* Tipográfica fija — evita layout shift al cambiar weight en hover/active */
+    text-rendering: geometricPrecision;
   }
   .nav-link::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: 50%;
+    bottom: -2px;
+    width: 22px;
     height: 2px;
     background: var(--color-brand-500);
-    transform: scaleX(0);
+    border-radius: 2px;
+    transform: translateX(-50%) scaleX(0);
     transform-origin: center;
     transition: transform var(--dur-normal) var(--ease-out-expo);
   }
   .nav-link:hover { color: var(--color-text-primary); }
-  .nav-link:hover::after { transform: scaleX(1); }
-  .nav-link--active {
-    color: var(--color-text-primary);
-    font-weight: var(--weight-semibold);
+  .nav-link:hover::after { transform: translateX(-50%) scaleX(0.8); }
+  .nav-link--active { color: var(--color-text-primary); }
+  .nav-link--active::after { transform: translateX(-50%) scaleX(1); }
+
+  /* Focus-visible más limpio en nav — no outline cuadrado del global */
+  .nav-link:focus-visible {
+    outline: none;
+    color: var(--color-text-brand);
   }
-  .nav-link--active::after { transform: scaleX(1); }
+  .nav-link:focus-visible::after {
+    transform: translateX(-50%) scaleX(1);
+  }
 
   .site-header__actions {
     display: flex;
@@ -288,10 +297,10 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
   .site-header__cta {
     padding: 0.7rem 1.1rem;
     font-size: var(--font-size-sm);
-    box-shadow: 0 4px 12px oklch(62% 0.150 155 / 0.32);
+    box-shadow: 0 4px 12px oklch(42% 0.190 252 / 0.28);
   }
   .site-header__cta:hover {
-    box-shadow: 0 6px 18px oklch(62% 0.150 155 / 0.40);
+    box-shadow: 0 6px 18px oklch(42% 0.190 252 / 0.38);
   }
   .site-header__menu-toggle {
     display: inline-grid;

@@ -31,7 +31,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
   <div class="container-content">
     {showHead && (
       <header class="cats__head">
-        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">05 · Categorías</p>
+        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Categorías</p>
         <h2 id="cats-title" class="cats__title" data-reveal style="--reveal-delay: 100ms;">
           11 categorías. <em>Un solo catálogo.</em>
         </h2>
@@ -46,7 +46,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
         const icon = iconFor(cat.slug);
         return (
           <li data-reveal>
-            <a class="cat-card" href={categoryUrl(cat)} target="_blank" rel="noopener" aria-label={`${cat.nombre} — abrir en app`}>
+            <a class="cat-card" href={categoryUrl(cat)} target="_blank" rel="noopener" aria-label={`${cat.nombre}: abrir en app`}>
               <div
                 class="cat-card__photo"
                 aria-hidden="true"
