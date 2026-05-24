@@ -36,7 +36,7 @@ export const PRESS: ReadonlyArray<PressItem> = [
     title:
       'Nació en Saladillo, cosechaba choclos y hoy lidera una empresa que factura US$6 millones al año',
     excerpt:
-      'Perfil de un empresario del interior que escala una operación gastronómica de alimentos congelados con presencia en franquicias, corners y red comercial B2B.',
+      'Empresario del interior escalando una operación de congelados con franquicias, corners y red B2B.',
     url: 'https://tn.com.ar/economia/2026/05/09/nacio-en-saladillo-cosechaba-choclos-y-hoy-lidera-una-empresa-que-factura-us6-millones-al-ano/',
     tag: 'Historia del equipo',
     featured: true,
@@ -47,7 +47,7 @@ export const PRESS: ReadonlyArray<PressItem> = [
     date: '2026-02-15', // TODO confirmar fecha exacta cuando esté el dato
     title: '5 buenas franquicias para invertir y tener un negocio llave en mano en 2026',
     excerpt:
-      'Selección de franquicias argentinas con modelos llave en mano para 2026. Mención al ecosistema de franquicias y corners de alimentos congelados.',
+      'Selección de franquicias llave en mano para 2026. Incluye modelos del ecosistema Qüem.',
     url: 'https://www.iprofesional.com/negocios/443965-5-buenas-franquicias-para-invertir-y-tener-negocio-llave-en-mano-en-2026',
     tag: 'Franquicias',
     featured: true,
@@ -58,7 +58,7 @@ export const PRESS: ReadonlyArray<PressItem> = [
     date: '2025-11-01', // TODO confirmar fecha exacta
     title: 'Boom de franquicias low cost: cuánta plata hay que invertir y qué ventajas ofrecen',
     excerpt:
-      'Análisis del crecimiento de las microfranquicias en Argentina. Inversión inicial, modelos operativos y ventajas comerciales — contexto del modelo Corner Qüem.',
+      'Crecimiento de las microfranquicias en Argentina — contexto del modelo Corner Qüem.',
     url: 'https://www.iprofesional.com/negocios/435719-cuanto-salen-las-microfranquicias-y-que-ventajas-ofrecen',
     tag: 'Microfranquicias',
   },
