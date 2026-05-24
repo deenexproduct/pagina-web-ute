@@ -65,10 +65,12 @@ const capabilities = [
 </section>
 
 <style>
+  /* Fondo claro con sutil brand-tint, sin sección oscura */
   .num {
     position: relative;
-    background: linear-gradient(135deg, var(--color-brand-700) 0%, var(--color-brand-900) 100%);
-    color: var(--color-text-on-brand);
+    background:
+      radial-gradient(60% 70% at 100% 0%, oklch(58% 0.155 254 / 0.06) 0%, transparent 60%),
+      linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 100%);
     overflow: hidden;
     isolation: isolate;
   }
@@ -77,47 +79,31 @@ const capabilities = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.06) 1px, transparent 1px);
-    background-size: 24px 24px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
-  }
-  .num::after {
-    content: '';
-    position: absolute;
-    inset: -40% -10% auto auto;
-    width: 60%;
-    height: 100%;
-    z-index: -1;
-    background: radial-gradient(circle, oklch(62% 0.150 155 / 0.20) 0%, transparent 60%);
-    filter: blur(60px);
+    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
   }
 
   .num__inner { display: grid; gap: var(--space-6); }
   .num__head { display: grid; gap: var(--space-3); max-width: 56ch; }
-  .num__head .eyebrow {
-    color: oklch(100% 0 0 / 0.62);
-    border: none;
-    padding: 0;
-    background: none;
-  }
   .num__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
     line-height: 1.05;
-    color: var(--color-text-on-brand);
+    color: var(--color-text-primary);
     max-width: 24ch;
   }
   .num__title em {
     font-style: normal;
-    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
+    background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Capabilities (soft state, no métricas inventadas) */
+  /* Capabilities — fondo claro, cards elevados */
   .num__capabilities {
     display: grid;
     gap: var(--space-3);
@@ -126,24 +112,23 @@ const capabilities = [
   }
   .capability {
     padding: var(--space-5);
-    background: oklch(100% 0 0 / 0.05);
-    border: 1px solid oklch(100% 0 0 / 0.12);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     display: grid;
     gap: 0.35rem;
-    backdrop-filter: blur(8px);
-    transition: background var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast);
+    transition: border-color var(--dur-fast), box-shadow var(--dur-normal), transform var(--dur-fast);
   }
   .capability:hover {
-    background: oklch(100% 0 0 / 0.09);
-    border-color: oklch(100% 0 0 / 0.22);
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-card);
     transform: translateY(-2px);
   }
   .capability__label {
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
-    color: oklch(100% 0 0 / 0.62);
+    color: var(--color-text-muted);
     font-weight: var(--weight-semibold);
   }
   .capability__value {
@@ -151,18 +136,22 @@ const capabilities = [
     font-size: var(--font-size-xl);
     font-weight: var(--weight-bold);
     letter-spacing: -0.02em;
-    color: var(--color-text-on-brand);
+    color: var(--color-text-primary);
     line-height: 1.1;
   }
   .capability__meta {
     font-size: var(--font-size-xs);
-    color: oklch(100% 0 0 / 0.62);
+    color: var(--color-text-secondary);
+  }
+  .capability--accent {
+    border-color: oklch(from var(--color-accent-500) l c h / 0.25);
+    background: linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.04) 0%, var(--color-bg-elevated) 60%);
   }
   .capability--accent .capability__value {
-    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--color-accent-700);
+  }
+  .capability--brand .capability__value {
+    color: var(--color-text-brand);
   }
 
   /* Métricas duras (cuando SHOW_METRICS=true) */
@@ -174,24 +163,31 @@ const capabilities = [
   }
   .num-item {
     padding: var(--space-5);
-    background: oklch(100% 0 0 / 0.05);
-    border: 1px solid oklch(100% 0 0 / 0.15);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     text-align: center;
-    backdrop-filter: blur(8px);
+    transition: border-color var(--dur-fast), box-shadow var(--dur-normal);
+  }
+  .num-item:hover {
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-card);
   }
   .num-item__value {
     display: block;
     font-family: var(--font-display);
     font-size: var(--font-size-4xl);
     font-weight: var(--weight-extrabold);
-    color: var(--color-accent-300);
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     letter-spacing: -0.03em;
     line-height: 1;
     margin-block-end: var(--space-2);
   }
   .num-item__label {
-    color: oklch(100% 0 0 / 0.78);
+    color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
   }
 </style>

@@ -158,15 +158,31 @@ const cards = [
 
   .eco-card--brand::before { background: linear-gradient(90deg, var(--color-brand-500), var(--color-brand-400)); }
   .eco-card--accent::before { background: linear-gradient(90deg, var(--color-accent-500), var(--color-accent-400)); }
+  /* Hero card de Distribución B2B — fondo claro brand-tint, sin oscuro */
   .eco-card--brand-hero {
-    background: radial-gradient(60% 80% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.18) 0%, transparent 60%), var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    border-color: transparent;
+    background:
+      radial-gradient(60% 80% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, var(--color-brand-50) 0%, var(--color-bg-elevated) 70%);
+    color: var(--color-text-primary);
+    border-color: oklch(from var(--color-brand-500) l c h / 0.25);
   }
-  .eco-card--brand-hero::before { display: none; }
-  .eco-card--brand-hero .eco-card__title { color: var(--color-text-on-brand); font-size: var(--font-size-2xl); }
-  .eco-card--brand-hero .eco-card__desc { color: oklch(100% 0 0 / 0.85); font-size: var(--font-size-base); }
-  .eco-card--brand-hero .eco-card__icon { background: oklch(100% 0 0 / 0.15); color: var(--color-text-on-brand); border-color: oklch(100% 0 0 / 0.22); }
+  .eco-card--brand-hero::before {
+    background: var(--gradient-brand);
+    height: 4px;
+  }
+  .eco-card--brand-hero .eco-card__title {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-2xl);
+  }
+  .eco-card--brand-hero .eco-card__desc {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+  }
+  .eco-card--brand-hero .eco-card__icon {
+    background: oklch(from var(--color-brand-500) l c h / 0.10);
+    color: var(--color-brand-700);
+    border-color: oklch(from var(--color-brand-500) l c h / 0.20);
+  }
 
   .eco-card--accent {
     background: linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.06), var(--color-bg-elevated));
@@ -209,14 +225,14 @@ const cards = [
   .eco-card__badge {
     display: inline-block;
     padding: 0.3rem 0.75rem;
-    background: oklch(from var(--color-bg-elevated) l c h / 0.18);
-    color: var(--color-text-on-brand);
+    background: var(--color-brand-50);
+    color: var(--color-brand-700);
     border-radius: var(--radius-pill);
     font-size: var(--font-size-2xs);
     font-weight: var(--weight-bold);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
-    border: 1px solid oklch(100% 0 0 / 0.25);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.25);
   }
   .eco-card--accent .eco-card__badge {
     background: var(--color-accent-50);
@@ -225,7 +241,7 @@ const cards = [
   }
   .eco-card__pattern {
     flex: 1; height: 24px;
-    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.3) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(from var(--color-brand-500) l c h / 0.25) 1px, transparent 1px);
     background-size: 10px 10px;
     mask-image: linear-gradient(90deg, transparent 0%, black 30%);
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 30%);

@@ -1,199 +1,108 @@
 ---
-import { NAV_PRIMARY, APP_BASE_URL, EMAILS, SOCIAL, link } from '../../config/site';
+import { APP_BASE_URL, EMAILS, SOCIAL, link } from '../../config/site';
 
 const year = new Date().getFullYear();
 const hasInstagram = SOCIAL.instagram.length > 0;
 const hasLinkedin = SOCIAL.linkedin.length > 0;
+
+/**
+ * Footer minimalista v3 — fondo claro, una sola fila + bottom bar.
+ *
+ * Diseño:
+ *   1) Top row: brand (izq) + nav esencial (centro) + CTA (der)
+ *   2) Bottom bar: copyright + credit Deenex
+ *
+ * Sin pitch block, sin 4 columnas, sin fondo oscuro. Funciona como cierre
+ * limpio del sitio sin competir con la sección Contacto.
+ */
+const footerNav = [
+  { label: 'Qué hacemos', href: '/#quem-central' },
+  { label: 'Corner Qüem', href: '/#corner-quem' },
+  { label: 'Franquicias', href: '/#franquicias' },
+  { label: 'Prensa', href: '/#prensa' },
+  { label: 'Contacto', href: '/#contacto' },
+];
 ---
 
 <footer class="site-footer">
-  <div class="site-footer__pitch container-content">
-    <div class="site-footer__pitch-copy">
-      <p class="eyebrow site-footer__pitch-eyebrow">Empezá a operar hoy</p>
-      <h2 class="site-footer__pitch-title">
-        Pedidos, abastecimiento y expansión <em>desde un único canal</em>.
-      </h2>
-    </div>
-    <div class="site-footer__pitch-cta">
-      <a class="btn btn-primary site-footer__pitch-btn" href={APP_BASE_URL} target="_blank" rel="noopener">
-        Comprar online
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a class="btn btn-outline site-footer__pitch-btn site-footer__pitch-btn--dark" href={link('/#contacto')}>
-        Hablar con ventas
-      </a>
-    </div>
-  </div>
-
   <div class="container-content site-footer__inner">
-    <div class="site-footer__brand">
-      <a href={link('/')} class="site-footer__logo" aria-label="Qüem Central · inicio">
-        <span class="brand-mark" aria-hidden="true">Q</span>
-        <span class="brand-name">Qüem Central</span>
+    <a href={link('/')} class="site-footer__brand" aria-label="Qüem Central · inicio">
+      <span class="brand-mark" aria-hidden="true">Q</span>
+      <span class="site-footer__brand-name">Qüem <em>Central</em></span>
+    </a>
+
+    <nav class="site-footer__nav" aria-label="Links del sitio">
+      <ul>
+        {footerNav.map((item) => (
+          <li><a href={link(item.href)}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-footer__cta">
+      <a class="btn btn-primary site-footer__cta-main" href={APP_BASE_URL} target="_blank" rel="noopener">
+        Comprar online
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </a>
-      <p class="site-footer__pitch-line">
-        Abastecimiento, distribución y desarrollo comercial de alimentos congelados.
-      </p>
-    </div>
-
-    <nav class="site-footer__links" aria-label="Links del sitio">
-      <h2>Compañía</h2>
-      <ul>
-        {NAV_PRIMARY.filter((i) => i.href !== '/').slice(0, 4).map((item) => (
-          <li><a href={link(item.href)}>{item.label}</a></li>
-        ))}
-        <li><a href={link('/#prensa')}>Prensa</a></li>
-      </ul>
-    </nav>
-
-    <nav class="site-footer__links" aria-label="Productos y modelos">
-      <h2>Productos y modelos</h2>
-      <ul>
-        {NAV_PRIMARY.filter((i) => ['/corner-quem','/productos','/franquicias'].includes(i.href)).map((item) => (
-          <li><a href={link(item.href)}>{item.label}</a></li>
-        ))}
-        <li><a href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online ↗</a></li>
-      </ul>
-    </nav>
-
-    <div class="site-footer__contact">
-      <h2>Contacto</h2>
-      <ul>
-        <li><a href={`mailto:${EMAILS.comercial}`}>{EMAILS.comercial}</a></li>
-        <li><a href={`mailto:${EMAILS.ventas}`}>{EMAILS.ventas}</a></li>
-        <li><a href={link('/#contacto')}>Formulario de contacto</a></li>
-      </ul>
-
-      {(hasInstagram || hasLinkedin) && (
-        <>
-          <h2 class="site-footer__social-title">Redes</h2>
-          <ul class="site-footer__social">
-            {hasInstagram && <li><a href={SOCIAL.instagram} target="_blank" rel="noopener">Instagram</a></li>}
-            {hasLinkedin && <li><a href={SOCIAL.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>}
-          </ul>
-        </>
-      )}
     </div>
   </div>
 
-  <div class="site-footer__bar container-content">
-    <small>© {year} Qüem Central. Todos los derechos reservados.</small>
-    <small class="site-footer__credit">Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a>.</small>
+  <div class="container-content site-footer__bar">
+    <small class="site-footer__legal">
+      © {year} Qüem Central. Todos los derechos reservados.
+    </small>
+
+    <div class="site-footer__bar-right">
+      <a class="site-footer__bar-link" href={`mailto:${EMAILS.comercial}`}>{EMAILS.comercial}</a>
+      {hasInstagram && <a class="site-footer__bar-link" href={SOCIAL.instagram} target="_blank" rel="noopener">Instagram</a>}
+      {hasLinkedin && <a class="site-footer__bar-link" href={SOCIAL.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
+      <span class="site-footer__credit">
+        Por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a>
+      </span>
+    </div>
   </div>
 </footer>
 
 <style>
+  /* ===== Shell — fondo claro, separador sutil del contenido ============== */
   .site-footer {
-    position: relative;
-    background-color: var(--color-bg-inverted);
-    color: var(--color-text-inverted);
-    padding-block: var(--space-6) var(--space-5);
+    background-color: var(--color-surface-subtle);
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--color-border-subtle);
     margin-top: var(--space-9);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .site-footer::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: radial-gradient(circle, oklch(100% 0 0 / 0.04) 1px, transparent 1px);
-    background-size: 24px 24px;
-    mask-image: linear-gradient(180deg, black 0%, transparent 80%);
-    -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 80%);
-  }
-  .site-footer::after {
-    content: '';
-    position: absolute;
-    inset: -20% -10% auto auto;
-    width: 60%;
-    height: 80%;
-    z-index: -1;
-    background: radial-gradient(circle, oklch(42% 0.190 252 / 0.20) 0%, transparent 60%);
-    filter: blur(50px);
   }
 
-  /* Pitch final */
-  .site-footer__pitch {
-    display: grid;
-    gap: var(--space-5);
-    padding-block-end: var(--space-7);
-    border-bottom: 1px solid oklch(100% 0 0 / 0.10);
-    margin-block-end: var(--space-7);
-  }
-  @media (min-width: 768px) {
-    .site-footer__pitch {
-      grid-template-columns: minmax(0, 1.4fr) auto;
-      align-items: center;
-    }
-  }
-  .site-footer__pitch-eyebrow {
-    color: var(--color-accent-300);
-    background: none;
-    border: none;
-    padding: 0;
-  }
-  .site-footer__pitch-title {
-    font-size: var(--font-size-3xl);
-    font-weight: var(--weight-extrabold);
-    letter-spacing: var(--tracking-tighter);
-    line-height: 1.0;
-    color: var(--color-text-on-brand);
-    margin-block-start: var(--space-3);
-    max-width: 24ch;
-  }
-  .site-footer__pitch-title em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--color-accent-300), var(--color-accent-500));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .site-footer__pitch-cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-  .site-footer__pitch-btn { padding-inline: 1.5rem; padding-block: 1rem; font-size: var(--font-size-sm); }
-  .site-footer__pitch-btn--dark {
-    background: oklch(100% 0 0 / 0.06);
-    color: var(--color-text-on-brand);
-    border-color: oklch(100% 0 0 / 0.18);
-  }
-  .site-footer__pitch-btn--dark:hover {
-    background: oklch(100% 0 0 / 0.12);
-    border-color: oklch(100% 0 0 / 0.3);
-  }
-
-  /* Columnas */
+  /* ===== Top row — brand · nav · CTA ====================================== */
   .site-footer__inner {
     display: grid;
-    gap: var(--space-6);
+    gap: var(--space-5);
+    padding-block: var(--space-7) var(--space-6);
+    align-items: center;
   }
   @media (min-width: 768px) {
     .site-footer__inner {
-      grid-template-columns: 1.3fr 0.8fr 1fr 1fr;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--space-6);
     }
   }
-  /**
-   * Headings de columnas (Compañía / Productos y modelos / Contacto)
-   * Importante: selector específico para NO matchear el pitch-title h2.
-   */
-  .site-footer__links h2,
-  .site-footer__contact h2 {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    color: oklch(100% 0 0 / 0.5);
-    font-weight: var(--weight-bold);
-    margin-block-end: var(--space-3);
+
+  /* Brand */
+  .site-footer__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+    width: max-content;
   }
-  .site-footer__brand .brand-name { color: var(--color-text-on-brand); font-size: var(--font-size-md); font-weight: var(--weight-bold); }
   .site-footer__brand .brand-mark {
+    position: relative;
     width: 2.25rem;
     height: 2.25rem;
     border-radius: 0.6rem;
-    background: linear-gradient(135deg, var(--color-brand-400) 0%, var(--color-brand-600) 100%);
+    background: var(--gradient-brand);
     color: var(--color-text-on-brand);
     display: inline-grid;
     place-items: center;
@@ -201,69 +110,108 @@ const hasLinkedin = SOCIAL.linkedin.length > 0;
     font-weight: var(--weight-extrabold);
     font-size: 1.05rem;
     letter-spacing: -0.06em;
-    position: relative;
-    box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.2);
+    box-shadow:
+      inset 0 1px 0 oklch(100% 0 0 / 0.18),
+      0 4px 12px oklch(42% 0.19 252 / 0.18);
   }
   .site-footer__brand .brand-mark::after {
     content: '';
     position: absolute;
     inset: 4px 4px auto auto;
-    width: 5px;
-    height: 5px;
+    width: 5px; height: 5px;
     border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 0 2px var(--color-bg-inverted);
+    box-shadow: 0 0 0 2px var(--color-surface-subtle);
   }
-  .site-footer__logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: var(--font-display);
+  .site-footer__brand-name {
+    font-size: var(--font-size-md);
     font-weight: var(--weight-bold);
-    color: var(--color-text-on-brand);
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+    white-space: nowrap;
   }
-  .site-footer__pitch-line {
-    margin-block-start: var(--space-3);
-    color: oklch(100% 0 0 / 0.62);
-    line-height: var(--leading-relaxed);
-    max-width: 36ch;
+  .site-footer__brand-name em {
+    font-style: normal;
+    color: var(--color-text-brand);
+    font-weight: var(--weight-medium);
+  }
+
+  /* Nav central */
+  .site-footer__nav { justify-self: center; width: 100%; }
+  .site-footer__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    justify-content: center;
+  }
+  .site-footer__nav a {
+    color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
+    font-weight: var(--weight-medium);
+    padding-block: 0.25rem;
+    border-bottom: 1.5px solid transparent;
+    transition: color var(--dur-fast), border-color var(--dur-fast);
+    white-space: nowrap;
+  }
+  .site-footer__nav a:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-brand-500);
   }
 
-  .site-footer__links ul,
-  .site-footer__contact ul {
-    display: grid;
-    gap: var(--space-2);
+  /* CTA derecha */
+  .site-footer__cta {
+    justify-self: end;
   }
-  .site-footer__links a,
-  .site-footer__contact a {
-    color: oklch(100% 0 0 / 0.78);
+  @media (max-width: 767px) {
+    .site-footer__cta { justify-self: start; }
+  }
+  .site-footer__cta-main {
+    padding-inline: 1.3rem;
+    padding-block: 0.85rem;
     font-size: var(--font-size-sm);
-    transition: color var(--dur-fast) var(--ease-standard);
+    box-shadow: 0 4px 12px oklch(62% 0.150 155 / 0.30);
   }
-  .site-footer__links a:hover,
-  .site-footer__contact a:hover { color: var(--color-text-on-brand); }
+  .site-footer__cta-main:hover {
+    box-shadow: 0 6px 18px oklch(62% 0.150 155 / 0.42);
+  }
 
-  .site-footer__social-title { margin-block-start: var(--space-5); }
-
+  /* ===== Bottom bar ======================================================= */
   .site-footer__bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: var(--space-7);
-    padding-top: var(--space-4);
-    border-top: 1px solid oklch(100% 0 0 / 0.10);
-    font-size: var(--font-size-xs);
-    color: oklch(100% 0 0 / 0.5);
     gap: var(--space-3);
     flex-wrap: wrap;
+    padding-block: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-border-subtle);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
   }
+  .site-footer__legal {
+    color: var(--color-text-muted);
+  }
+  .site-footer__bar-right {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .site-footer__bar-link {
+    color: var(--color-text-secondary);
+    font-weight: var(--weight-medium);
+    transition: color var(--dur-fast);
+  }
+  .site-footer__bar-link:hover { color: var(--color-text-brand); }
+
   .site-footer__credit a {
-    color: var(--color-text-on-brand);
+    color: var(--color-text-secondary);
     text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
     text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-    text-decoration-color: oklch(62% 0.150 155);
+    transition: text-decoration-color var(--dur-fast), color var(--dur-fast);
   }
-  .site-footer__credit a:hover { color: var(--color-accent-300); }
+  .site-footer__credit a:hover {
+    color: var(--color-text-primary);
+    text-decoration-color: var(--color-brand-500);
+  }
 </style>
