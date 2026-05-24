@@ -5,234 +5,355 @@ interface Props {
 const { showHead = true } = Astro.props;
 
 /**
- * Unidades de negocio v2 — timeline copy comprimido.
- * Status visual por unidad: 'active', 'featured', 'development'.
- * Descripciones max ~14 palabras.
+ * Unidades de negocio v3 — bento grid.
+ * Desktop: 01 (span 2), 02-08 (1×1), 09 (full width horizontal).
+ * Hierarchy: featured → brand/accent tint + top bar.
+ *            development → dashed, muted, horizontal layout.
  */
 const unidades = [
-  { n: '01', title: 'Distribución B2B',
-    desc: 'Negocio principal: gastronómicos y comercios con catálogo de alta rotación.',
-    status: 'featured', badge: 'Principal' },
-  { n: '02', title: 'Franquicias',
+  {
+    n: '01',
+    title: 'Distribución B2B',
+    desc: 'Canal principal. Gastronómicos y comercios con catálogo de alta rotación y logística incluida.',
+    status: 'featured',
+    badge: 'Canal principal',
+  },
+  {
+    n: '02',
+    title: 'Franquicias',
     desc: 'Formatos replicables bajo marca Qüem en nuevos mercados.',
-    status: 'active', badge: 'Activo' },
-  { n: '03', title: 'Corner Qüem',
-    desc: 'Productos Qüem dentro de espacios comerciales existentes.',
-    status: 'featured', badge: 'Destacado' },
-  { n: '04', title: 'Logística de congelados',
+    status: 'active',
+    badge: null,
+  },
+  {
+    n: '03',
+    title: 'Corner Qüem',
+    desc: 'Productos Qüem dentro de espacios comerciales existentes. Llave en mano.',
+    status: 'featured',
+    badge: 'Destacado',
+  },
+  {
+    n: '04',
+    title: 'Logística de congelados',
     desc: 'Última milla AMBA y Provincia de Buenos Aires.',
-    status: 'active', badge: null },
-  { n: '05', title: 'Retail B2C',
+    status: 'active',
+    badge: null,
+  },
+  {
+    n: '05',
+    title: 'Retail B2C',
     desc: 'Tiendas y venta directa al consumidor final.',
-    status: 'active', badge: null },
-  { n: '06', title: 'Tecnología / App',
-    desc: 'Catálogo digital, pedidos y compra B2B en un canal.',
-    status: 'active', badge: null },
-  { n: '07', title: 'Fraccionamiento',
+    status: 'active',
+    badge: null,
+  },
+  {
+    n: '06',
+    title: 'Tecnología / App',
+    desc: 'Catálogo digital, pedidos y compra B2B en un solo canal.',
+    status: 'active',
+    badge: null,
+  },
+  {
+    n: '07',
+    title: 'Fraccionamiento',
     desc: 'Formatos y presentaciones según necesidad comercial.',
-    status: 'active', badge: null },
-  { n: '08', title: 'Desarrolladora comercial',
+    status: 'active',
+    badge: null,
+  },
+  {
+    n: '08',
+    title: 'Desarrolladora comercial',
     desc: 'Validamos y escalamos nuevos formatos del mercado.',
-    status: 'active', badge: null },
-  { n: '09', title: 'Representación de marcas',
+    status: 'active',
+    badge: null,
+  },
+  {
+    n: '09',
+    title: 'Representación de marcas',
     desc: 'Marcas en eventos, puntos de expendio y canales estratégicos.',
-    status: 'development', badge: 'En desarrollo' },
-] as const;
+    status: 'development',
+    badge: 'En desarrollo',
+  },
+];
 ---
 
-<section class="un section-y" id="unidades-de-negocio" aria-labelledby="un-title" style="background: var(--color-surface-subtle);">
+<section
+  class="un section-y"
+  id="unidades-de-negocio"
+  aria-labelledby="un-title"
+  style="background: var(--color-surface-subtle);"
+>
   <div class="container-content">
+
     {showHead && (
       <header class="un__head">
-        <p class="eyebrow" data-reveal style="--reveal-y: 14px;">Unidades de negocio</p>
-        <h2 id="un-title" class="un__title" data-reveal style="--reveal-delay: 100ms;">
-          9 unidades comerciales. <em>Una sola operación.</em>
+        <p class="eyebrow" data-reveal style="--reveal-y:12px;">Unidades de negocio</p>
+        <h2 id="un-title" class="un__title" data-reveal style="--reveal-delay:80ms;">
+          9 unidades comerciales.<br><em>Una sola operación.</em>
         </h2>
-        <p class="un__lede" data-reveal style="--reveal-delay: 200ms;">
+        <p class="un__lede" data-reveal style="--reveal-delay:180ms;">
           Líneas que abastecen, distribuyen, representan y escalan productos congelados.
         </p>
       </header>
     )}
 
-    <ol class="un__timeline" data-reveal-stagger>
-      <div class="un__line" aria-hidden="true"></div>
+    <ol class="un__grid" aria-label="Unidades de negocio Qüem Central">
       {unidades.map((u, i) => (
-        <li class:list={['un-item', `un-item--${i % 2 === 0 ? 'left' : 'right'}`, `un-item--${u.status}`]} data-reveal>
-          <div class="un-item__dot" aria-hidden="true">
-            <span class="un-item__dot-inner"></span>
-          </div>
-
-          <div class="un-item__card">
-            <div class="un-item__head">
-              <span class="un-item__num" aria-hidden="true">{u.n}</span>
+        <li
+          class:list={['un-card', `un-card--${u.status}`]}
+          data-reveal
+          style={`--reveal-delay:${220 + i * 38}ms`}
+        >
+          <span class="un-card__watermark" aria-hidden="true">{u.n}</span>
+          <div class="un-card__body">
+            <div class="un-card__meta">
+              <span class="un-card__num">{u.n}</span>
               {u.badge && (
-                <span class:list={['un-item__badge', `un-item__badge--${u.status}`]}>{u.badge}</span>
+                <span class:list={['un-card__badge', `un-card__badge--${u.status}`]}>
+                  {u.badge}
+                </span>
               )}
             </div>
-            <h3 class="un-item__title">{u.title}</h3>
-            <p class="un-item__desc">{u.desc}</p>
+            <h3 class="un-card__title">{u.title}</h3>
+            <p class="un-card__desc">{u.desc}</p>
           </div>
         </li>
       ))}
     </ol>
+
   </div>
 </section>
 
 <style>
-  .un__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-8); max-width: 56ch; }
-  .un__title {
-    font-size: var(--font-size-3xl);
-    font-weight: var(--weight-extrabold);
-    letter-spacing: var(--tracking-tighter);
-    line-height: 1.02;
-  }
-  .un__title em {
-    font-style: normal;
-    background: var(--gradient-text-brand);
-    -webkit-background-clip: text; background-clip: text;
-    color: transparent;
-  }
-  .un__lede { color: var(--color-text-secondary); font-size: var(--font-size-md); line-height: var(--leading-snug); }
+/* ── Header ──────────────────────────────────── */
+.un__head {
+  max-width: 52ch;
+  display: grid;
+  gap: var(--space-3);
+  margin-block-end: var(--space-10);
+}
+.un__title {
+  font-size: clamp(2.1rem, 4.5vw, var(--font-size-4xl));
+  font-weight: var(--weight-extrabold);
+  letter-spacing: var(--tracking-tighter);
+  line-height: 1.0;
+}
+.un__title em {
+  font-style: normal;
+  background: var(--gradient-text-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.un__lede {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+  line-height: var(--leading-snug);
+}
 
-  .un__timeline {
-    position: relative;
-    display: grid;
+/* ── Bento grid ──────────────────────────────── */
+.un__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+@media (min-width: 600px) {
+  .un__grid { grid-template-columns: repeat(2, 1fr); }
+  .un-card:nth-child(1),
+  .un-card:nth-child(9) { grid-column: 1 / -1; }
+}
+@media (min-width: 960px) {
+  .un__grid {
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-4);
   }
-  .un__line { display: none; }
-  @media (min-width: 960px) {
-    .un__line {
-      display: block;
-      position: absolute;
-      top: 0; bottom: 0; left: 50%;
-      width: 2px;
-      background: linear-gradient(180deg, transparent 0%, var(--color-border-strong) 8%, var(--color-border-strong) 92%, transparent 100%);
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
-    .un__timeline { gap: var(--space-2); }
-  }
+  .un-card:nth-child(1) { grid-column: span 2; }
+  .un-card:nth-child(9) { grid-column: 1 / -1; }
+}
 
-  .un-item {
-    position: relative;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-3);
-    align-items: start;
-  }
-  @media (min-width: 960px) {
-    .un-item { grid-template-columns: 1fr auto 1fr; align-items: center; }
-    .un-item--left .un-item__card { grid-column: 1; text-align: right; }
-    .un-item--left .un-item__dot { grid-column: 2; }
-    .un-item--right .un-item__dot { grid-column: 2; }
-    .un-item--right .un-item__card { grid-column: 3; }
-    .un-item--left .un-item__head { justify-content: flex-end; }
-  }
+/* ── Card base ───────────────────────────────── */
+.un-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  transition:
+    transform 200ms var(--ease-standard),
+    border-color 200ms var(--ease-standard),
+    box-shadow 200ms var(--ease-standard);
+}
+.un-card:hover {
+  transform: translateY(-3px);
+  border-color: oklch(from var(--color-brand-500) l c h / 0.3);
+  box-shadow: 0 10px 28px -6px oklch(from var(--color-brand-500) l c h / 0.1);
+}
 
-  .un-item__dot {
-    position: relative;
-    width: 24px; height: 24px;
-    display: grid; place-items: center;
-    flex-shrink: 0;
-    margin-block-start: 1rem;
-    z-index: 1;
-  }
-  @media (min-width: 960px) { .un-item__dot { margin-block-start: 0; } }
-  .un-item__dot::before {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: 50%;
-    background: var(--color-bg);
-    border: 2px solid var(--color-border-strong);
-    transition: border-color var(--dur-fast), background var(--dur-fast);
-  }
-  .un-item__dot-inner {
-    position: relative;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--color-border-strong);
-    transition: background var(--dur-fast), transform var(--dur-fast);
-  }
-  .un-item--featured .un-item__dot::before { border-color: var(--color-brand-500); background: var(--color-brand-50); }
-  .un-item--featured .un-item__dot-inner { background: var(--color-brand-500); }
-  .un-item--development .un-item__dot::before { border-color: var(--color-text-muted); }
-  .un-item--development .un-item__dot-inner { background: var(--color-text-muted); }
-  .un-item:hover .un-item__dot::before { border-color: var(--color-brand-500); background: var(--color-brand-50); }
-  .un-item:hover .un-item__dot-inner { background: var(--color-brand-500); transform: scale(1.5); }
+/* ── Watermark number ────────────────────────── */
+.un-card__watermark {
+  position: absolute;
+  right: var(--space-4);
+  bottom: -0.15em;
+  font-family: var(--font-display);
+  font-size: 6.5rem;
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--color-text-primary);
+  opacity: 0.04;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 200ms var(--ease-standard);
+}
+.un-card:hover .un-card__watermark { opacity: 0.08; }
+.un-card:nth-child(1) .un-card__watermark { font-size: 9rem; }
+.un-card:nth-child(9) .un-card__watermark { font-size: 8rem; }
 
-  .un-item__card {
-    padding: var(--space-4) var(--space-5);
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
-  }
-  .un-item__card:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-brand-300);
-    box-shadow: var(--shadow-card);
-  }
-  .un-item--featured .un-item__card {
-    background: linear-gradient(180deg, oklch(from var(--color-brand-500) l c h / 0.04) 0%, var(--color-bg-elevated) 60%);
-    border-color: oklch(from var(--color-brand-500) l c h / 0.18);
-  }
-  .un-item--development .un-item__card { opacity: 0.88; }
+/* ── Card body ───────────────────────────────── */
+.un-card__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.un-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-1);
+}
 
-  .un-item__head {
-    display: flex;
+/* ── Number chip ─────────────────────────────── */
+.un-card__num {
+  font-size: var(--font-size-xs);
+  font-weight: var(--weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-brand);
+  background: var(--color-brand-50);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  line-height: 1.5;
+}
+
+/* ── Badge ───────────────────────────────────── */
+.un-card__badge {
+  font-size: 0.64rem;
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+.un-card__badge--featured {
+  color: var(--color-brand-700);
+  background: var(--color-brand-50);
+  border: 1px solid oklch(from var(--color-brand-500) l c h / 0.2);
+}
+.un-card__badge--development {
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* ── Title & desc ────────────────────────────── */
+.un-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+.un-card__desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-snug);
+  max-width: 38ch;
+}
+
+/* ── Featured (01 + 03) ──────────────────────── */
+.un-card--featured {
+  background: linear-gradient(
+    145deg,
+    oklch(from var(--color-brand-500) l c h / 0.06) 0%,
+    var(--color-bg-elevated) 58%
+  );
+  border-color: oklch(from var(--color-brand-500) l c h / 0.16);
+}
+.un-card--featured::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-brand-400), var(--color-brand-600));
+}
+.un-card--featured:hover {
+  border-color: oklch(from var(--color-brand-500) l c h / 0.4);
+  box-shadow: 0 12px 36px -8px oklch(from var(--color-brand-500) l c h / 0.15);
+}
+
+/* card 01 — bigger type */
+.un-card:nth-child(1) .un-card__title { font-size: var(--font-size-xl); }
+.un-card:nth-child(1) .un-card__desc  { font-size: var(--font-size-base); max-width: none; }
+
+/* card 03 — accent green */
+.un-card:nth-child(3) {
+  background: linear-gradient(
+    145deg,
+    oklch(from var(--color-accent-500) l c h / 0.06) 0%,
+    var(--color-bg-elevated) 58%
+  );
+  border-color: oklch(from var(--color-accent-500) l c h / 0.16);
+}
+.un-card:nth-child(3)::before {
+  background: linear-gradient(90deg, var(--color-accent-400), var(--color-accent-600));
+}
+.un-card:nth-child(3):hover {
+  border-color: oklch(from var(--color-accent-500) l c h / 0.38);
+  box-shadow: 0 12px 36px -8px oklch(from var(--color-accent-500) l c h / 0.12);
+}
+.un-card:nth-child(3) .un-card__num {
+  color: var(--color-accent-700);
+  background: var(--color-accent-50);
+}
+.un-card:nth-child(3) .un-card__badge--featured {
+  color: var(--color-accent-700);
+  background: var(--color-accent-50);
+  border-color: oklch(from var(--color-accent-500) l c h / 0.2);
+}
+
+/* ── Development (09) ────────────────────────── */
+.un-card--development {
+  background: transparent;
+  border-style: dashed;
+}
+.un-card--development:hover {
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  box-shadow: none;
+  transform: none;
+}
+.un-card--development .un-card__num {
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+}
+.un-card--development .un-card__title,
+.un-card--development .un-card__desc { opacity: 0.72; }
+.un-card--development .un-card__watermark { opacity: 0.025; }
+
+/* 09 — horizontal on wide screens */
+@media (min-width: 960px) {
+  .un-card:nth-child(9) .un-card__body {
+    flex-direction: row;
     align-items: center;
-    gap: var(--space-3);
-    margin-block-end: var(--space-2);
-    flex-wrap: wrap;
+    gap: var(--space-8);
   }
-  .un-item__num {
-    font-family: var(--font-display);
-    font-size: var(--font-size-xs);
-    font-weight: var(--weight-extrabold);
-    color: var(--color-text-brand);
-    letter-spacing: -0.02em;
-    background: var(--color-brand-50);
-    padding: 0.3rem 0.55rem;
-    border-radius: var(--radius-sm);
-  }
-  .un-item__badge {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-bold);
-    padding: 0.3rem 0.7rem;
-    border-radius: var(--radius-pill);
-  }
-  .un-item__badge--featured {
-    color: var(--color-brand-700);
-    background: var(--color-brand-50);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.25);
-  }
-  .un-item__badge--active {
-    color: var(--color-accent-700);
-    background: var(--color-accent-50);
-    border: 1px solid oklch(from var(--color-accent-500) l c h / 0.2);
-  }
-  .un-item__badge--development {
-    color: var(--color-text-muted);
-    background: var(--color-surface-subtle);
-    border: 1px solid var(--color-border-subtle);
-  }
-
-  .un-item__title {
-    font-size: var(--font-size-lg);
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    margin-block-end: var(--space-2);
-  }
-  .un-item__desc {
-    color: var(--color-text-secondary);
-    line-height: var(--leading-snug);
-    font-size: var(--font-size-sm);
-  }
-  @media (min-width: 960px) {
-    .un-item--left .un-item__desc { margin-inline-start: auto; max-width: 36ch; }
-    .un-item--right .un-item__desc { max-width: 36ch; }
-  }
+  .un-card:nth-child(9) .un-card__meta  { margin-block-end: 0; flex-shrink: 0; }
+  .un-card:nth-child(9) .un-card__title { flex-shrink: 0; font-size: var(--font-size-base); }
+  .un-card:nth-child(9) .un-card__desc  { max-width: none; flex: 1; }
+}
 </style>
