@@ -361,3 +361,66 @@ p { text-wrap: pretty; }
   white-space: nowrap;
   border: 0;
 }
+
+/* -------- Print stylesheet ---------------------------------------------- *
+ * Para que el cliente o un periodista pueda imprimir/PDF un brief limpio:
+ *  - Sin header sticky, footer, animaciones, gradientes
+ *  - Todo blanco/negro, links subrayados con href visible
+ *  - Salto de página entre secciones
+ *  - Una sola columna
+ * ------------------------------------------------------------------------ */
+@media print {
+  *, *::before, *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  html, body { font-size: 11pt; line-height: 1.5; }
+
+  /* Esconder UI no-imprimible */
+  [data-header],
+  .site-header,
+  .site-footer__pitch-cta,
+  .scroll-progress,
+  .hero__cue,
+  .hero__phone,
+  .hero__bg,
+  .plat__device,
+  .cn-hero__panel,
+  .btn,
+  .nf__actions,
+  [data-mobile-nav],
+  .mobile-nav,
+  .skip-link {
+    display: none !important;
+  }
+
+  /* Mostrar href de links externos */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555 !important;
+  }
+  /* No mostrar href de mailto ni anchors */
+  a[href^="mailto"]::after,
+  a[href^="tel"]::after,
+  a[href^="#"]::after { content: ""; }
+
+  /* Una columna, sin grids */
+  .container-content, .qe__pillars, .eco__bento, .un__timeline,
+  .cats__grid, .franq__grid, .team__grid, .num__capabilities,
+  .pr-list__grid, .cn-formats__grid, .cn-includes__grid, .cn-where__grid,
+  .cn-value__split, .contact__inner, .plat__inner, .hero__inner {
+    display: block !important;
+    grid-template-columns: none !important;
+  }
+
+  section, .section-y { padding: 1.5rem 0 !important; page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  img { max-width: 100% !important; }
+}

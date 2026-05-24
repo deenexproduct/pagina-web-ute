@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { link, APP_BASE_URL } from '../config/site';
+---
+
+<BaseLayout
+  title="Página no encontrada"
+  description="La página que buscás no existe. Volvé al inicio o explorá el catálogo de Qüem Central."
+  noindex={true}
+>
+  <section class="nf section-y" aria-labelledby="nf-title">
+    <div class="nf__bg" aria-hidden="true"></div>
+
+    <div class="container-content nf__inner">
+      <p class="nf__eyebrow">
+        <span class="nf__eyebrow-dot" aria-hidden="true"></span>
+        Error 404
+      </p>
+
+      <h1 id="nf-title" class="nf__title">
+        Esa página <em>se congeló</em>.
+      </h1>
+
+      <p class="nf__lede">
+        El enlace que abriste no existe o se movió. Acá tenés un par de caminos para seguir.
+      </p>
+
+      <div class="nf__actions">
+        <a class="btn btn-primary nf__cta-main" href={link('/')}>
+          Volver al inicio
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a class="btn btn-outline" href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online</a>
+        <a class="btn btn-ghost" href={link('/#contacto')}>Hablar con ventas</a>
+      </div>
+
+      <ul class="nf__shortcuts" aria-label="Atajos de navegación">
+        <li><a href={link('/#quem-central')}>Qué hacemos</a></li>
+        <li><a href={link('/#corner-quem')}>Corner Qüem</a></li>
+        <li><a href={link('/#productos')}>Categorías</a></li>
+        <li><a href={link('/#franquicias')}>Franquicias</a></li>
+        <li><a href={link('/#prensa')}>Prensa</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    position: relative;
+    min-height: clamp(560px, 70vh, 760px);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .nf__bg {
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(45% 55% at 80% 10%, oklch(58% 0.155 254 / 0.16) 0%, transparent 60%),
+      radial-gradient(40% 50% at 10% 90%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%),
+      linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg) 100%);
+  }
+  .nf__bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 90%);
+  }
+
+  .nf__inner {
+    display: grid;
+    gap: var(--space-4);
+    text-align: center;
+    justify-items: center;
+    max-width: 56ch;
+  }
+
+  .nf__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.85rem;
+    background: oklch(from var(--color-brand-500) l c h / 0.08);
+    color: var(--color-text-brand);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.15);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+  }
+  .nf__eyebrow-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--color-accent-500);
+    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
+  }
+
+  .nf__title {
+    font-size: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    font-weight: var(--weight-extrabold);
+    color: var(--color-text-primary);
+    text-wrap: balance;
+  }
+  .nf__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nf__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+    max-width: 44ch;
+  }
+
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: center;
+    margin-block-start: var(--space-3);
+  }
+  .nf__cta-main {
+    padding-inline: 1.4rem;
+    padding-block: 0.95rem;
+    font-size: var(--font-size-sm);
+    box-shadow: 0 6px 18px oklch(62% 0.150 155 / 0.32);
+  }
+
+  .nf__shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    justify-content: center;
+    margin-block-start: var(--space-6);
+    padding-block-start: var(--space-5);
+    border-top: 1px solid var(--color-border-subtle);
+    width: 100%;
+    max-width: 48ch;
+  }
+  .nf__shortcuts a {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-medium);
+    border-bottom: 1.5px solid transparent;
+    padding-block: 0.25rem;
+    transition: color var(--dur-fast), border-color var(--dur-fast);
+  }
+  .nf__shortcuts a:hover {
+    color: var(--color-text-brand);
+    border-color: var(--color-brand-500);
+  }
+</style>

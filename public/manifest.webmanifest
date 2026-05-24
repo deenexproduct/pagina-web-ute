@@ -1,0 +1,26 @@
+{
+  "name": "Qüem Central",
+  "short_name": "Qüem",
+  "description": "Abastecimiento, distribución y desarrollo comercial de alimentos congelados.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fb",
+  "theme_color": "#1f4e79",
+  "lang": "es-AR",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "food", "shopping"]
+}

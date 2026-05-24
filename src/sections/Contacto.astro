@@ -78,7 +78,8 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <div class="field">
         <label for="f-nombre">Nombre y apellido *</label>
-        <input id="f-nombre" name="nombre" type="text" autocomplete="name" required />
+        <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="f-nombre-hint" />
+        <small id="f-nombre-hint" class="field__hint" data-error-for="nombre" hidden></small>
       </div>
 
       <div class="field">
@@ -88,28 +89,40 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <div class="field">
         <label for="f-tipo">Tipo de consulta *</label>
-        <select id="f-tipo" name="tipo" required>
+        <select id="f-tipo" name="tipo" required aria-describedby="f-tipo-hint">
           <option value="" disabled selected={!defaultTipo}>Elegí una opción</option>
           {tipos.map((t) => (
             <option value={t} selected={defaultTipo === t}>{t}</option>
           ))}
         </select>
+        <small id="f-tipo-hint" class="field__hint" data-error-for="tipo" hidden></small>
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="f-tel">Teléfono</label>
-          <input id="f-tel" name="telefono" type="tel" autocomplete="tel" />
+          <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" />
         </div>
         <div class="field">
           <label for="f-email">Email *</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" required />
+          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-hint" />
+          <small id="f-email-hint" class="field__hint" data-error-for="email" hidden></small>
         </div>
       </div>
 
       <div class="field">
         <label for="f-msg">Mensaje *</label>
-        <textarea id="f-msg" name="mensaje" rows="5" required></textarea>
+        <textarea id="f-msg" name="mensaje" rows="5" required aria-describedby="f-msg-hint"></textarea>
+        <small id="f-msg-hint" class="field__hint" data-error-for="mensaje" hidden></small>
+      </div>
+
+      {/*
+        Honeypot — campo invisible para bots. Si llega completo, descartamos.
+        No usa display:none (algunos bots lo detectan). Usa offscreen + tabindex=-1.
+      */}
+      <div class="contact__honeypot" aria-hidden="true">
+        <label for="f-website">No completes este campo</label>
+        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
       </div>
 
       <button type="submit" class="btn btn-primary contact__submit">Enviar consulta</button>
@@ -122,32 +135,98 @@ const hasWhatsapp = WHATSAPP.length > 0;
   /**
    * Form modular: por ahora el envío es client-only — muestra mensaje de éxito
    * y arma mailto. Cuando llegue endpoint o servicio (Formspree/Netlify Forms/
-   * propio backend), reemplazar el handler.
+   * propio backend), reemplazar el handler con un fetch al endpoint.
+   *
+   * Features:
+   *  - Honeypot anti-spam (campo `website` invisible — si llega completo, descarta)
+   *  - Validación inline con microcopy humano por campo
+   *  - Prefill ?tipo= via querystring
+   *  - Estado del submit accesible (aria-live)
    */
   const form = document.querySelector<HTMLFormElement>('[data-form]');
   const status = document.querySelector<HTMLElement>('[data-form-status]');
 
+  /** Microcopy de errores — humano, accionable, sin jerga */
+  const errorMessages: Record<string, (input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => string> = {
+    nombre: () => 'Contanos cómo te llamás.',
+    tipo: () => 'Elegí una opción para que llegue al equipo correcto.',
+    email: (i) => {
+      if (!i.value) return 'Necesitamos un email para responderte.';
+      return 'El email no parece válido. Revisá si tiene @ y dominio.';
+    },
+    mensaje: () => 'Contanos brevemente qué necesitás.',
+  };
+
+  const showError = (input: HTMLElement, name: string): void => {
+    const hint = form?.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+    if (!hint) return;
+    hint.textContent = errorMessages[name]?.(input as HTMLInputElement) ?? 'Revisá este campo.';
+    hint.hidden = false;
+    (input as HTMLElement).setAttribute('aria-invalid', 'true');
+  };
+
+  const clearError = (input: HTMLElement, name: string): void => {
+    const hint = form?.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+    if (!hint) return;
+    hint.hidden = true;
+    hint.textContent = '';
+    (input as HTMLElement).removeAttribute('aria-invalid');
+  };
+
   if (form && status) {
+    /* Limpiar errores cuando el usuario empieza a corregir */
+    form.querySelectorAll<HTMLElement>('input, select, textarea').forEach((el) => {
+      el.addEventListener('input', () => clearError(el, (el as HTMLInputElement).name));
+      el.addEventListener('change', () => clearError(el, (el as HTMLInputElement).name));
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (!form.checkValidity()) {
-        form.reportValidity();
+      status.textContent = '';
+      status.removeAttribute('data-form-status-type');
+
+      const data = new FormData(form);
+
+      /* Honeypot: si el campo invisible tiene contenido, es un bot — descartar silenciosamente */
+      if (String(data.get('website') ?? '').trim() !== '') {
+        status.textContent = 'Tu consulta fue enviada. Gracias.';
+        status.setAttribute('data-form-status-type', 'success');
+        form.reset();
         return;
       }
-      const data = new FormData(form);
+
+      /* Validación: si invalid, mostrar errores inline (sin reportValidity nativo feo) */
+      if (!form.checkValidity()) {
+        let firstInvalid: HTMLElement | null = null;
+        form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+          'input[required], select[required], textarea[required]',
+        ).forEach((el) => {
+          if (!el.checkValidity()) {
+            showError(el, el.name);
+            if (!firstInvalid) firstInvalid = el;
+          }
+        });
+        if (firstInvalid) (firstInvalid as HTMLElement).focus();
+        status.textContent = 'Revisá los campos marcados.';
+        status.setAttribute('data-form-status-type', 'error');
+        return;
+      }
+
+      /* Sin backend todavía → mailto fallback */
       const params = new URLSearchParams();
       const subject = `Consulta web Qüem Central · ${String(data.get('tipo') ?? '')}`;
       const body =
         `Nombre: ${data.get('nombre')}\n` +
-        `Empresa: ${data.get('empresa') ?? '-'}\n` +
+        `Empresa: ${data.get('empresa') || '-'}\n` +
         `Tipo: ${data.get('tipo')}\n` +
-        `Teléfono: ${data.get('telefono') ?? '-'}\n` +
+        `Teléfono: ${data.get('telefono') || '-'}\n` +
         `Email: ${data.get('email')}\n\n` +
         `Mensaje:\n${data.get('mensaje')}\n`;
       params.set('subject', subject);
       params.set('body', body);
       window.location.href = `mailto:comercial@quem-central.com?${params.toString()}`;
       status.textContent = 'Abriendo tu cliente de email…';
+      status.setAttribute('data-form-status-type', 'success');
     });
 
     // Si llega el query ?tipo=Franquicias, prefill
@@ -265,5 +344,31 @@ const hasWhatsapp = WHATSAPP.length > 0;
     color: var(--color-accent-700);
     font-size: var(--font-size-sm);
     min-height: 1.5rem;
+  }
+  .contact__form-status[data-form-status-type="error"] { color: oklch(55% 0.22 28); }
+  .contact__form-status[data-form-status-type="success"] { color: var(--color-accent-700); }
+
+  /* Field hint / error microcopy */
+  .field__hint {
+    font-size: var(--font-size-xs);
+    color: oklch(55% 0.22 28);
+    line-height: 1.4;
+    margin-block-start: 0.15rem;
+  }
+  .field input[aria-invalid="true"],
+  .field select[aria-invalid="true"],
+  .field textarea[aria-invalid="true"] {
+    border-color: oklch(60% 0.20 28);
+    box-shadow: 0 0 0 3px oklch(60% 0.20 28 / 0.12);
+  }
+
+  /* Honeypot — offscreen pero accesible para screen readers que sí lo verán como warning */
+  .contact__honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 </style>
