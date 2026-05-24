@@ -1,6 +1,11 @@
 ---
 import { PRESS } from '../../config/press';
 
+interface Props {
+  showHead?: boolean;
+}
+const { showHead = true } = Astro.props;
+
 const fmtDate = (iso: string): string => {
   const d = new Date(iso);
   return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -10,10 +15,23 @@ const fmtDate = (iso: string): string => {
 const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outlet])).entries());
 ---
 
-<section class="pr-list section-y" aria-labelledby="pr-list-title">
+<section class="pr-list section-y" id="prensa" aria-labelledby="pr-list-title">
   <div class="container-content">
-    <header class="pr-list__head">
-      <h2 id="pr-list-title" class="sr-only">Notas de prensa</h2>
+
+    {showHead && (
+      <header class="pr-list__section-head">
+        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Prensa</p>
+        <h2 id="pr-list-title" class="pr-list__section-title" data-reveal style="--reveal-delay: 100ms;">
+          Qüem en <em>los medios</em>.
+        </h2>
+        <p class="pr-list__section-lede" data-reveal style="--reveal-delay: 200ms;">
+          Cobertura de medios económicos y de negocios sobre Qüem Central.
+        </p>
+      </header>
+    )}
+
+    <div class="pr-list__head">
+      {!showHead && <h2 id="pr-list-title" class="sr-only">Notas de prensa</h2>}
 
       {/* Strip "Como nos vieron" — wordmarks de medios sobre las cards */}
       <div class="pr-list__outlets" aria-label="Medios donde aparecemos" data-reveal>
@@ -27,7 +45,7 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
           ))}
         </ul>
       </div>
-    </header>
+    </div>
 
     {/* Pull-quote destacado — La Nación (datos del artículo oct 2023) */}
     <a
@@ -114,6 +132,33 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
 </section>
 
 <style>
+  /* Section header — muestra cuando showHead=true */
+  .pr-list__section-head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 56ch;
+    margin-block-end: var(--space-7);
+  }
+  .pr-list__section-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.02;
+    color: var(--color-text-primary);
+  }
+  .pr-list__section-title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .pr-list__section-lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+  }
+
   .pr-list__head { margin-block-end: var(--space-6); }
 
   /* Strip outlets — social proof "Cobertura en" */

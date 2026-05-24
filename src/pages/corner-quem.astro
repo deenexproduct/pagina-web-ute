@@ -1,0 +1,25 @@
+---
+/**
+ * /corner-quem — página dedicada al modelo Corner Qüem.
+ * Muestra el detalle completo de las 5 sub-secciones del brief comercial.
+ * El home muestra solo el CornerTeaser como resumen.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CornerHero from '../sections/corner/CornerHero.astro';
+import CornerFormatos from '../sections/corner/CornerFormatos.astro';
+import CornerIncluye from '../sections/corner/CornerIncluye.astro';
+import CornerDonde from '../sections/corner/CornerDonde.astro';
+import CornerValor from '../sections/corner/CornerValor.astro';
+---
+
+<BaseLayout
+  title="Corner Qüem — Retail congelado llave en mano"
+  description="Instalamos y operamos un corner con producto Qüem dentro de tu comercio. Sin inversión inicial ni complejidad operativa. 5 formatos disponibles para 12+ tipos de espacios."
+  canonicalPath="/corner-quem"
+>
+  <CornerHero />
+  <CornerFormatos />
+  <CornerIncluye />
+  <CornerDonde />
+  <CornerValor />
+</BaseLayout>
