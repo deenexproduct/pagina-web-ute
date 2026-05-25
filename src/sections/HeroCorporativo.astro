@@ -37,11 +37,6 @@ const previewCategories = [
   <div class="hero__inner container-content">
     <!-- COPY -->
     <div class="hero__copy">
-      <p class="hero__brand-tag" data-reveal="fade" style="--reveal-delay: 100ms;">
-        <span class="hero__brand-tag-dot" aria-hidden="true"></span>
-        Plataforma B2B de congelados
-      </p>
-
       <h1 id="hero-title" class="hero__title">
         <span class="hero__title-line" data-reveal style="--reveal-delay: 250ms; --reveal-duration: 800ms;">Comprá alimentos</span>
         <span class="hero__title-line hero__title-line--gradient" data-reveal style="--reveal-delay: 400ms; --reveal-duration: 800ms;">congelados</span>
@@ -167,11 +162,6 @@ const previewCategories = [
     </aside>
   </div>
 
-  <!-- Scroll cue -->
-  <a class="hero__cue" href="#quem-central" aria-label="Bajar a Qüem Central" data-reveal style="--reveal-delay: 1400ms;">
-    <span class="hero__cue-line" aria-hidden="true"></span>
-    <span class="hero__cue-text">Descubrí más</span>
-  </a>
 </section>
 
 <style>
@@ -185,54 +175,6 @@ const previewCategories = [
     display: flex;
     align-items: center;
   }
-
-  /* ===== Scroll cue ================================================ */
-  .hero__cue {
-    position: absolute;
-    bottom: clamp(1rem, 3vw, 1.75rem);
-    left: 50%;
-    transform: translateX(-50%);
-    display: inline-flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 0.6rem;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-bold);
-    transition: color var(--dur-fast);
-    z-index: 2;
-  }
-  .hero__cue:hover { color: var(--color-text-brand); }
-  .hero__cue-line {
-    width: 1.5px;
-    height: 36px;
-    background: linear-gradient(180deg, transparent 0%, var(--color-border-strong) 100%);
-    position: relative;
-    overflow: hidden;
-    border-radius: 99px;
-  }
-  .hero__cue-line::after {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(180deg, transparent 0%, var(--color-brand-500) 100%);
-    border-radius: 99px;
-    animation: hero-cue-trickle 2s ease-in-out infinite;
-  }
-  @keyframes hero-cue-trickle {
-    0%   { transform: translateY(-100%); opacity: 0; }
-    25%  { opacity: 1; }
-    75%  { opacity: 1; }
-    100% { transform: translateY(150%); opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__cue-line::after { animation: none; opacity: 0.6; transform: none; }
-  }
-  @media (max-width: 640px) { .hero__cue { display: none; } }
 
   /* ===== Background ================================================ */
   .hero__bg {
@@ -291,35 +233,6 @@ const previewCategories = [
     }
   }
 
-  /* ===== Brand tag — eyebrow informativo con dot accent ================ */
-  .hero__brand-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.4rem 0.95rem;
-    background: oklch(from var(--color-brand-500) l c h / 0.08);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.18);
-    border-radius: var(--radius-pill);
-    color: var(--color-text-brand);
-    font-size: var(--font-size-2xs);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    width: max-content;
-  }
-  .hero__brand-tag-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
-    animation: hero-tag-pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes hero-tag-pulse {
-    0%, 100% { box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18); }
-    50%      { box-shadow: 0 0 0 7px oklch(62% 0.150 155 / 0.06); }
-  }
-  @media (prefers-reduced-motion: reduce) { .hero__brand-tag-dot { animation: none; } }
   /* Legacy brand-mark (kept for backward compat — no longer used in markup) */
   .hero__brand-mark {
     display: inline-grid;
