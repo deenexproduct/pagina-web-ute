@@ -190,15 +190,13 @@ export const link = (path: string): string => {
  * detecte e ilumine.
  */
 export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
-  { label: 'Inicio',              href: '/',                       sectionId: 'top' },
-  { label: 'Qüem Central',        href: '/#quem-central',          sectionId: 'quem-central' },
-  { label: 'Ecosistema',          href: '/#ecosistema',            sectionId: 'ecosistema' },
-  { label: 'Unidades de negocio', href: '/#unidades-de-negocio',   sectionId: 'unidades-de-negocio' },
-  { label: 'Corner Qüem',         href: '/#corner-quem',           sectionId: 'corner-quem' },
-  { label: 'Productos',           href: '/#productos',             sectionId: 'productos' },
-  { label: 'Franquicias',         href: '/#franquicias',           sectionId: 'franquicias' },
-  { label: 'Prensa',              href: '/#prensa',                sectionId: 'prensa' },
-  { label: 'Contacto',            href: '/#contacto',              sectionId: 'contacto' },
+  { label: 'Inicio',      href: '/',               sectionId: 'top' },
+  { label: 'Ecosistema',  href: '/#ecosistema',    sectionId: 'ecosistema' },
+  { label: 'Corner Qüem', href: '/#corner-quem',   sectionId: 'corner-quem' },
+  { label: 'Productos',   href: '/#productos',     sectionId: 'productos' },
+  { label: 'Franquicias', href: '/#franquicias',   sectionId: 'franquicias' },
+  { label: 'Prensa',      href: '/#prensa',        sectionId: 'prensa' },
+  { label: 'Contacto',    href: '/#contacto',      sectionId: 'contacto' },
 ] as const;
 
 /* -------------------------------------------------------------------------- */
