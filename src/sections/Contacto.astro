@@ -40,7 +40,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
       </p>
 
       <div class="contact__cta-row">
-        <a class="btn btn-primary" href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online</a>
+        <a class="btn btn-outline" href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online</a>
         <a class="btn btn-outline" href={waLink} {...(hasWhatsapp ? { target: '_blank', rel: 'noopener' } : {})}>
           WhatsApp comercial
         </a>
@@ -90,7 +90,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <div class="field">
         <label for="f-empresa">Empresa</label>
-        <input id="f-empresa" name="empresa" type="text" autocomplete="organization" />
+        <input id="f-empresa" name="empresa" type="text" autocomplete="organization" placeholder="Razón social o nombre del local" />
       </div>
 
       <div class="field">
@@ -107,7 +107,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
       <div class="field-row">
         <div class="field">
           <label for="f-tel">Teléfono</label>
-          <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" />
+          <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" placeholder="11 1234-5678" />
         </div>
         <div class="field">
           <label for="f-email">Email *</label>
@@ -118,7 +118,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <div class="field">
         <label for="f-msg">Mensaje *</label>
-        <textarea id="f-msg" name="mensaje" rows="5" required aria-describedby="f-msg-hint"></textarea>
+        <textarea id="f-msg" name="mensaje" rows="5" required aria-describedby="f-msg-hint" placeholder="Contanos tu tipo de negocio, qué productos te interesan o cuánto volumen manejás."></textarea>
         <small id="f-msg-hint" class="field__hint" data-error-for="mensaje" hidden></small>
       </div>
 

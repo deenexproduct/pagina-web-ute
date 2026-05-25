@@ -183,7 +183,9 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
   .site-header__inner {
     display: flex;
     align-items: center;
-    gap: var(--space-5);
+    /* Gap dinámico — angosto en laptops chicas (1100-1280px) donde el nav
+       compite por píxeles con brand + CTA, más generoso en pantallas grandes. */
+    gap: clamp(0.75rem, 1.4vw, var(--space-5));
     height: var(--header-height);
   }
 
@@ -239,23 +241,34 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
   .site-header__nav {
     flex: 1;
     display: none;
+    /* Permite que el nav se comprima si el viewport es chico, en vez de
+       expandir el container y empujar el CTA fuera del header. */
+    min-width: 0;
   }
-  @media (min-width: 1024px) {
+  /* Subimos el breakpoint a 1200px — con 8 items + brand + CTA en 1024-1199
+     todo quedaba demasiado apretado y los labels se superponían con el brand.
+     Por debajo seguimos con el hamburger menu (que ya tiene todos los items). */
+  @media (min-width: 1200px) {
     .site-header__nav { display: block; }
   }
   .site-header__nav ul {
     display: flex;
     align-items: center;
-    gap: var(--space-5);
+    /* Gap entre items: angosto en 1100-1280, más holgado en >1440. */
+    gap: clamp(0.5rem, 0.6vw, 1rem);
     justify-content: center;
+    flex-wrap: nowrap;
   }
   .nav-link {
     position: relative;
     display: inline-block;
-    font-size: var(--font-size-sm);
+    /* Tipografía un punto más chica en el nav desktop — los items son muchos
+       y van a tener que convivir con el resto del header. El font-size-sm
+       de fluid type sigue siendo legible. */
+    font-size: clamp(0.83rem, 0.78rem + 0.18vw, 0.95rem);
     font-weight: var(--weight-medium);
     color: var(--color-text-secondary);
-    padding: 0.5rem 0;
+    padding: 0.5rem 0.25rem;
     white-space: nowrap;
     transition: color var(--dur-fast) var(--ease-standard);
     /* Tipográfica fija — evita layout shift al cambiar weight en hover/active */
@@ -291,17 +304,21 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
   .site-header__actions {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
     margin-inline-start: auto;
+    flex-shrink: 0;
   }
   /* Hide CTA from header on small screens — the mobile nav dropdown already has it */
   @media (max-width: 639px) {
     .site-header__cta { display: none; }
   }
   .site-header__cta {
-    padding: 0.7rem 1.1rem;
-    font-size: var(--font-size-sm);
+    /* Padding más compacto en desktop para liberar espacio al nav. En pantallas
+       grandes (>1440px) recuperamos el padding original via clamp. */
+    padding: 0.6rem clamp(0.8rem, 0.6rem + 0.4vw, 1.1rem);
+    font-size: clamp(0.83rem, 0.78rem + 0.18vw, 0.95rem);
     box-shadow: 0 4px 12px oklch(42% 0.190 252 / 0.28);
+    white-space: nowrap;
   }
   .site-header__cta:hover {
     box-shadow: 0 6px 18px oklch(42% 0.190 252 / 0.38);
@@ -315,7 +332,8 @@ import { NAV_PRIMARY, APP_BASE_URL, link } from '../../config/site';
     color: var(--color-text-primary);
   }
   .site-header__menu-toggle:hover { background-color: var(--color-surface-subtle); }
-  @media (min-width: 1024px) {
+  /* Coincide con el breakpoint del nav: hamburger se esconde sólo cuando aparece el nav full. */
+  @media (min-width: 1200px) {
     .site-header__menu-toggle { display: none; }
   }
 
