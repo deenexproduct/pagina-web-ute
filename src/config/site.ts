@@ -52,7 +52,7 @@ export const WHATSAPP = ''; // TODO confirmar WhatsApp final
 
 /** Helper: link efectivo para CTAs "Contactar por WhatsApp". */
 export const whatsappLink = (): string =>
-  WHATSAPP ? `https://wa.me/${WHATSAPP}` : '#contacto';
+  WHATSAPP ? `https://wa.me/${WHATSAPP}` : '/#contacto';
 
 /* -------------------------------------------------------------------------- */
 /*  EQUIPO DIRECTIVO                                                          */
