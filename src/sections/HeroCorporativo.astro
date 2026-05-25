@@ -15,14 +15,18 @@ import { APP_BASE_URL, CATEGORIES } from '../config/site';
  * Objetivo: conversión al click "Comprar online" → app.
  */
 
-/* 6 categorías visibles en el preview de la app — mix balanceado. */
+/*
+ * 6 categorías visibles en el preview de la app.
+ * Copy con presentación + volumen para que un comprador entienda
+ * el formato real del catálogo (no es retail unidad, es mayorista por bolsa/caja).
+ */
 const previewCategories = [
-  { slug: 'empanadas',    nombre: 'Empanadas',    hue: 38 },
-  { slug: 'hamburguesas', nombre: 'Hamburguesas', hue: 28 },
-  { slug: 'pizzas',       nombre: 'Pizzas',       hue: 12 },
-  { slug: 'postres',      nombre: 'Postres',      hue: 320 },
-  { slug: 'frutas',       nombre: 'Frutas',       hue: 18 },
-  { slug: 'pescados',     nombre: 'Pescados',     hue: 200 },
+  { slug: 'empanadas',    nombre: 'Empanadas',    pack: 'Caja 24u',    hue: 38 },
+  { slug: 'hamburguesas', nombre: 'Hamburguesas', pack: 'Caja 12u',    hue: 28 },
+  { slug: 'pizzas',       nombre: 'Pizzas',       pack: 'Bolsa 6u',    hue: 12 },
+  { slug: 'postres',      nombre: 'Postres',      pack: 'Caja 24u',    hue: 320 },
+  { slug: 'frutas',       nombre: 'Frutas',       pack: 'Bolsa 5kg',   hue: 18 },
+  { slug: 'pescados',     nombre: 'Pescados',     pack: 'Caja 4kg',    hue: 200 },
 ];
 ---
 
@@ -132,7 +136,10 @@ const previewCategories = [
                 <div class="hero__phone-cat-thumb">
                   <span class="hero__phone-cat-mark"></span>
                 </div>
-                <span class="hero__phone-cat-name">{c.nombre}</span>
+                <div class="hero__phone-cat-info">
+                  <span class="hero__phone-cat-name">{c.nombre}</span>
+                  <span class="hero__phone-cat-pack">{c.pack}</span>
+                </div>
               </li>
             ))}
           </ul>
@@ -603,11 +610,25 @@ const previewCategories = [
     border-radius: 50%;
     background: oklch(45% 0.16 var(--cat-hue));
   }
+  .hero__phone-cat-info {
+    display: grid;
+    gap: 0.05rem;
+    min-width: 0;
+  }
   .hero__phone-cat-name {
     font-size: 0.7rem;
     font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
     letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .hero__phone-cat-pack {
+    font-size: 0.55rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: var(--weight-medium);
+    line-height: 1;
   }
 
   /* Floating CTA dentro de la app — brand color */

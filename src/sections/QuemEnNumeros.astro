@@ -1,222 +1,193 @@
 ---
-import { SHOW_METRICS, METRICS } from '../config/site';
-
 /**
- * "QUEM en números" v2.
- * - SHOW_METRICS=false: capabilities cards (sin inventar datos).
- * - SHOW_METRICS=true: requiere METRICS reales.
+ * "Confían en nosotros" — placeholder de logos de clientes B2B.
  *
- * Regla del brief: NO inventar números.
+ * Reemplaza la sección anterior "Por qué Qüem" (capabilities cards)
+ * que era redundante con Hero + ProofStrip + Garantías.
+ *
+ * Estado: placeholders vacíos. El cliente debe proveer 6-10 logos
+ * de cadenas/comercios que compran a Qüem Central. Los logos
+ * pueden ir en src/assets/logos-clientes/ y referenciarse desde acá.
+ *
+ * GATE: pedir al cliente 6-10 logos en SVG o PNG transparente.
+ *   - Si solo hay 1-2 testimonios reales, mejor cambiar este componente
+ *     por Testimonials.astro (quote + nombre + comercio).
+ *   - Si no hay nada, ocultar la sección hasta tener assets.
  */
 
-const items: ReadonlyArray<{ value: string; label: string }> = SHOW_METRICS
-  ? [
-      ...(METRICS.yearsOfOperation ? [{ value: String(METRICS.yearsOfOperation), label: 'Años de operación' }] : []),
-      ...(METRICS.monthlyOrders ? [{ value: String(METRICS.monthlyOrders), label: 'Pedidos mensuales' }] : []),
-      ...(METRICS.coverageZones ? [{ value: String(METRICS.coverageZones), label: 'Zonas de cobertura' }] : []),
-      ...(METRICS.activeUnits ? [{ value: String(METRICS.activeUnits), label: 'Unidades activas' }] : []),
-      ...(METRICS.productCategories ? [{ value: String(METRICS.productCategories), label: 'Categorías de producto' }] : []),
-      ...(METRICS.b2bClients ? [{ value: String(METRICS.b2bClients), label: 'Clientes B2B activos' }] : []),
-      ...(METRICS.commercialPoints ? [{ value: String(METRICS.commercialPoints), label: 'Puntos comerciales' }] : []),
-    ]
-  : [];
+interface ClientLogo {
+  name: string;
+  /** Path al logo (SVG/PNG transparente) — vacío = placeholder visual */
+  logo?: string;
+  /** Categoría del cliente, opcional, para tooltip */
+  segment?: string;
+}
 
-const showSoft = !SHOW_METRICS || items.length === 0;
+/* TODO confirmar con cliente — completar con clientes reales */
+const clients: ReadonlyArray<ClientLogo> = [
+  { name: '', segment: 'Cadena gastronómica' },
+  { name: '', segment: 'Cafeterías' },
+  { name: '', segment: 'Hotelería' },
+  { name: '', segment: 'Catering / eventos' },
+  { name: '', segment: 'Supermercado' },
+  { name: '', segment: 'Kioscos premium' },
+  { name: '', segment: 'Gimnasios' },
+  { name: '', segment: 'Universidades' },
+];
 
-/** Capacidades cualitativas — foco comprador B2B, sin métricas inventadas. */
-const capabilities = [
-  { label: 'Comprá online', value: 'Catálogo B2B', meta: 'pedidos en minutos, sin papeles', tone: 'brand', icon: 'app' },
-  { label: 'Entrega incluida', value: 'AMBA + PBA', meta: 'llegamos a tu puerta', tone: 'neutral', icon: 'map' },
-  { label: 'Canal directo', value: 'B2B sin intermediarios', meta: 'pedido → confirmación → entrega', tone: 'brand', icon: 'b2b' },
-  { label: 'Stock real', value: '11 categorías', meta: 'disponibilidad en línea, sin sorpresas', tone: 'accent', icon: 'expand' },
-] as const;
+const isPlaceholder = clients.every((c) => !c.logo);
 ---
 
-<section class="num section-y" aria-labelledby="num-title">
-  <div class="container-content num__inner">
-    <header class="num__head">
-      <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Por qué Qüem</p>
-      <h2 id="num-title" class="num__title" data-reveal style="--reveal-delay: 100ms;">
-        Abastecimiento completo, <em>logística incluida.</em>
+<section class="trust section-y" aria-labelledby="trust-title">
+  <div class="container-content trust__inner">
+    <header class="trust__head" data-reveal>
+      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">Confianza</p>
+      <h2 id="trust-title" class="trust__title" data-reveal style="--reveal-delay: 100ms;">
+        Compran en Qüem.
       </h2>
+      <p class="trust__lede" data-reveal style="--reveal-delay: 200ms;">
+        Cadenas gastronómicas, hoteles, cafeterías y comercios que abastecen su operación con nuestro catálogo.
+      </p>
     </header>
 
-    {showSoft ? (
-      <ul class="num__capabilities" role="list" data-reveal-stagger>
-        {capabilities.map((c) => (
-          <li class:list={['capability', `capability--${c.tone}`]} data-reveal>
-            <div class="capability__icon" aria-hidden="true">
-              {c.icon === 'b2b' && (
-                <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h16M6 12h3M6 14.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              )}
-              {c.icon === 'map' && (
-                <svg viewBox="0 0 20 20" fill="none"><path d="M10 18s-6-5.6-6-9.5a6 6 0 1 1 12 0c0 3.9-6 9.5-6 9.5Z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="8.5" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
-              )}
-              {c.icon === 'expand' && (
-                <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/><circle cx="4" cy="5" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="16" cy="5" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="15" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="16" cy="15" r="1.5" stroke="currentColor" stroke-width="1.3"/><path d="m5.5 6.5 3 2.5M11.5 11l3 2.5M14.5 6.5l-3 2.5M8.5 11l-3 2.5" stroke="currentColor" stroke-width="1.2"/></svg>
-              )}
-              {c.icon === 'app' && (
-                <svg viewBox="0 0 20 20" fill="none"><rect x="6" y="2" width="8" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M9 5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="15" r="0.75" fill="currentColor"/></svg>
-              )}
-            </div>
-            <span class="capability__label">{c.label}</span>
-            <span class="capability__value">{c.value}</span>
-            <span class="capability__meta">{c.meta}</span>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <ul class="num__grid" role="list" data-reveal-stagger>
-        {items.map((it) => (
-          <li class="num-item" data-reveal>
-            <span class="num-item__value">{it.value}</span>
-            <span class="num-item__label">{it.label}</span>
-          </li>
-        ))}
-      </ul>
+    <ul class="trust__grid" role="list" data-reveal-stagger>
+      {clients.map((c, idx) => (
+        <li
+          class:list={['trust-logo', isPlaceholder && 'trust-logo--placeholder']}
+          data-reveal
+          style={`--reveal-delay: ${100 + idx * 60}ms;`}
+          title={c.segment}
+        >
+          {c.logo ? (
+            <img src={c.logo} alt={c.name} loading="lazy" decoding="async" width="160" height="60" />
+          ) : (
+            <span class="trust-logo__placeholder" aria-hidden="true">
+              <svg viewBox="0 0 60 24" fill="none" aria-hidden="true">
+                <rect x="2" y="2" width="56" height="20" rx="3" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.4"/>
+                <circle cx="10" cy="12" r="2" fill="currentColor" opacity="0.25"/>
+                <rect x="18" y="9" width="16" height="2" rx="1" fill="currentColor" opacity="0.25"/>
+                <rect x="18" y="13" width="10" height="2" rx="1" fill="currentColor" opacity="0.25"/>
+              </svg>
+              <span class="trust-logo__segment">{c.segment}</span>
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    {isPlaceholder && (
+      <p class="trust__fineprint" data-reveal style="--reveal-delay: 600ms;">
+        <span aria-hidden="true">ⓘ</span>
+        Logos de clientes en alta resolución se incorporan con cada autorización
+        comercial. Lista completa al alta como cliente.
+      </p>
     )}
   </div>
 </section>
 
 <style>
-  /* Fondo claro con sutil brand-tint, sin sección oscura */
-  .num {
+  .trust {
     position: relative;
     background:
-      radial-gradient(60% 70% at 100% 0%, oklch(58% 0.155 254 / 0.06) 0%, transparent 60%),
-      linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 100%);
+      radial-gradient(70% 70% at 50% 0%, oklch(from var(--color-brand-500) l c h / 0.04) 0%, transparent 60%),
+      var(--color-bg);
     overflow: hidden;
     isolation: isolate;
   }
-  .num::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.05) 1px, transparent 1px);
-    background-size: 28px 28px;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
-  }
 
-  .num__inner { display: grid; gap: var(--space-6); }
-  .num__head { display: grid; gap: var(--space-3); max-width: 56ch; }
-  .num__title {
+  .trust__inner { display: grid; gap: var(--space-6); }
+  .trust__head { display: grid; gap: var(--space-3); max-width: 56ch; }
+  .trust__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.05;
+    line-height: 1.02;
     color: var(--color-text-primary);
-    max-width: 24ch;
+    max-width: 18ch;
   }
-  .num__title em {
-    font-style: normal;
-    background: var(--gradient-text-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .trust__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
   }
 
-  /* Capabilities — fondo claro, cards elevados */
-  .num__capabilities {
+  /* ----- Grid de logos ----- */
+  .trust__grid {
     display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-    margin-block-start: var(--space-4);
+    margin-block-start: var(--space-3);
   }
-  .capability {
-    padding: var(--space-5);
+  @media (min-width: 540px) { .trust__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 880px) { .trust__grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .trust-logo {
+    aspect-ratio: 5 / 2;
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    display: grid;
-    gap: 0.35rem;
-    transition: border-color var(--dur-fast), box-shadow var(--dur-normal), transform var(--dur-fast);
-  }
-  .capability:hover {
-    border-color: var(--color-brand-300);
-    box-shadow: var(--shadow-card);
-    transform: translateY(-2px);
-  }
-  .capability__icon {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.6rem;
-    background: var(--color-surface-subtle);
-    border: 1px solid var(--color-border-subtle);
-    color: var(--color-text-secondary);
+    border-radius: var(--radius-lg);
     display: grid;
     place-items: center;
-    margin-block-end: var(--space-2);
+    padding: var(--space-3);
+    transition: border-color var(--dur-fast), background var(--dur-fast);
   }
-  .capability__icon svg { width: 1.1rem; height: 1.1rem; }
-  .capability--brand .capability__icon { background: var(--color-brand-50); color: var(--color-brand-600); border-color: var(--color-brand-100); }
-  .capability--accent .capability__icon { background: var(--color-accent-50); color: var(--color-accent-700); border-color: oklch(from var(--color-accent-500) l c h / 0.20); }
+  .trust-logo:hover {
+    border-color: var(--color-brand-300);
+    background: var(--color-brand-50);
+  }
+  .trust-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.85;
+    transition: filter var(--dur-fast), opacity var(--dur-fast);
+  }
+  .trust-logo:hover img { filter: grayscale(0); opacity: 1; }
 
-  .capability__label {
+  /* ----- Placeholder mode (sin logos reales todavía) ----- */
+  .trust-logo--placeholder { background: var(--color-surface-subtle); }
+  .trust-logo--placeholder:hover {
+    border-color: var(--color-border-strong);
+    background: var(--color-bg-elevated);
+  }
+  .trust-logo__placeholder {
+    display: grid;
+    place-items: center;
+    gap: 0.4rem;
+    color: var(--color-text-muted);
+  }
+  .trust-logo__placeholder svg { width: 60%; max-width: 60px; height: auto; }
+  .trust-logo__segment {
     font-size: var(--font-size-2xs);
+    font-weight: var(--weight-semibold);
     text-transform: uppercase;
     letter-spacing: var(--tracking-widest);
     color: var(--color-text-muted);
-    font-weight: var(--weight-semibold);
-  }
-  .capability__value {
-    font-family: var(--font-display);
-    font-size: var(--font-size-xl);
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    line-height: 1.1;
-  }
-  .capability__meta {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-  .capability--accent {
-    border-color: oklch(from var(--color-accent-500) l c h / 0.25);
-    background: linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.04) 0%, var(--color-bg-elevated) 60%);
-  }
-  .capability--accent .capability__value {
-    color: var(--color-accent-700);
-  }
-  .capability--brand .capability__value {
-    color: var(--color-text-brand);
+    text-align: center;
+    line-height: 1.2;
   }
 
-  /* Métricas duras (cuando SHOW_METRICS=true) */
-  .num__grid {
-    display: grid;
-    gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-    margin-block-start: var(--space-4);
-  }
-  .num-item {
-    padding: var(--space-5);
-    background: var(--color-bg-elevated);
+  /* ----- Fineprint ----- */
+  .trust__fineprint {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface-subtle);
     border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    text-align: center;
-    transition: border-color var(--dur-fast), box-shadow var(--dur-normal);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-snug);
+    max-width: 60ch;
+    margin-block-start: var(--space-3);
   }
-  .num-item:hover {
-    border-color: var(--color-brand-300);
-    box-shadow: var(--shadow-card);
-  }
-  .num-item__value {
-    display: block;
-    font-family: var(--font-display);
-    font-size: var(--font-size-4xl);
-    font-weight: var(--weight-extrabold);
-    background: var(--gradient-text-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    margin-block-end: var(--space-2);
-  }
-  .num-item__label {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
+  .trust__fineprint span {
+    color: var(--color-text-brand);
+    flex-shrink: 0;
+    margin-block-start: 0.05rem;
   }
 </style>
+</content>
+</invoke>

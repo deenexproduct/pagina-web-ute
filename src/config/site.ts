@@ -194,13 +194,15 @@ export const link = (path: string): string => {
  * detecte e ilumine.
  */
 export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
-  { label: 'Inicio',      href: '/',               sectionId: 'top' },
-  { label: 'Ecosistema',  href: '/#ecosistema',    sectionId: 'ecosistema' },
-  { label: 'Corner Qüem', href: '/#corner-quem',   sectionId: 'corner-quem' },
-  { label: 'Productos',   href: '/#productos',     sectionId: 'productos' },
-  { label: 'Franquicias', href: '/#franquicias',   sectionId: 'franquicias' },
-  { label: 'Prensa',      href: '/#prensa',        sectionId: 'prensa' },
-  { label: 'Contacto',    href: '/#contacto',      sectionId: 'contacto' },
+  /* BUYER FLOW — orden del scroll real del comprador */
+  { label: 'Inicio',     href: '/',              sectionId: 'top' },
+  { label: 'Plataforma', href: '/#plataforma',   sectionId: 'plataforma' },
+  { label: 'Productos',  href: '/#productos',    sectionId: 'productos' },
+  { label: 'Garantías',  href: '/#garantias',    sectionId: 'garantias' },
+  { label: 'Prensa',     href: '/#prensa',       sectionId: 'prensa' },
+  /* PARTNER FLOW — link único al divider que abre las secciones partner */
+  { label: 'Partners',   href: '/#partners',     sectionId: 'partners' },
+  { label: 'Contacto',   href: '/#contacto',     sectionId: 'contacto' },
 ] as const;
 
 /* -------------------------------------------------------------------------- */
