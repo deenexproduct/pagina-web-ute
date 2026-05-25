@@ -1,27 +1,16 @@
 ---
-import { APP_BASE_URL, EMAILS, SOCIAL, link } from '../../config/site';
-
-const year = new Date().getFullYear();
-const hasInstagram = SOCIAL.instagram.length > 0;
-const hasLinkedin = SOCIAL.linkedin.length > 0;
+import { link } from '../../config/site';
 
 /**
- * Footer minimalista v3 — fondo claro, una sola fila + bottom bar.
+ * Footer minimalista v4 — solo brand centrado + credit centrado.
  *
  * Diseño:
- *   1) Top row: brand (izq) + nav esencial (centro) + CTA (der)
- *   2) Bottom bar: copyright + credit Deenex
+ *   1) Top row: brand logo + name, centrado
+ *   2) Bottom bar: credit "Creado por Deenex" centrado
  *
- * Sin pitch block, sin 4 columnas, sin fondo oscuro. Funciona como cierre
- * limpio del sitio sin competir con la sección Contacto.
+ * Nav, CTA, copyright legal, email y socials eliminados — el header sticky
+ * con "Comprar online" siempre visible cubre la conversión.
  */
-const footerNav = [
-  { label: 'Qué hacemos', href: '/#quem-central' },
-  { label: 'Corner Qüem', href: '/#corner-quem' },
-  { label: 'Franquicias', href: '/#franquicias' },
-  { label: 'Prensa', href: '/#prensa' },
-  { label: 'Contacto', href: '/#contacto' },
-];
 ---
 
 <footer class="site-footer">
@@ -30,38 +19,12 @@ const footerNav = [
       <span class="brand-mark" aria-hidden="true">Q</span>
       <span class="site-footer__brand-name">Qüem <em>Central</em></span>
     </a>
-
-    <nav class="site-footer__nav" aria-label="Links del sitio">
-      <ul>
-        {footerNav.map((item) => (
-          <li><a href={link(item.href)}>{item.label}</a></li>
-        ))}
-      </ul>
-    </nav>
-
-    <div class="site-footer__cta">
-      <a class="btn btn-primary site-footer__cta-main" href={APP_BASE_URL} target="_blank" rel="noopener">
-        Comprar online
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-    </div>
   </div>
 
   <div class="container-content site-footer__bar">
-    <small class="site-footer__legal">
-      © {year} Qüem Central. Todos los derechos reservados.
-    </small>
-
-    <div class="site-footer__bar-right">
-      <a class="site-footer__bar-link" href={`mailto:${EMAILS.comercial}`}>{EMAILS.comercial}</a>
-      {hasInstagram && <a class="site-footer__bar-link" href={SOCIAL.instagram} target="_blank" rel="noopener">Instagram</a>}
-      {hasLinkedin && <a class="site-footer__bar-link" href={SOCIAL.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
-      <span class="site-footer__credit">
-        Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a> — Software para cadenas gastronómicas
-      </span>
-    </div>
+    <span class="site-footer__credit">
+      Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a> — Software para cadenas gastronómicas
+    </span>
   </div>
 </footer>
 
@@ -74,18 +37,12 @@ const footerNav = [
     margin-top: var(--space-9);
   }
 
-  /* ===== Top row — brand · nav · CTA ====================================== */
+  /* ===== Top row — brand centrado ========================================= */
   .site-footer__inner {
-    display: grid;
-    gap: var(--space-5);
-    padding-block: var(--space-7) var(--space-6);
+    display: flex;
+    justify-content: center;
     align-items: center;
-  }
-  @media (min-width: 768px) {
-    .site-footer__inner {
-      grid-template-columns: auto 1fr auto;
-      gap: var(--space-6);
-    }
+    padding-block: var(--space-7) var(--space-6);
   }
 
   /* Brand */
@@ -112,7 +69,7 @@ const footerNav = [
     letter-spacing: -0.06em;
     box-shadow:
       inset 0 1px 0 oklch(100% 0 0 / 0.18),
-      0 4px 12px oklch(42% 0.19 252 / 0.18);
+      0 4px 12px oklch(60% 0.030 100 / 0.20);
   }
   .site-footer__brand .brand-mark::after {
     content: '';
@@ -136,73 +93,20 @@ const footerNav = [
     font-weight: var(--weight-medium);
   }
 
-  /* Nav central */
-  .site-footer__nav { justify-self: center; width: 100%; }
-  .site-footer__nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-5);
-    justify-content: center;
-  }
-  .site-footer__nav a {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-medium);
-    padding-block: 0.25rem;
-    border-bottom: 1.5px solid transparent;
-    transition: color var(--dur-fast), border-color var(--dur-fast);
-    white-space: nowrap;
-  }
-  .site-footer__nav a:hover {
-    color: var(--color-text-primary);
-    border-color: var(--color-brand-500);
-  }
-
-  /* CTA derecha */
-  .site-footer__cta {
-    justify-self: end;
-  }
-  @media (max-width: 767px) {
-    .site-footer__cta { justify-self: start; }
-  }
-  .site-footer__cta-main {
-    padding-inline: 1.3rem;
-    padding-block: 0.85rem;
-    font-size: var(--font-size-sm);
-    box-shadow: 0 4px 12px oklch(42% 0.190 252 / 0.26);
-  }
-  .site-footer__cta-main:hover {
-    box-shadow: 0 6px 18px oklch(42% 0.190 252 / 0.38);
-  }
-
-  /* ===== Bottom bar ======================================================= */
+  /* ===== Bottom bar — credit centrado ===================================== */
   .site-footer__bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: var(--space-3);
-    flex-wrap: wrap;
     padding-block: var(--space-4) var(--space-5);
     border-top: 1px solid var(--color-border-subtle);
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
+    text-align: center;
   }
-  .site-footer__legal {
-    color: var(--color-text-muted);
-  }
-  .site-footer__bar-right {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-  }
-  .site-footer__bar-link {
+  .site-footer__credit {
     color: var(--color-text-secondary);
-    font-weight: var(--weight-medium);
-    transition: color var(--dur-fast);
   }
-  .site-footer__bar-link:hover { color: var(--color-text-brand); }
-
   .site-footer__credit a {
     color: var(--color-text-secondary);
     text-decoration: underline;
@@ -215,3 +119,5 @@ const footerNav = [
     text-decoration-color: var(--color-brand-500);
   }
 </style>
+</content>
+</invoke>
