@@ -2,13 +2,14 @@
 import { APP_BASE_URL } from '../config/site';
 
 /**
- * Plataforma v2 — copy comprimido a 3 mensajes clave + mockup mantenido.
+ * Plataforma v2 — ángulo "experiencia de compra B2B", no catálogo
+ * (el catálogo ya se muestra en CategoriasProducto).
  */
 const mensajes = [
-  'Catálogo digital siempre disponible',
-  'Compra online B2B en un canal',
-  'Pedidos simples desde la app',
-  'Reposición programada y con seguimiento',
+  'Precio fijo visible. Stock en tiempo real.',
+  'Pedido confirmado en segundos — sin llamadas',
+  'Seguimiento desde el despacho hasta la entrega',
+  'Reposición programada cuando más la necesitás',
 ];
 ---
 
@@ -17,10 +18,10 @@ const mensajes = [
     <div class="plat__copy">
       <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Plataforma</p>
       <h2 id="plat-title" class="plat__title" data-reveal style="--reveal-delay: 100ms;">
-        Catálogo, pedidos y compra en <em>una sola app</em>.
+        Del pedido a la entrega, <em>sin fricción.</em>
       </h2>
       <p data-reveal style="--reveal-delay: 200ms;">
-        Centralizamos catálogo, categorías y compra B2B en un único canal digital.
+        Precio listado, stock visible, confirmación al instante. Sin negociar, sin llamar, sin esperar.
       </p>
 
       <ul class="plat__list" data-reveal-stagger>
@@ -50,16 +51,22 @@ const mensajes = [
             <div class="plat__device-logo">Qüem Central</div>
             <div class="plat__device-pill">B2B</div>
           </div>
-          <p class="plat__screen-label">Categorías</p>
-          <div class="plat__device-grid">
-            <span>Empanadas</span>
-            <span>Pizzas</span>
-            <span>Hamburguesas</span>
-            <span>Postres</span>
-            <span>Frutas</span>
-            <span>Verduras</span>
+          <p class="plat__screen-label">Pedido #1 · Confirmado</p>
+          <div class="plat__device-order">
+            <div class="plat__order-row">
+              <span class="plat__order-name">Empanadas · 20 u.</span>
+              <span class="plat__order-check">✓</span>
+            </div>
+            <div class="plat__order-row">
+              <span class="plat__order-name">Hamburguesas · 12 u.</span>
+              <span class="plat__order-check">✓</span>
+            </div>
+            <div class="plat__order-row plat__order-row--logistics">
+              <span class="plat__order-name">Logística incluida</span>
+              <span class="plat__order-check">✓</span>
+            </div>
           </div>
-          <div class="plat__device-cta">Comprar online →</div>
+          <div class="plat__device-cta">Entrega: jueves · 15:00 →</div>
         </div>
         <div class="plat__phone-bar"></div>
       </div>
@@ -175,17 +182,28 @@ const mensajes = [
     color: var(--color-text-on-brand);
     font-weight: var(--weight-semibold);
   }
-  .plat__device-grid {
+  .plat__device-order {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-2);
+    gap: 0.4rem;
   }
-  .plat__device-grid span {
-    padding: 0.9rem;
+  .plat__order-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
     background: var(--color-surface-subtle);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-sm);
-    color: var(--color-text-primary);
+  }
+  .plat__order-name { color: var(--color-text-primary); }
+  .plat__order-check {
+    color: var(--color-accent-600);
+    font-weight: var(--weight-bold);
+    font-size: var(--font-size-xs);
+  }
+  .plat__order-row--logistics .plat__order-name {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
   }
   .plat__device-cta {
     text-align: center;
