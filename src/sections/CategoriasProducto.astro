@@ -1,5 +1,5 @@
 ---
-import { CATEGORIES, APP_BASE_URL, categoryUrl } from '../config/site';
+import { CATEGORIES, APP_BASE_URL, categoryUrl, link } from '../config/site';
 
 interface Props {
   showHead?: boolean;
@@ -53,7 +53,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
                 style={`--cat-hue: ${icon.hue};`}
               >
                 {cat.foto ? (
-                  <img src={cat.foto} alt="" loading="lazy" decoding="async" />
+                  <img src={link(cat.foto)} alt="" loading="lazy" decoding="async" />
                 ) : (
                   <svg class="cat-card__icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
                     <path d={icon.svg} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -135,18 +135,22 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, oklch(15% 0.018 240 / 0.04) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(15% 0.018 95 / 0.04) 1px, transparent 1px);
     background-size: 12px 12px;
     mix-blend-mode: multiply;
     opacity: 0.5;
   }
   .cat-card__photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 92%;
+    height: 92%;
+    object-fit: contain;
+    object-position: center;
     transition: transform var(--dur-slow) var(--ease-out-expo);
+    filter: drop-shadow(0 6px 14px oklch(15% 0.018 95 / 0.15));
+    position: relative;
+    z-index: 1;
   }
-  .cat-card:hover .cat-card__photo img { transform: scale(1.04); }
+  .cat-card:hover .cat-card__photo img { transform: scale(1.06) rotate(-1.5deg); }
 
   .cat-card__icon {
     position: relative;

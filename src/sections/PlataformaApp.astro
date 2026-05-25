@@ -1,7 +1,10 @@
 ---
+import { link } from '../config/site';
+
 /**
- * Plataforma v2 — ángulo "experiencia de compra B2B", no catálogo
- * (el catálogo ya se muestra en CategoriasProducto).
+ * Plataforma v3 — video showcase (reemplaza mockup de phone con video real
+ * heredado del sitio UTE). Autoplay + muted + loop = no requiere interacción
+ * del usuario, no rompe accesibilidad.
  */
 const mensajes = [
   'Precio fijo visible. Stock en tiempo real.',
@@ -35,34 +38,25 @@ const mensajes = [
 
     </div>
 
-    <div class="plat__phone-wrap" aria-hidden="true" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
-      <div class="plat__phone">
-        <div class="plat__phone-notch"></div>
-        <div class="plat__phone-screen">
-          <div class="plat__device-header">
-            <div class="plat__device-logo">Qüem Central</div>
-            <div class="plat__device-pill">B2B</div>
-          </div>
-          <p class="plat__screen-label">Pedido #1 · Confirmado</p>
-          <div class="plat__device-order">
-            <div class="plat__order-row">
-              <span class="plat__order-name">Empanadas · 20 u.</span>
-              <span class="plat__order-check">✓</span>
-            </div>
-            <div class="plat__order-row">
-              <span class="plat__order-name">Hamburguesas · 12 u.</span>
-              <span class="plat__order-check">✓</span>
-            </div>
-            <div class="plat__order-row plat__order-row--logistics">
-              <span class="plat__order-name">Logística incluida</span>
-              <span class="plat__order-check">✓</span>
-            </div>
-          </div>
-          <div class="plat__device-cta">Entrega: jueves · 15:00 →</div>
+    <div class="plat__video-wrap" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
+      <div class="plat__video-frame">
+        <video
+          class="plat__video"
+          src={link('/video/hero.mp4')}
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-label="Demo de la plataforma Qüem Central"
+        ></video>
+        <div class="plat__video-overlay" aria-hidden="true"></div>
+        <div class="plat__video-badge" aria-hidden="true">
+          <span class="plat__video-badge-dot"></span>
+          En vivo
         </div>
-        <div class="plat__phone-bar"></div>
       </div>
-      <div class="plat__device-glow" aria-hidden="true"></div>
+      <div class="plat__video-glow" aria-hidden="true"></div>
     </div>
   </div>
 </section>
@@ -118,122 +112,90 @@ const mensajes = [
     background: var(--color-accent-100);
     color: var(--color-accent-700);
   }
-  /* PL2: Mobile phone mockup */
-  .plat__phone-wrap {
+  /* ===== Video showcase ===================================== */
+  .plat__video-wrap {
     position: relative;
     display: grid;
     place-items: center;
     padding-block: var(--space-5);
+    isolation: isolate;
   }
-  .plat__phone {
+
+  .plat__video-frame {
     position: relative;
     z-index: 1;
-    width: min(18rem, 100%);
-    background: var(--color-bg-elevated);
-    border-radius: 2.5rem;
-    border: 2px solid var(--color-border-strong);
-    box-shadow: var(--shadow-xl), 0 0 0 6px var(--color-surface-subtle);
+    width: 100%;
+    max-width: 32rem;
+    aspect-ratio: 9 / 16;
+    border-radius: var(--radius-2xl);
     overflow: hidden;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-  }
-  .plat__phone-notch {
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-bg-elevated);
-  }
-  .plat__phone-notch::after {
-    content: '';
-    width: 5rem;
-    height: 0.75rem;
-    border-radius: 999px;
-    background: var(--color-border-strong);
-  }
-  .plat__phone-screen { padding: var(--space-4); display: grid; gap: var(--space-3); }
-  .plat__device-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .plat__device-logo {
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-primary);
-  }
-  .plat__device-pill {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    padding: 0.25rem 0.6rem;
-    border-radius: var(--radius-pill);
-    background: var(--color-brand-500);
-    color: var(--color-text-on-brand);
-    font-weight: var(--weight-semibold);
-  }
-  .plat__device-order {
-    display: grid;
-    gap: 0.4rem;
-  }
-  .plat__order-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0.8rem;
-    background: var(--color-surface-subtle);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-sm);
-  }
-  .plat__order-name { color: var(--color-text-primary); }
-  .plat__order-check {
-    color: var(--color-accent-600);
-    font-weight: var(--weight-bold);
-    font-size: var(--font-size-xs);
-  }
-  .plat__order-row--logistics .plat__order-name {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
-  }
-  .plat__device-cta {
-    text-align: center;
-    padding: 0.9rem;
-    background: var(--color-brand-500);
-    color: var(--color-text-on-brand);
-    border-radius: var(--radius-md);
-    font-weight: var(--weight-semibold);
-    font-size: var(--font-size-sm);
+    background: var(--color-brand-900);
+    border: 1px solid var(--color-border-subtle);
+    box-shadow:
+      0 1px 0 oklch(100% 0 0 / 0.06) inset,
+      var(--shadow-xl),
+      0 0 0 8px var(--color-bg-elevated);
   }
 
-  .plat__phone-bar {
-    height: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-bg-elevated);
-  }
-  .plat__phone-bar::after {
-    content: '';
-    width: 4rem;
-    height: 0.3rem;
-    border-radius: 999px;
-    background: var(--color-border-strong);
-  }
-  .plat__screen-label {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    color: var(--color-text-muted);
-    font-weight: var(--weight-semibold);
+  .plat__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
-  .plat__device-glow {
+  /* Overlay sutil para integrar el video con la paleta */
+  .plat__video-overlay {
     position: absolute;
-    inset: 10% -10% -10% 10%;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 60%, oklch(22% 0.018 95 / 0.25) 100%);
+    mix-blend-mode: multiply;
+  }
+
+  /* Badge "En vivo" */
+  .plat__video-badge {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    background: oklch(15% 0.018 95 / 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: oklch(100% 0 0);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    border-radius: var(--radius-pill);
+    border: 1px solid oklch(100% 0 0 / 0.15);
+  }
+  .plat__video-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    box-shadow: 0 0 8px oklch(88% 0.115 105 / 0.6);
+    animation: plat-badge-pulse 2s ease-in-out infinite;
+  }
+  @keyframes plat-badge-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 oklch(88% 0.115 105 / 0.7); }
+    50%      { opacity: 0.7; box-shadow: 0 0 0 6px oklch(88% 0.115 105 / 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .plat__video-badge-dot { animation: none; }
+  }
+
+  .plat__video-glow {
+    position: absolute;
+    inset: 10% -8% -8% 10%;
     z-index: 0;
     border-radius: 2.5rem;
-    background: linear-gradient(135deg, var(--color-brand-200) 0%, var(--color-accent-200) 100%);
+    background: var(--gradient-mixed);
     filter: blur(50px);
-    opacity: 0.45;
+    opacity: 0.30;
   }
 </style>

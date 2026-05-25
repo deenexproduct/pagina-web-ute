@@ -139,18 +139,22 @@ export interface Category {
 export const categoryUrl = (cat: Category): string =>
   cat.appUrl ?? `${APP_BASE_URL}/categoria/${cat.slug}`;
 
-/** Categorías iniciales — orden del brief. */
+/**
+ * Categorías iniciales — orden del brief.
+ * Fotos reutilizadas del sitio UTE original (ute.deenex.tech).
+ * Las que NO tienen foto cae a placeholder icon SVG.
+ */
 export const CATEGORIES: ReadonlyArray<Category> = [
-  { slug: 'bunuelos',     nombre: 'Buñuelos' },     // TODO foto definitiva
-  { slug: 'empanadas',    nombre: 'Empanadas' },    // TODO foto definitiva
-  { slug: 'hamburguesas', nombre: 'Hamburguesas' }, // TODO foto definitiva
+  { slug: 'bunuelos',     nombre: 'Buñuelos',     foto: '/img/categorias/bunuelos.png' },
+  { slug: 'empanadas',    nombre: 'Empanadas',    foto: '/img/categorias/empanadas.png' },
+  { slug: 'hamburguesas', nombre: 'Hamburguesas', foto: '/img/categorias/hamburguesas.png' },
   { slug: 'frutas',       nombre: 'Frutas' },       // TODO foto definitiva
-  { slug: 'franui',       nombre: 'Franui' },       // TODO foto definitiva
+  { slug: 'franui',       nombre: 'Franui',       foto: '/img/categorias/franui.png' },
   { slug: 'postres',      nombre: 'Postres' },      // TODO foto definitiva
-  { slug: 'pizzas',       nombre: 'Pizzas' },       // TODO foto definitiva
+  { slug: 'pizzas',       nombre: 'Pizzas',       foto: '/img/categorias/pizzas.png' },
   { slug: 'pescados',     nombre: 'Pescados' },     // TODO foto definitiva
   { slug: 'verduras',     nombre: 'Verduras' },     // TODO foto definitiva
-  { slug: 'rebozados',    nombre: 'Rebozados' },    // TODO foto definitiva
+  { slug: 'rebozados',    nombre: 'Rebozados',    foto: '/img/categorias/rebozados.png' },
   { slug: 'tartas',       nombre: 'Tartas' },       // TODO foto definitiva
 ] as const;
 

@@ -4,63 +4,64 @@
  * Fuente única de verdad. Nada hardcodeado en componentes: todo viene de acá.
  * Convención: kebab-case, prefijos semánticos (color-*, font-*, space-*, ...).
  *
- * Dirección de marca: corporativo moderno, limpio, institucional. Paleta
- * neutral cool con acento brand azul corporativo + acento secundario verde
- * (categoría alimentos / crecimiento). Tipografías y paleta finales sujetas
- * al brand kit oficial de QUEM S.A. (TODO descargar de Drive).
+ * Dirección de marca (2026-05-25): editorial monocromo + dorado.
+ * Hereda la paleta del sitio UTE original (Meet & Quem):
+ *   - Brand 500 ≈ #93936E (oliva/caqui)
+ *   - Accent 500 ≈ #E1DF84 (amarillo dorado cálido)
+ * Las CTAs usan gradient brand → accent (oliva → dorado), como en UTE.
  * ========================================================================== */
 
 :root {
-  /* ---------- COLOR — Neutrals (cool slate, no warm) ----------------------- */
-  --color-neutral-0:   oklch(100% 0     0);          /* puro #FFFFFF para cards elevadas */
-  --color-neutral-50:  oklch(98%  0.003 240);        /* #F8F9FB — bg base */
-  --color-neutral-100: oklch(96%  0.005 240);        /* surface subtle */
-  --color-neutral-200: oklch(92%  0.008 240);        /* borders, dividers */
-  --color-neutral-300: oklch(85%  0.010 240);        /* disabled outline */
-  --color-neutral-400: oklch(70%  0.012 240);        /* placeholder text */
-  --color-neutral-500: oklch(55%  0.014 240);        /* muted text */
-  --color-neutral-600: oklch(42%  0.016 240);        /* secondary text */
-  --color-neutral-700: oklch(30%  0.016 240);        /* body strong */
-  --color-neutral-800: oklch(22%  0.018 240);        /* headings */
-  --color-neutral-900: oklch(15%  0.018 240);        /* primary text — #111623 */
-  --color-neutral-950: oklch(9%   0.016 240);        /* inverted bg */
+  /* ---------- COLOR — Neutrals (warm-leaning, complementa el oliva) -------- */
+  --color-neutral-0:   oklch(100% 0     0);          /* puro #FFFFFF */
+  --color-neutral-50:  oklch(98%  0.005 95);         /* warm off-white */
+  --color-neutral-100: oklch(96%  0.008 95);         /* surface subtle */
+  --color-neutral-200: oklch(92%  0.010 95);         /* borders, dividers */
+  --color-neutral-300: oklch(85%  0.012 95);         /* disabled outline */
+  --color-neutral-400: oklch(70%  0.014 95);         /* placeholder text */
+  --color-neutral-500: oklch(55%  0.016 95);         /* muted text */
+  --color-neutral-600: oklch(42%  0.018 95);         /* secondary text */
+  --color-neutral-700: oklch(30%  0.018 95);         /* body strong */
+  --color-neutral-800: oklch(22%  0.018 95);         /* headings */
+  --color-neutral-900: oklch(15%  0.018 95);         /* primary text */
+  --color-neutral-950: oklch(9%   0.016 95);         /* inverted bg */
 
-  /* ---------- COLOR — Brand (azul corporativo profundo) -------------------
-   * Comunica seriedad institucional, escala y operación. NO es el azul de
-   * "SaaS landing" — más oscuro, más presencia, más cerca a marina/cobalto.
-   * 500 ≈ #1E3E9C. Aparece en CTA secundario, links, iconos, eyebrow.
-   * Si el brand kit oficial pide otro hue, ajustar acá y propaga.
+  /* ---------- COLOR — Brand (oliva / caqui dorado) ------------------------
+   * Hereda directamente del sitio UTE original (#93936E). Tono cálido sobrio,
+   * editorial. Aparece en eyebrows, ícono, links, borders destacados.
+   * 500 ≈ #93936E. Heredado de Meet & Quem.
    * ----------------------------------------------------------------------- */
-  --color-brand-50:  oklch(97% 0.012 248);
-  --color-brand-100: oklch(93% 0.030 250);
-  --color-brand-200: oklch(85% 0.060 252);
-  --color-brand-300: oklch(73% 0.105 254);
-  --color-brand-400: oklch(58% 0.155 254);
-  --color-brand-500: oklch(42% 0.190 252);   /* primario — azul profundo institucional */
-  --color-brand-600: oklch(35% 0.170 252);   /* hover */
-  --color-brand-700: oklch(28% 0.140 252);   /* pressed / dark surfaces */
-  --color-brand-800: oklch(22% 0.105 252);
-  --color-brand-900: oklch(15% 0.072 250);   /* footer-grade dark */
+  --color-brand-50:  oklch(97% 0.010 100);
+  --color-brand-100: oklch(94% 0.020 100);
+  --color-brand-200: oklch(88% 0.030 100);
+  --color-brand-300: oklch(78% 0.035 100);
+  --color-brand-400: oklch(68% 0.035 100);
+  --color-brand-500: oklch(60% 0.030 100);   /* primario — oliva #93936E */
+  --color-brand-600: oklch(52% 0.030 100);   /* hover */
+  --color-brand-700: oklch(42% 0.026 100);   /* pressed */
+  --color-brand-800: oklch(32% 0.022 100);
+  --color-brand-900: oklch(22% 0.018 100);   /* footer-grade dark */
 
-  /* ---------- COLOR — Brand DEEP (overlay decorativo, hero gradient) ------ */
-  --color-brand-deep: oklch(22% 0.110 252);
-  --color-brand-tint: oklch(96% 0.018 252);  /* tint para backgrounds calmados */
+  /* ---------- COLOR — Brand DEEP (overlay decorativo) --------------------- */
+  --color-brand-deep: oklch(32% 0.024 100);
+  --color-brand-tint: oklch(96% 0.015 100);  /* tint backgrounds calmados */
 
-  /* ---------- COLOR — Acento (verde alimentos / crecimiento) ---------------
-   * Acento secundario. Comunica producto fresco, crecimiento, "Comprar online".
-   * Reservado para callouts y la CTA primaria Comprar online.
-   * 500 ≈ #1FB874 (verde moderno tech, no verde "huerta").
+  /* ---------- COLOR — Acento (amarillo dorado cálido) ----------------------
+   * Hereda directamente del sitio UTE original (#E1DF84). Usado como
+   * highlight en gradient con brand (oliva → dorado). Reservado para
+   * la CTA "Comprar online" y callouts premium.
+   * 500 ≈ #E1DF84. Es claro, así que combina con texto oscuro encima.
    * ----------------------------------------------------------------------- */
-  --color-accent-50:  oklch(96% 0.020 155);
-  --color-accent-100: oklch(92% 0.045 155);
-  --color-accent-200: oklch(85% 0.085 155);
-  --color-accent-300: oklch(76% 0.125 155);
-  --color-accent-400: oklch(68% 0.150 155);
-  --color-accent-500: oklch(62% 0.150 155);   /* primario — verde acento */
-  --color-accent-600: oklch(54% 0.135 155);   /* hover */
-  --color-accent-700: oklch(45% 0.118 155);
-  --color-accent-800: oklch(33% 0.094 155);
-  --color-accent-900: oklch(22% 0.068 155);
+  --color-accent-50:  oklch(98% 0.025 105);
+  --color-accent-100: oklch(96% 0.050 105);
+  --color-accent-200: oklch(93% 0.080 105);
+  --color-accent-300: oklch(91% 0.100 105);
+  --color-accent-400: oklch(89% 0.115 105);
+  --color-accent-500: oklch(88% 0.115 105);   /* primario — dorado #E1DF84 */
+  --color-accent-600: oklch(75% 0.115 105);   /* hover */
+  --color-accent-700: oklch(58% 0.100 100);   /* texto sobre claro */
+  --color-accent-800: oklch(42% 0.078 100);
+  --color-accent-900: oklch(28% 0.055 100);
 
   /* ---------- COLOR — Semantic surfaces & text (light mode) ---------------- */
   --color-bg: var(--color-neutral-50);
@@ -79,7 +80,7 @@
   --color-text-brand: var(--color-brand-600);
   --color-text-accent: var(--color-accent-700);
   --color-text-on-brand: var(--color-neutral-0);
-  --color-text-on-accent: var(--color-neutral-0);
+  --color-text-on-accent: var(--color-neutral-900);  /* accent claro (#E1DF84) → texto oscuro para contraste */
 
   --color-border-subtle: var(--color-neutral-200);
   --color-border-strong: var(--color-neutral-300);
@@ -185,8 +186,8 @@
   --shadow-lg:  0 18px 48px oklch(15% 0.018 240 / 0.10);
   --shadow-xl:  0 32px 80px oklch(15% 0.018 240 / 0.14);
   --shadow-2xl: 0 50px 120px oklch(15% 0.018 240 / 0.20);
-  --shadow-glow-brand:  0 0 0 4px oklch(50% 0.180 250 / 0.18);
-  --shadow-glow-accent: 0 0 0 4px oklch(62% 0.150 155 / 0.22);
+  --shadow-glow-brand:  0 0 0 4px oklch(60% 0.030 100 / 0.20);
+  --shadow-glow-accent: 0 0 0 4px oklch(88% 0.115 105 / 0.35);
 
   /* Layered shadows — premium feel para cards destacadas */
   --shadow-card:
@@ -198,21 +199,24 @@
     0 8px 16px oklch(15% 0.018 240 / 0.08),
     0 24px 48px oklch(15% 0.018 240 / 0.12);
   --shadow-elevated:
-    0 0 0 1px oklch(42% 0.190 252 / 0.08),
-    0 2px 4px oklch(15% 0.018 240 / 0.04),
-    0 12px 32px oklch(15% 0.018 240 / 0.10),
-    0 32px 80px oklch(42% 0.190 252 / 0.10);
+    0 0 0 1px oklch(60% 0.030 100 / 0.10),
+    0 2px 4px oklch(15% 0.018 95 / 0.04),
+    0 12px 32px oklch(15% 0.018 95 / 0.10),
+    0 32px 80px oklch(60% 0.030 100 / 0.14);
 
-  /* ---------- GRADIENTES reutilizables ------------------------------------ */
-  --gradient-brand:    linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-700) 100%);
-  --gradient-brand-soft: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-brand-100) 100%);
+  /* ---------- GRADIENTES reutilizables ------------------------------------
+   * gradient-brand = signature de Meet&Quem / UTE: oliva → dorado, 230deg.
+   * Reservado para CTAs primarias y headings con emphasis.
+   * --------------------------------------------------------------------- */
+  --gradient-brand:    linear-gradient(230deg, var(--color-brand-500) 0%, var(--color-accent-500) 100%);
+  --gradient-brand-soft: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-accent-50) 100%);
   --gradient-accent:   linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-accent-700) 100%);
-  --gradient-mixed:    linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-accent-500) 100%);
+  --gradient-mixed:    linear-gradient(230deg, var(--color-brand-500) 0%, var(--color-accent-500) 100%);
   --gradient-mesh:
-    radial-gradient(60% 60% at 90% 0%, oklch(58% 0.155 254 / 0.18) 0%, transparent 65%),
-    radial-gradient(40% 50% at 0% 100%, oklch(62% 0.150 155 / 0.12) 0%, transparent 65%);
-  --gradient-text-brand: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-700));
-  --gradient-text-mixed: linear-gradient(135deg, var(--color-brand-500), var(--color-accent-500));
+    radial-gradient(60% 60% at 90% 0%, oklch(60% 0.030 100 / 0.18) 0%, transparent 65%),
+    radial-gradient(40% 50% at 0% 100%, oklch(88% 0.115 105 / 0.22) 0%, transparent 65%);
+  --gradient-text-brand: linear-gradient(230deg, var(--color-brand-700), var(--color-brand-500));
+  --gradient-text-mixed: linear-gradient(230deg, var(--color-brand-600), var(--color-accent-700));
 
   /* ---------- BLUR -------------------------------------------------------- */
   --blur-sm: 4px;
