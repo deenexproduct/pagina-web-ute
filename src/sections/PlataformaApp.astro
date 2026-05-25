@@ -40,26 +40,72 @@ const mensajes = [
 
     <div class="plat__video-wrap" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
       <div class="plat__video-frame">
+        {/*
+          Video lazy-loaded: arranca con preload="none" + data-src,
+          y el script abajo lo carga + reproduce cuando entra al viewport.
+          Esto baja el TTFB inicial de la home de 15MB → 0.
+        */}
         <video
           class="plat__video"
-          src={link('/video/hero.mp4')}
-          autoplay
+          data-lazy-video
+          data-src={link('/video/hero.mp4')}
           muted
           loop
           playsinline
-          preload="metadata"
-          aria-label="Demo de la plataforma Qüem Central"
+          preload="none"
+          aria-label="Demo del modelo operativo Qüem Central"
         ></video>
         <div class="plat__video-overlay" aria-hidden="true"></div>
         <div class="plat__video-badge" aria-hidden="true">
           <span class="plat__video-badge-dot"></span>
-          En vivo
+          Demo
         </div>
       </div>
       <div class="plat__video-glow" aria-hidden="true"></div>
     </div>
   </div>
 </section>
+
+<script>
+  /**
+   * Lazy-load del video de plataforma.
+   *
+   * Por qué: el .mp4 pesa ~15MB. Cargarlo on-page-load penaliza mobile 3G
+   * y consume datos del usuario. Lo hacemos solo cuando el wrap entra al
+   * viewport (con rootMargin para anticipar la carga ~200px antes).
+   *
+   * Fallback: si IntersectionObserver no existe, cargamos directo.
+   */
+  const lazyVideos = document.querySelectorAll<HTMLVideoElement>('[data-lazy-video]');
+
+  const loadVideo = (v: HTMLVideoElement): void => {
+    const src = v.dataset.src;
+    if (!src || v.src) return;
+    v.src = src;
+    v.load();
+    // play() puede rechazar si el browser tiene políticas anti-autoplay
+    // — está OK silenciar el error, el user puede tocar para reproducir
+    v.play().catch(() => {});
+  };
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            loadVideo(entry.target as HTMLVideoElement);
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '200px 0px', threshold: 0.01 },
+    );
+    lazyVideos.forEach((v) => io.observe(v));
+  } else {
+    // Sin IO support → cargar directo (browsers viejos)
+    lazyVideos.forEach(loadVideo);
+  }
+</script>
 
 <style>
   .plat {

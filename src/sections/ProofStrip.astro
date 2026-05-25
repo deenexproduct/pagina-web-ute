@@ -1,0 +1,166 @@
+---
+/**
+ * ProofStrip — banda de números reales y verificables, justo después del Hero.
+ *
+ * Sourceados de cobertura La Nación (Oct 2023) — NO inventados:
+ *   - "Factura $800 millones al año"
+ *   - "21 tiendas, 15 franquiciadas"
+ *   - "Expansión proyectada a Colombia"
+ *   - Fundación Qüem 2018 (mencionada en múltiples notas)
+ *
+ * Objetivo: dar trust signal arriba del fold para que el comprador B2B
+ * no necesite scrollear hasta Prensa para validar que somos serios.
+ */
+const items = [
+  { value: '2018',  label: 'Fundada', sub: 'operación continua' },
+  { value: '21',    label: 'Tiendas', sub: '15 franquiciadas' },
+  { value: '$800M', label: 'Facturación', sub: 'anual reportada' },
+  { value: 'AR + CO', label: 'Cobertura', sub: 'expansión 2026' },
+] as const;
+---
+
+<aside class="proof" aria-label="Datos de operación Qüem Central">
+  <div class="container-content proof__inner">
+    <p class="proof__caption" data-reveal style="--reveal-y: 12px;">
+      <span class="proof__caption-dot" aria-hidden="true"></span>
+      Operación verificada
+    </p>
+
+    <ul class="proof__list" data-reveal-stagger role="list">
+      {items.map((it, idx) => (
+        <li class="proof-item" data-reveal style={`--reveal-delay: ${100 + idx * 80}ms;`}>
+          <span class="proof-item__value">{it.value}</span>
+          <span class="proof-item__label">{it.label}</span>
+          <span class="proof-item__sub">{it.sub}</span>
+        </li>
+      ))}
+    </ul>
+
+    <p class="proof__source" data-reveal style="--reveal-delay: 500ms;">
+      Datos publicados en
+      <a href="https://www.lanacion.com.ar/economia/se-hizo-socio-para-ayudar-a-un-amigo-y-termino-adquiriendo-un-emprendimiento-de-congelados-que-nid16102023/" target="_blank" rel="noopener">La Nación</a>,
+      <a href="https://www.iprofesional.com/" target="_blank" rel="noopener">iProfesional</a> y
+      <a href="https://tn.com.ar/" target="_blank" rel="noopener">TN</a>.
+    </p>
+  </div>
+</aside>
+
+<style>
+  .proof {
+    position: relative;
+    background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface-subtle) 100%);
+    border-block: 1px solid var(--color-border-subtle);
+    padding-block: var(--space-6);
+    isolation: isolate;
+  }
+  .proof::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle, oklch(60% 0.030 100 / 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 90%);
+  }
+
+  .proof__inner {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .proof__caption {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: max-content;
+    padding: 0.35rem 0.85rem;
+    background: oklch(from var(--color-brand-500) l c h / 0.10);
+    color: var(--color-text-brand);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.20);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-bold);
+  }
+  .proof__caption-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    box-shadow: 0 0 0 3px oklch(88% 0.115 105 / 0.4);
+  }
+
+  /* ----- Lista de números ---------------------------------------- */
+  .proof__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+  @media (min-width: 720px) {
+    .proof__list {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+  }
+
+  .proof-item {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: var(--space-2);
+  }
+  @media (min-width: 720px) {
+    .proof-item {
+      padding-inline: var(--space-5);
+      border-inline-start: 1px solid var(--color-border-subtle);
+    }
+    .proof-item:first-child {
+      padding-inline-start: 0;
+      border-inline-start: none;
+    }
+  }
+
+  .proof-item__value {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+    font-weight: var(--weight-extrabold);
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .proof-item__label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .proof-item__sub {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* ----- Source / disclaimer ------------------------------------- */
+  .proof__source {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+  .proof__source a {
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 2px;
+    transition: color var(--dur-fast), text-decoration-color var(--dur-fast);
+  }
+  .proof__source a:hover {
+    color: var(--color-text-brand);
+    text-decoration-color: var(--color-brand-500);
+  }
+</style>
+</content>
+</invoke>

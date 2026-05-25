@@ -24,7 +24,7 @@ const tipos = [
   { value: 'Franquicias',          label: 'Franquicias', desc: 'Abrir una unidad con identidad Qüem Central.',     icon: 'building' },
   { value: 'Proveedores / marcas', label: 'Proveedores', desc: 'Distribución de tu marca o producto.',             icon: 'handshake' },
   { value: 'Inversores',           label: 'Inversores',  desc: 'Conversaciones de capital y expansión.',           icon: 'chart' },
-  { value: 'Otro',                 label: 'Otro tema',   desc: 'Consultas generales o de prensa.',                 icon: 'msg' },
+  { value: 'Prensa o alianza',     label: 'Prensa o alianza', desc: 'Periodistas, alianzas comerciales u otra consulta.', icon: 'msg' },
 ];
 
 const waLink = whatsappLink();
@@ -38,7 +38,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
         <header>
           <p class="eyebrow">Contacto</p>
           <h2 id="contact-title" class="contact__title">
-            Trabajemos con <em>Qüem</em>.
+            Hablemos.
           </h2>
         </header>
       )}
@@ -412,7 +412,13 @@ const hasWhatsapp = WHATSAPP.length > 0;
         return;
       }
 
-      /* Mailto fallback */
+      /*
+       * Mailto fallback. Problema conocido: en mobile sin app de email
+       * configurada, el mailto: falla silencioso. Mitigamos así:
+       *  1) Disparamos el mailto
+       *  2) Después de 1.5s, ofrecemos copiar el email al portapapeles
+       *     y mostramos un mensaje claro con la dirección visible.
+       */
       const params = new URLSearchParams();
       const subject = `Consulta web Qüem Central · ${String(data.get('tipo') ?? '')}`;
       const body =
@@ -424,9 +430,31 @@ const hasWhatsapp = WHATSAPP.length > 0;
         `Mensaje:\n${data.get('mensaje')}\n`;
       params.set('subject', subject);
       params.set('body', body);
-      window.location.href = `mailto:comercial@quem-central.com?${params.toString()}`;
+
+      const mailto = `mailto:comercial@quem-central.com?${params.toString()}`;
+      window.location.href = mailto;
       status.textContent = 'Abriendo tu cliente de email…';
       status.setAttribute('data-form-status-type', 'success');
+
+      /* Fallback robusto — si en 1.5s el user no salió de la página
+         (caso típico: mailto no abrió nada), mostramos un mensaje
+         claro con email visible para copiar a mano */
+      setTimeout(() => {
+        if (!document.hidden) {
+          status.innerHTML =
+            '¿No se abrió tu cliente de email? ' +
+            'Escribinos a <strong>comercial@quem-central.com</strong> ' +
+            '<button type="button" class="form__copy-btn" data-copy-email>Copiar email</button>';
+          status.setAttribute('data-form-status-type', 'success');
+          const copyBtn = status.querySelector<HTMLButtonElement>('[data-copy-email]');
+          copyBtn?.addEventListener('click', () => {
+            navigator.clipboard?.writeText('comercial@quem-central.com').then(() => {
+              copyBtn.textContent = 'Copiado ✓';
+              setTimeout(() => { copyBtn.textContent = 'Copiar email'; }, 2000);
+            });
+          });
+        }
+      }, 1500);
     });
 
     /* Prefill por querystring ?tipo=... → saltar al paso 2 */
@@ -816,9 +844,36 @@ const hasWhatsapp = WHATSAPP.length > 0;
     font-size: var(--font-size-sm);
     min-height: 1.5rem;
     margin-block-start: var(--space-2);
+    line-height: var(--leading-snug);
   }
   .contact__form-status[data-form-status-type="error"] { color: oklch(55% 0.22 28); }
-  .contact__form-status[data-form-status-type="success"] { color: var(--color-accent-700); }
+  .contact__form-status[data-form-status-type="success"] { color: var(--color-text-secondary); }
+  .contact__form-status strong {
+    color: var(--color-text-primary);
+    font-weight: var(--weight-semibold);
+    user-select: all;
+    background: var(--color-brand-50);
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-sm);
+  }
+  .form__copy-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    transition: border-color var(--dur-fast), background var(--dur-fast);
+  }
+  .form__copy-btn:hover {
+    border-color: var(--color-brand-500);
+    background: var(--color-brand-50);
+  }
 
   /* Field hint / error microcopy */
   .field__hint {

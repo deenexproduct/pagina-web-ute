@@ -23,12 +23,12 @@ const items: ReadonlyArray<{ value: string; label: string }> = SHOW_METRICS
 
 const showSoft = !SHOW_METRICS || items.length === 0;
 
-/** Capacidades cualitativas — sin métricas inventadas. */
+/** Capacidades cualitativas — foco comprador B2B, sin métricas inventadas. */
 const capabilities = [
   { label: 'Comprá online', value: 'Catálogo B2B', meta: 'pedidos en minutos, sin papeles', tone: 'brand', icon: 'app' },
   { label: 'Entrega incluida', value: 'AMBA + PBA', meta: 'llegamos a tu puerta', tone: 'neutral', icon: 'map' },
   { label: 'Canal directo', value: 'B2B sin intermediarios', meta: 'pedido → confirmación → entrega', tone: 'brand', icon: 'b2b' },
-  { label: 'Escalá con Qüem', value: 'Corner · Franquicia', meta: 'si querés crecer, tenemos el modelo', tone: 'accent', icon: 'expand' },
+  { label: 'Stock real', value: '11 categorías', meta: 'disponibilidad en línea, sin sorpresas', tone: 'accent', icon: 'expand' },
 ] as const;
 ---
 
