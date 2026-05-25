@@ -73,9 +73,9 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
     </ul>
 
     <div class="cats__cta-row">
-      <a class="btn btn-primary" href={APP_BASE_URL} target="_blank" rel="noopener">
-        Ver catálogo completo
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <a class="btn btn-primary cats__cta-full" href={APP_BASE_URL} target="_blank" rel="noopener">
+        <span>Ver catálogo completo</span>
+        <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
   </div>
@@ -192,7 +192,29 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
 
   .cats__cta-row {
     display: flex;
+    justify-content: stretch;
+    margin-block-start: var(--space-6);
+  }
+  .cats__cta-full {
+    width: 100%;
     justify-content: center;
-    margin-block-start: var(--space-7);
+    padding-block: 1.15rem;
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-bold);
+    letter-spacing: -0.01em;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 8px 24px oklch(from var(--color-brand-500) l c h / 0.22);
+    transition: transform var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-normal) var(--ease-out-expo);
+  }
+  .cats__cta-full:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px oklch(from var(--color-brand-500) l c h / 0.32);
+  }
+  .cats__cta-full svg {
+    transition: transform var(--dur-fast) var(--ease-standard);
+  }
+  .cats__cta-full:hover svg {
+    transform: translate(2px, -2px);
   }
 </style>

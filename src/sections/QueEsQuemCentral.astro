@@ -25,6 +25,7 @@ const pilares = [
     icon: 'product',
     title: 'Producto',
     desc: '11 categorías curadas. Stock disponible, sin sobrestock ni faltantes.',
+    accent: false,
   },
   {
     icon: 'logistics',
@@ -36,11 +37,13 @@ const pilares = [
     icon: 'network',
     title: 'Red comercial',
     desc: 'Todos los canales bajo una sola estructura — sin fricción entre ellos.',
+    accent: false,
   },
   {
     icon: 'tech',
     title: 'Tecnología',
     desc: 'Pedido confirmado en minutos. Sin llamadas, sin papeles, sin Excel.',
+    accent: false,
   },
 ] as const;
 ---
@@ -114,21 +117,6 @@ const pilares = [
       ))}
     </ul>
 
-    <!-- Footer mini-stat -->
-    <footer class="qe__foot" data-reveal style="--reveal-delay: 500ms;">
-      <div class="qe__foot-line" aria-hidden="true"></div>
-      <p class="qe__foot-text">
-        <strong>1 estructura</strong>
-        <span aria-hidden="true">·</span>
-        <strong>5 canales activos</strong>
-        <span aria-hidden="true">·</span>
-        <span class="qe__foot-meta">B2B, retail, franquicias, corners, tecnología</span>
-      </p>
-      <a href="#ecosistema" class="qe__foot-link">
-        Ver todos los canales
-        <span aria-hidden="true">→</span>
-      </a>
-    </footer>
   </div>
 </section>
 
@@ -340,64 +328,4 @@ const pilares = [
     color: var(--color-text-secondary);
   }
 
-  /* ===== Footer mini-stat ======================================== */
-  .qe__foot {
-    display: flex;
-    align-items: center;
-    gap: var(--space-5);
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-    margin-block-start: var(--space-5);
-  }
-  .qe__foot-line {
-    display: none;
-  }
-
-  .qe__foot-text {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.6rem;
-    justify-content: center;
-  }
-  .qe__foot-text strong {
-    font-family: var(--font-display);
-    color: var(--color-text-primary);
-    font-weight: var(--weight-extrabold);
-    letter-spacing: -0.01em;
-  }
-  .qe__foot-text > span[aria-hidden] {
-    color: var(--color-text-muted);
-    font-weight: var(--weight-bold);
-  }
-  .qe__foot-meta {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
-    font-style: italic;
-  }
-
-  .qe__foot-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--color-text-brand);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    border-bottom: 1.5px solid transparent;
-    padding-block: 0.3rem;
-    transition: border-color var(--dur-fast) var(--ease-standard),
-                color var(--dur-fast) var(--ease-standard);
-  }
-  .qe__foot-link:hover {
-    border-color: var(--color-brand-500);
-    color: var(--color-text-primary);
-  }
-  .qe__foot-link span {
-    transition: transform var(--dur-fast) var(--ease-standard);
-    display: inline-block;
-  }
-  .qe__foot-link:hover span { transform: translateX(3px); }
 </style>

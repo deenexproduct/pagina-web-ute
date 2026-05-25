@@ -1,6 +1,4 @@
 ---
-import { link } from '../config/site';
-
 interface Props {
   showHead?: boolean;
 }
@@ -53,9 +51,6 @@ const cards = [
       ))}
     </div>
 
-    <div class="franq__cta-row">
-      <a class="btn btn-primary" href={link('/#contacto')}>Consultar expansión</a>
-    </div>
   </div>
 </section>
 
@@ -210,5 +205,4 @@ const cards = [
     border-color: transparent;
   }
 
-  .franq__cta-row { display: flex; justify-content: center; margin-block-start: var(--space-7); }
 </style>

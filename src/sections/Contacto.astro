@@ -1,5 +1,5 @@
 ---
-import { APP_BASE_URL, EMAILS, whatsappLink, WHATSAPP, link } from '../config/site';
+import { APP_BASE_URL, EMAILS, whatsappLink, WHATSAPP } from '../config/site';
 
 interface Props {
   showHead?: boolean;
@@ -8,16 +8,23 @@ interface Props {
 const { showHead = true, defaultTipo = '' } = Astro.props;
 
 /**
- * Contacto v2 — copy comprimido, form mantenido.
- * Tipos de consulta sincronizados con landing.
+ * Contacto v3 — formulario en 3 pasos (wizard).
+ *
+ * Paso 1: Tipo de consulta (radio cards visuales).
+ * Paso 2: Datos de contacto (nombre, empresa, email, teléfono).
+ * Paso 3: Mensaje + submit.
+ *
+ * Reduce la fricción percibida (form largo de un golpe → microcompromisos).
+ * Mantiene honeypot anti-spam, validación inline y mailto fallback.
  */
+
 const tipos = [
-  'Compra B2B',
-  'Corner Qüem',
-  'Franquicias',
-  'Proveedores / marcas',
-  'Inversores',
-  'Otro',
+  { value: 'Compra B2B',           label: 'Compra B2B',  desc: 'Pedidos mayoristas para gastronomía o comercios.', icon: 'cart' },
+  { value: 'Corner Qüem',          label: 'Corner Qüem', desc: 'Retail congelado llave en mano en tu espacio.',    icon: 'corner' },
+  { value: 'Franquicias',          label: 'Franquicias', desc: 'Abrir una unidad con identidad Qüem Central.',     icon: 'building' },
+  { value: 'Proveedores / marcas', label: 'Proveedores', desc: 'Distribución de tu marca o producto.',             icon: 'handshake' },
+  { value: 'Inversores',           label: 'Inversores',  desc: 'Conversaciones de capital y expansión.',           icon: 'chart' },
+  { value: 'Otro',                 label: 'Otro tema',   desc: 'Consultas generales o de prensa.',                 icon: 'msg' },
 ];
 
 const waLink = whatsappLink();
@@ -71,106 +78,213 @@ const hasWhatsapp = WHATSAPP.length > 0;
     </div>
 
     <form
-      class="contact__form"
+      class="contact__form contact__form--wizard"
       method="post"
       action="#"
       novalidate
       aria-label="Formulario de contacto comercial"
       data-form
+      data-wizard
+      data-step="1"
       data-reveal="right"
       style="--reveal-delay: 100ms;"
     >
-      <p class="contact__form-note">
-        Respondemos en menos de 24 hs hábiles. * obligatorios.
-      </p>
-
-      <div class="field">
-        <label for="f-nombre">Nombre y apellido *</label>
-        <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="f-nombre-hint" />
-        <small id="f-nombre-hint" class="field__hint" data-error-for="nombre" hidden></small>
+      <!-- Progress indicator -->
+      <div class="wizard__progress" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" data-wizard-progress>
+        <ol class="wizard__steps" aria-label="Pasos del formulario">
+          <li class="wizard__step is-active" data-step-indicator="1">
+            <span class="wizard__step-num" aria-hidden="true">1</span>
+            <span class="wizard__step-label">¿Qué necesitás?</span>
+          </li>
+          <li class="wizard__step" data-step-indicator="2">
+            <span class="wizard__step-num" aria-hidden="true">2</span>
+            <span class="wizard__step-label">Tus datos</span>
+          </li>
+          <li class="wizard__step" data-step-indicator="3">
+            <span class="wizard__step-num" aria-hidden="true">3</span>
+            <span class="wizard__step-label">Mensaje</span>
+          </li>
+        </ol>
+        <div class="wizard__bar" aria-hidden="true">
+          <span class="wizard__bar-fill" data-wizard-bar></span>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="f-empresa">Empresa</label>
-        <input id="f-empresa" name="empresa" type="text" autocomplete="organization" placeholder="Razón social o nombre del local" />
-      </div>
+      <!-- ─────────────────────────── PASO 1 ─────────────────────────── -->
+      <fieldset class="wizard__panel is-active" data-step-panel="1">
+        <legend class="wizard__legend">Elegí el tipo de consulta</legend>
+        <p class="wizard__hint">Te conectamos con el equipo correcto.</p>
 
-      <div class="field">
-        <label for="f-tipo">Tipo de consulta *</label>
-        <select id="f-tipo" name="tipo" required aria-describedby="f-tipo-hint">
-          <option value="" disabled selected={!defaultTipo}>Elegí una opción</option>
+        <div class="wizard__tipos" role="radiogroup" aria-label="Tipo de consulta">
           {tipos.map((t) => (
-            <option value={t} selected={defaultTipo === t}>{t}</option>
+            <label class="tipo-card">
+              <input
+                type="radio"
+                name="tipo"
+                value={t.value}
+                required
+                checked={defaultTipo === t.value}
+              />
+              <div class="tipo-card__inner">
+                <span class="tipo-card__icon" aria-hidden="true">
+                  {t.icon === 'cart' && (
+                    <svg viewBox="0 0 20 20" fill="none"><path d="M2 3h2l1.5 10h11l1.5-7H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="17" r="1.2" stroke="currentColor" stroke-width="1.5"/><circle cx="15" cy="17" r="1.2" stroke="currentColor" stroke-width="1.5"/></svg>
+                  )}
+                  {t.icon === 'corner' && (
+                    <svg viewBox="0 0 20 20" fill="none"><path d="M3 16V6l6-2 8 3v9" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 16v-5h4v5M13 16v-3h2v3" stroke="currentColor" stroke-width="1.5"/></svg>
+                  )}
+                  {t.icon === 'building' && (
+                    <svg viewBox="0 0 20 20" fill="none"><path d="M3 17V4h9v13M12 17V8h5v9M3 17h14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 7h1M6 10h1M6 13h1M9 7h1M9 10h1M9 13h1M14 10h1M14 13h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  )}
+                  {t.icon === 'handshake' && (
+                    <svg viewBox="0 0 20 20" fill="none"><path d="m3 12 3-4 5 4-2 2-6-2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 12 8 15l2 2 3-3M11 12l4-4 4 4-3 4-2-2-3-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+                  )}
+                  {t.icon === 'chart' && (
+                    <svg viewBox="0 0 20 20" fill="none"><path d="M3 16h14M5 14V8m4 6v-3m4 3V5m4 9v-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  )}
+                  {t.icon === 'msg' && (
+                    <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14v9H9l-4 3v-3H3V5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 9h6M7 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  )}
+                </span>
+                <span class="tipo-card__label">{t.label}</span>
+                <span class="tipo-card__desc">{t.desc}</span>
+                <span class="tipo-card__check" aria-hidden="true">
+                  <svg viewBox="0 0 14 14" fill="none"><path d="m3 7 3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </div>
+            </label>
           ))}
-        </select>
-        <small id="f-tipo-hint" class="field__hint" data-error-for="tipo" hidden></small>
-      </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label for="f-tel">Teléfono</label>
-          <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" placeholder="11 1234-5678" />
         </div>
-        <div class="field">
-          <label for="f-email">Email *</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-hint" />
-          <small id="f-email-hint" class="field__hint" data-error-for="email" hidden></small>
+        <small class="field__hint" data-error-for="tipo" hidden></small>
+
+        <div class="wizard__actions">
+          <span aria-hidden="true"></span>
+          <button type="button" class="btn btn-primary wizard__next" data-wizard-next>
+            Siguiente
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 7h7M7 3.5 10.5 7 7 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
-      </div>
+      </fieldset>
 
-      <div class="field">
-        <label for="f-msg">Mensaje *</label>
-        <textarea id="f-msg" name="mensaje" rows="5" required aria-describedby="f-msg-hint" placeholder="Contanos tu tipo de negocio, qué productos te interesan o cuánto volumen manejás."></textarea>
-        <small id="f-msg-hint" class="field__hint" data-error-for="mensaje" hidden></small>
-      </div>
+      <!-- ─────────────────────────── PASO 2 ─────────────────────────── -->
+      <fieldset class="wizard__panel" data-step-panel="2">
+        <legend class="wizard__legend">¿Cómo te contactamos?</legend>
+        <p class="wizard__hint">Respondemos por email en menos de 24hs hábiles.</p>
 
-      {/*
-        Honeypot — campo invisible para bots. Si llega completo, descartamos.
-        No usa display:none (algunos bots lo detectan). Usa offscreen + tabindex=-1.
-      */}
-      <div class="contact__honeypot" aria-hidden="true">
-        <label for="f-website">No completes este campo</label>
-        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
-      </div>
+        <div class="field">
+          <label for="f-nombre">Nombre y apellido <span class="req">*</span></label>
+          <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="f-nombre-hint" />
+          <small id="f-nombre-hint" class="field__hint" data-error-for="nombre" hidden></small>
+        </div>
 
-      <button type="submit" class="btn btn-primary contact__submit">Enviar consulta</button>
-      <p class="contact__form-status" data-form-status role="status" aria-live="polite"></p>
+        <div class="field">
+          <label for="f-empresa">Empresa</label>
+          <input id="f-empresa" name="empresa" type="text" autocomplete="organization" placeholder="Razón social o nombre del local" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="f-email">Email <span class="req">*</span></label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-hint" />
+            <small id="f-email-hint" class="field__hint" data-error-for="email" hidden></small>
+          </div>
+          <div class="field">
+            <label for="f-tel">Teléfono</label>
+            <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" placeholder="11 1234-5678" />
+          </div>
+        </div>
+
+        <div class="wizard__actions">
+          <button type="button" class="btn btn-outline wizard__prev" data-wizard-prev>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M10.5 7h-7M7 3.5 3.5 7 7 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Atrás
+          </button>
+          <button type="button" class="btn btn-primary wizard__next" data-wizard-next>
+            Siguiente
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 7h7M7 3.5 10.5 7 7 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <!-- ─────────────────────────── PASO 3 ─────────────────────────── -->
+      <fieldset class="wizard__panel" data-step-panel="3">
+        <legend class="wizard__legend">Contanos más</legend>
+        <p class="wizard__hint">Cuanto más concreto, mejor te respondemos.</p>
+
+        <!-- Resumen de pasos previos -->
+        <div class="wizard__summary" aria-live="polite">
+          <div class="wizard__summary-row">
+            <span class="wizard__summary-label">Tipo</span>
+            <span class="wizard__summary-value" data-summary-tipo>—</span>
+          </div>
+          <div class="wizard__summary-row">
+            <span class="wizard__summary-label">Email</span>
+            <span class="wizard__summary-value" data-summary-email>—</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-msg">Mensaje <span class="req">*</span></label>
+          <textarea id="f-msg" name="mensaje" rows="5" required aria-describedby="f-msg-hint" placeholder="Contanos tu tipo de negocio, qué productos te interesan o cuánto volumen manejás."></textarea>
+          <small id="f-msg-hint" class="field__hint" data-error-for="mensaje" hidden></small>
+        </div>
+
+        {/*
+          Honeypot — campo invisible para bots. Si llega completo, descartamos.
+          No usa display:none (algunos bots lo detectan). Usa offscreen + tabindex=-1.
+        */}
+        <div class="contact__honeypot" aria-hidden="true">
+          <label for="f-website">No completes este campo</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="wizard__actions">
+          <button type="button" class="btn btn-outline wizard__prev" data-wizard-prev>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M10.5 7h-7M7 3.5 3.5 7 7 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Atrás
+          </button>
+          <button type="submit" class="btn btn-primary wizard__submit">
+            Enviar consulta
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h9M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="contact__form-status" data-form-status role="status" aria-live="polite"></p>
+      </fieldset>
     </form>
   </div>
 </section>
 
 <script>
   /**
-   * Form modular: por ahora el envío es client-only — muestra mensaje de éxito
-   * y arma mailto. Cuando llegue endpoint o servicio (Formspree/Netlify Forms/
-   * propio backend), reemplazar el handler con un fetch al endpoint.
+   * Wizard de 3 pasos para el form de contacto.
    *
    * Features:
-   *  - Honeypot anti-spam (campo `website` invisible — si llega completo, descarta)
-   *  - Validación inline con microcopy humano por campo
-   *  - Prefill ?tipo= via querystring
-   *  - Estado del submit accesible (aria-live)
+   *  - Validación por paso: no podés avanzar si faltan campos requeridos.
+   *  - Indicador visual de progreso (barra + steps numerados).
+   *  - Summary del paso 3: muestra tipo + email ya elegidos.
+   *  - Honeypot anti-spam (campo `website` invisible).
+   *  - Prefill por querystring (?tipo=...).
+   *  - Submit con fallback mailto cuando no hay backend.
+   *  - Microcopy de errores humano, sin jerga.
    */
   const form = document.querySelector<HTMLFormElement>('[data-form]');
   const status = document.querySelector<HTMLElement>('[data-form-status]');
+  const TOTAL_STEPS = 3;
 
-  /** Microcopy de errores — humano, accionable, sin jerga */
-  const errorMessages: Record<string, (input: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => string> = {
-    nombre: () => 'Contanos cómo te llamás.',
-    tipo: () => 'Elegí una opción para que llegue al equipo correcto.',
-    email: (i) => {
-      if (!i.value) return 'Necesitamos un email para responderte.';
-      return 'El email no parece válido. Revisá si tiene @ y dominio.';
-    },
+  /** Microcopy de errores — humano, accionable */
+  const errorMessages: Record<string, () => string> = {
+    nombre:  () => 'Contanos cómo te llamás.',
+    tipo:    () => 'Elegí una opción para que llegue al equipo correcto.',
+    email:   () => 'Necesitamos un email válido para responderte.',
     mensaje: () => 'Contanos brevemente qué necesitás.',
   };
 
   const showError = (input: HTMLElement, name: string): void => {
     const hint = form?.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
     if (!hint) return;
-    hint.textContent = errorMessages[name]?.(input as HTMLInputElement) ?? 'Revisá este campo.';
+    hint.textContent = errorMessages[name]?.() ?? 'Revisá este campo.';
     hint.hidden = false;
-    (input as HTMLElement).setAttribute('aria-invalid', 'true');
+    input.setAttribute('aria-invalid', 'true');
   };
 
   const clearError = (input: HTMLElement, name: string): void => {
@@ -178,16 +292,119 @@ const hasWhatsapp = WHATSAPP.length > 0;
     if (!hint) return;
     hint.hidden = true;
     hint.textContent = '';
-    (input as HTMLElement).removeAttribute('aria-invalid');
+    input.removeAttribute('aria-invalid');
   };
+
+  /** Devuelve los inputs requeridos del paso actual */
+  const getStepFields = (step: number): HTMLInputElement[] => {
+    const panel = form?.querySelector<HTMLElement>(`[data-step-panel="${step}"]`);
+    if (!panel) return [];
+    return Array.from(panel.querySelectorAll<HTMLInputElement>('input[required], select[required], textarea[required]'));
+  };
+
+  /** Valida solo los campos del paso actual */
+  const validateStep = (step: number): boolean => {
+    const fields = getStepFields(step);
+    let firstInvalid: HTMLElement | null = null;
+    const seenRadios = new Set<string>();
+
+    fields.forEach((el) => {
+      // Para radios, validar el grupo completo solo una vez
+      if (el.type === 'radio') {
+        if (seenRadios.has(el.name)) return;
+        seenRadios.add(el.name);
+        const radioGroup = form?.querySelectorAll<HTMLInputElement>(`input[name="${el.name}"]`);
+        const anyChecked = Array.from(radioGroup ?? []).some((r) => r.checked);
+        if (!anyChecked) {
+          showError(el as HTMLElement, el.name);
+          if (!firstInvalid) firstInvalid = el as HTMLElement;
+        } else {
+          clearError(el as HTMLElement, el.name);
+        }
+      } else if (!el.checkValidity()) {
+        showError(el, el.name);
+        if (!firstInvalid) firstInvalid = el;
+      } else {
+        clearError(el, el.name);
+      }
+    });
+
+    if (firstInvalid) {
+      (firstInvalid as HTMLElement).focus({ preventScroll: false });
+      return false;
+    }
+    return true;
+  };
+
+  /** Ir a un paso N */
+  const goToStep = (n: number): void => {
+    if (!form) return;
+    const step = Math.max(1, Math.min(TOTAL_STEPS, n));
+    form.setAttribute('data-step', String(step));
+
+    // Panels
+    form.querySelectorAll<HTMLElement>('[data-step-panel]').forEach((panel) => {
+      const isActive = panel.getAttribute('data-step-panel') === String(step);
+      panel.classList.toggle('is-active', isActive);
+    });
+
+    // Indicators
+    form.querySelectorAll<HTMLElement>('[data-step-indicator]').forEach((ind) => {
+      const stepNum = Number(ind.getAttribute('data-step-indicator'));
+      ind.classList.toggle('is-active', stepNum === step);
+      ind.classList.toggle('is-complete', stepNum < step);
+    });
+
+    // Progress bar
+    const bar = form.querySelector<HTMLElement>('[data-wizard-bar]');
+    if (bar) {
+      const pct = ((step - 1) / (TOTAL_STEPS - 1)) * 100;
+      bar.style.width = `${pct}%`;
+    }
+
+    // ARIA
+    const progress = form.querySelector<HTMLElement>('[data-wizard-progress]');
+    progress?.setAttribute('aria-valuenow', String(step));
+
+    // Si vamos al paso 3, actualizar el summary
+    if (step === 3) {
+      const tipo = (form.querySelector<HTMLInputElement>('input[name="tipo"]:checked'))?.value ?? '—';
+      const email = (form.querySelector<HTMLInputElement>('input[name="email"]'))?.value ?? '—';
+      const tipoEl = form.querySelector<HTMLElement>('[data-summary-tipo]');
+      const emailEl = form.querySelector<HTMLElement>('[data-summary-email]');
+      if (tipoEl) tipoEl.textContent = tipo || '—';
+      if (emailEl) emailEl.textContent = email || '—';
+    }
+
+    // Scroll suave al form (no demasiado agresivo)
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const getCurrentStep = (): number => Number(form?.getAttribute('data-step') ?? '1');
 
   if (form && status) {
     /* Limpiar errores cuando el usuario empieza a corregir */
-    form.querySelectorAll<HTMLElement>('input, select, textarea').forEach((el) => {
-      el.addEventListener('input', () => clearError(el, (el as HTMLInputElement).name));
-      el.addEventListener('change', () => clearError(el, (el as HTMLInputElement).name));
+    form.querySelectorAll<HTMLInputElement>('input, select, textarea').forEach((el) => {
+      el.addEventListener('input', () => clearError(el, el.name));
+      el.addEventListener('change', () => clearError(el, el.name));
     });
 
+    /* Botones Siguiente */
+    form.querySelectorAll<HTMLButtonElement>('[data-wizard-next]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const current = getCurrentStep();
+        if (validateStep(current)) goToStep(current + 1);
+      });
+    });
+
+    /* Botones Atrás */
+    form.querySelectorAll<HTMLButtonElement>('[data-wizard-prev]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        goToStep(getCurrentStep() - 1);
+      });
+    });
+
+    /* Submit final (solo desde paso 3) */
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       status.textContent = '';
@@ -195,32 +412,23 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       const data = new FormData(form);
 
-      /* Honeypot: si el campo invisible tiene contenido, es un bot — descartar silenciosamente */
+      /* Honeypot: si tiene contenido, es bot — descartar silenciosamente */
       if (String(data.get('website') ?? '').trim() !== '') {
         status.textContent = 'Tu consulta fue enviada. Gracias.';
         status.setAttribute('data-form-status-type', 'success');
         form.reset();
+        goToStep(1);
         return;
       }
 
-      /* Validación: si invalid, mostrar errores inline (sin reportValidity nativo feo) */
-      if (!form.checkValidity()) {
-        let firstInvalid: HTMLElement | null = null;
-        form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
-          'input[required], select[required], textarea[required]',
-        ).forEach((el) => {
-          if (!el.checkValidity()) {
-            showError(el, el.name);
-            if (!firstInvalid) firstInvalid = el;
-          }
-        });
-        if (firstInvalid) (firstInvalid as HTMLElement).focus();
+      /* Validar el paso actual antes de enviar */
+      if (!validateStep(getCurrentStep())) {
         status.textContent = 'Revisá los campos marcados.';
         status.setAttribute('data-form-status-type', 'error');
         return;
       }
 
-      /* Sin backend todavía → mailto fallback */
+      /* Mailto fallback */
       const params = new URLSearchParams();
       const subject = `Consulta web Qüem Central · ${String(data.get('tipo') ?? '')}`;
       const body =
@@ -237,12 +445,15 @@ const hasWhatsapp = WHATSAPP.length > 0;
       status.setAttribute('data-form-status-type', 'success');
     });
 
-    // Si llega el query ?tipo=Franquicias, prefill
+    /* Prefill por querystring ?tipo=... → saltar al paso 2 */
     const u = new URL(window.location.href);
     const t = u.searchParams.get('tipo');
     if (t) {
-      const sel = form.querySelector<HTMLSelectElement>('#f-tipo');
-      if (sel) sel.value = t;
+      const radio = form.querySelector<HTMLInputElement>(`input[name="tipo"][value="${t}"]`);
+      if (radio) {
+        radio.checked = true;
+        goToStep(2);
+      }
     }
   }
 </script>
@@ -318,21 +529,236 @@ const hasWhatsapp = WHATSAPP.length > 0;
   }
   .contact__channels dd a:hover { text-decoration-color: var(--color-brand-500); }
 
+  /* ═══════════════════════════ FORM SHELL ═══════════════════════════ */
   .contact__form {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-5);
     padding: var(--space-6);
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-md);
   }
-  .contact__form-note {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
+
+  /* ═══════════════════════════ WIZARD PROGRESS ═══════════════════════════ */
+  .wizard__progress {
+    display: grid;
+    gap: var(--space-3);
   }
+
+  .wizard__steps {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .wizard__step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .wizard__step-num {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: var(--color-surface-subtle);
+    color: var(--color-text-muted);
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: var(--font-size-xs);
+    border: 1.5px solid var(--color-border-subtle);
+    transition: all var(--dur-fast) var(--ease-standard);
+    flex-shrink: 0;
+  }
+  .wizard__step.is-active { color: var(--color-text-primary); }
+  .wizard__step.is-active .wizard__step-num {
+    background: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 4px oklch(from var(--color-brand-500) l c h / 0.18);
+  }
+  .wizard__step.is-complete .wizard__step-num {
+    background: var(--color-accent-500);
+    color: white;
+    border-color: var(--color-accent-500);
+    font-size: 0;
+  }
+  .wizard__step.is-complete .wizard__step-num::before {
+    content: '✓';
+    font-size: var(--font-size-sm);
+  }
+  .wizard__step-label { white-space: nowrap; }
+  @media (max-width: 540px) {
+    .wizard__step-label { display: none; }
+    .wizard__step { gap: 0; }
+  }
+
+  /* Barra de progreso lineal */
+  .wizard__bar {
+    height: 4px;
+    background: var(--color-surface-subtle);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .wizard__bar-fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--gradient-brand);
+    border-radius: 999px;
+    transition: width var(--dur-normal) var(--ease-out-expo);
+  }
+
+  /* ═══════════════════════════ WIZARD PANELS ═══════════════════════════ */
+  .wizard__panel {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: none;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    animation: fade-up var(--dur-normal) var(--ease-out-expo);
+  }
+  .wizard__panel.is-active { display: grid; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wizard__panel { animation: none; }
+  }
+
+  .wizard__legend {
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    padding: 0;
+  }
+  .wizard__hint {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-snug);
+    margin-block-start: -0.5rem;
+  }
+
+  /* ═══════════════════════════ PASO 1: TIPO CARDS ═══════════════════════════ */
+  .wizard__tipos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  @media (min-width: 540px) {
+    .wizard__tipos { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .tipo-card {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .tipo-card input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tipo-card__inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.25rem 0.75rem;
+    align-items: start;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg);
+    border: 1.5px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    transition:
+      border-color var(--dur-fast) var(--ease-standard),
+      background var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-normal) var(--ease-out-expo),
+      transform var(--dur-fast) var(--ease-standard);
+  }
+  .tipo-card:hover .tipo-card__inner {
+    border-color: var(--color-brand-300);
+    background: var(--color-brand-50);
+    transform: translateY(-1px);
+  }
+  .tipo-card__icon {
+    grid-row: span 2;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.6rem;
+    display: grid;
+    place-items: center;
+    background: var(--color-surface-subtle);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-subtle);
+    align-self: center;
+    transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+  }
+  .tipo-card__icon svg { width: 1.15rem; height: 1.15rem; }
+  .tipo-card__label {
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    letter-spacing: -0.01em;
+  }
+  .tipo-card__desc {
+    grid-column: 2;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-snug);
+  }
+  .tipo-card__check {
+    grid-row: span 2;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+    display: grid;
+    place-items: center;
+    align-self: center;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity var(--dur-fast), transform var(--dur-fast);
+  }
+  .tipo-card__check svg { width: 0.85rem; height: 0.85rem; }
+
+  /* Estado seleccionado */
+  .tipo-card input:checked ~ .tipo-card__inner {
+    border-color: var(--color-brand-500);
+    background: var(--color-brand-50);
+    box-shadow: 0 0 0 3px oklch(from var(--color-brand-500) l c h / 0.12);
+  }
+  .tipo-card input:checked ~ .tipo-card__inner .tipo-card__icon {
+    background: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+    border-color: var(--color-brand-500);
+  }
+  .tipo-card input:checked ~ .tipo-card__inner .tipo-card__check {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .tipo-card input:focus-visible ~ .tipo-card__inner {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+
+  /* ═══════════════════════════ PASOS 2/3: CAMPOS ═══════════════════════════ */
   .field { display: grid; gap: 0.4rem; }
-  .field-row { display: grid; gap: var(--space-4); }
+  .field-row { display: grid; gap: var(--space-3); }
   @media (min-width: 640px) {
     .field-row { grid-template-columns: 1fr 1fr; }
   }
@@ -341,8 +767,8 @@ const hasWhatsapp = WHATSAPP.length > 0;
     color: var(--color-text-primary);
     font-weight: var(--weight-semibold);
   }
+  .req { color: var(--color-brand-600); }
   .field input,
-  .field select,
   .field textarea {
     padding: 0.85rem 1rem;
     background: var(--color-bg);
@@ -352,9 +778,9 @@ const hasWhatsapp = WHATSAPP.length > 0;
     color: var(--color-text-primary);
     transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
     min-height: 44px;
+    font-family: inherit;
   }
   .field input:focus,
-  .field select:focus,
   .field textarea:focus {
     outline: none;
     border-color: var(--color-brand-500);
@@ -362,11 +788,66 @@ const hasWhatsapp = WHATSAPP.length > 0;
   }
   .field textarea { resize: vertical; min-height: 120px; line-height: var(--leading-relaxed); }
 
-  .contact__submit { justify-self: start; margin-block-start: var(--space-2); }
+  /* ═══════════════════════════ SUMMARY EN PASO 3 ═══════════════════════════ */
+  .wizard__summary {
+    display: grid;
+    gap: 0.4rem;
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(180deg, var(--color-brand-50), var(--color-bg));
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.18);
+    border-radius: var(--radius-lg);
+  }
+  .wizard__summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+  .wizard__summary-label {
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: var(--weight-semibold);
+  }
+  .wizard__summary-value {
+    color: var(--color-text-primary);
+    font-weight: var(--weight-semibold);
+    font-size: var(--font-size-sm);
+    text-align: right;
+    word-break: break-word;
+  }
+
+  /* ═══════════════════════════ ACTIONS (PREV / NEXT / SUBMIT) ═══════════════════════════ */
+  .wizard__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block-start: var(--space-2);
+  }
+  .wizard__next,
+  .wizard__prev,
+  .wizard__submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: var(--weight-semibold);
+  }
+  .wizard__submit svg,
+  .wizard__next svg {
+    transition: transform var(--dur-fast);
+  }
+  .wizard__submit:hover svg,
+  .wizard__next:hover svg { transform: translateX(2px); }
+  .wizard__prev svg { transition: transform var(--dur-fast); }
+  .wizard__prev:hover svg { transform: translateX(-2px); }
+
   .contact__form-status {
     color: var(--color-accent-700);
     font-size: var(--font-size-sm);
     min-height: 1.5rem;
+    margin-block-start: var(--space-2);
   }
   .contact__form-status[data-form-status-type="error"] { color: oklch(55% 0.22 28); }
   .contact__form-status[data-form-status-type="success"] { color: var(--color-accent-700); }
@@ -379,13 +860,12 @@ const hasWhatsapp = WHATSAPP.length > 0;
     margin-block-start: 0.15rem;
   }
   .field input[aria-invalid="true"],
-  .field select[aria-invalid="true"],
   .field textarea[aria-invalid="true"] {
     border-color: oklch(60% 0.20 28);
     box-shadow: 0 0 0 3px oklch(60% 0.20 28 / 0.12);
   }
 
-  /* Honeypot — offscreen pero accesible para screen readers que sí lo verán como warning */
+  /* Honeypot — offscreen pero accesible */
   .contact__honeypot {
     position: absolute;
     left: -10000px;
@@ -395,3 +875,5 @@ const hasWhatsapp = WHATSAPP.length > 0;
     overflow: hidden;
   }
 </style>
+</content>
+</invoke>
