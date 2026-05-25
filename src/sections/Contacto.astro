@@ -112,8 +112,10 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <!-- ─────────────────────────── PASO 1 ─────────────────────────── -->
       <fieldset class="wizard__panel is-active" data-step-panel="1">
-        <legend class="wizard__legend">Elegí el tipo de consulta</legend>
-        <p class="wizard__hint">Te conectamos con el equipo correcto.</p>
+        <div class="wizard__head">
+          <legend class="wizard__legend">Elegí el tipo de consulta</legend>
+          <p class="wizard__hint">Te conectamos con el equipo correcto.</p>
+        </div>
 
         <div class="wizard__tipos" role="radiogroup" aria-label="Tipo de consulta">
           {tipos.map((t) => (
@@ -168,8 +170,10 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <!-- ─────────────────────────── PASO 2 ─────────────────────────── -->
       <fieldset class="wizard__panel" data-step-panel="2">
-        <legend class="wizard__legend">¿Cómo te contactamos?</legend>
-        <p class="wizard__hint">Respondemos por email en menos de 24hs hábiles.</p>
+        <div class="wizard__head">
+          <legend class="wizard__legend">¿Cómo te contactamos?</legend>
+          <p class="wizard__hint">Respondemos por email en menos de 24hs hábiles.</p>
+        </div>
 
         <div class="field">
           <label for="f-nombre">Nombre y apellido <span class="req">*</span></label>
@@ -208,19 +212,9 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <!-- ─────────────────────────── PASO 3 ─────────────────────────── -->
       <fieldset class="wizard__panel" data-step-panel="3">
-        <legend class="wizard__legend">Contanos más</legend>
-        <p class="wizard__hint">Cuanto más concreto, mejor te respondemos.</p>
-
-        <!-- Resumen de pasos previos -->
-        <div class="wizard__summary" aria-live="polite">
-          <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Tipo</span>
-            <span class="wizard__summary-value" data-summary-tipo>—</span>
-          </div>
-          <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Email</span>
-            <span class="wizard__summary-value" data-summary-email>—</span>
-          </div>
+        <div class="wizard__head">
+          <legend class="wizard__legend">Contanos más</legend>
+          <p class="wizard__hint">Cuanto más concreto, mejor te respondemos.</p>
         </div>
 
         <div class="field">
@@ -365,16 +359,6 @@ const hasWhatsapp = WHATSAPP.length > 0;
     // ARIA
     const progress = form.querySelector<HTMLElement>('[data-wizard-progress]');
     progress?.setAttribute('aria-valuenow', String(step));
-
-    // Si vamos al paso 3, actualizar el summary
-    if (step === 3) {
-      const tipo = (form.querySelector<HTMLInputElement>('input[name="tipo"]:checked'))?.value ?? '—';
-      const email = (form.querySelector<HTMLInputElement>('input[name="email"]'))?.value ?? '—';
-      const tipoEl = form.querySelector<HTMLElement>('[data-summary-tipo]');
-      const emailEl = form.querySelector<HTMLElement>('[data-summary-email]');
-      if (tipoEl) tipoEl.textContent = tipo || '—';
-      if (emailEl) emailEl.textContent = email || '—';
-    }
 
     // Scroll suave al form (no demasiado agresivo)
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -637,6 +621,15 @@ const hasWhatsapp = WHATSAPP.length > 0;
     .wizard__panel { animation: none; }
   }
 
+  /* Header del paso — agrupa legend + hint con espaciado tight (~6px).
+     El grid-gap del panel maneja la separación entre este header y el
+     contenido (fields, tipo cards, etc.). */
+  .wizard__head {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+  }
   .wizard__legend {
     font-family: var(--font-display);
     font-size: var(--font-size-xl);
@@ -644,13 +637,18 @@ const hasWhatsapp = WHATSAPP.length > 0;
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
     line-height: 1.15;
+    margin: 0;
     padding: 0;
+    /* legend default es "display: table" en algunos browsers — forzar block
+       para que el ancho ocupe la columna y el gap del grid funcione bien */
+    display: block;
+    width: 100%;
   }
   .wizard__hint {
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
     line-height: var(--leading-snug);
-    margin-block-start: -0.5rem;
+    margin: 0;
   }
 
   /* ═══════════════════════════ PASO 1: TIPO CARDS ═══════════════════════════ */
@@ -787,36 +785,6 @@ const hasWhatsapp = WHATSAPP.length > 0;
     box-shadow: var(--shadow-glow-brand);
   }
   .field textarea { resize: vertical; min-height: 120px; line-height: var(--leading-relaxed); }
-
-  /* ═══════════════════════════ SUMMARY EN PASO 3 ═══════════════════════════ */
-  .wizard__summary {
-    display: grid;
-    gap: 0.4rem;
-    padding: var(--space-3) var(--space-4);
-    background: linear-gradient(180deg, var(--color-brand-50), var(--color-bg));
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.18);
-    border-radius: var(--radius-lg);
-  }
-  .wizard__summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-3);
-    font-size: var(--font-size-xs);
-  }
-  .wizard__summary-label {
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    font-weight: var(--weight-semibold);
-  }
-  .wizard__summary-value {
-    color: var(--color-text-primary);
-    font-weight: var(--weight-semibold);
-    font-size: var(--font-size-sm);
-    text-align: right;
-    word-break: break-word;
-  }
 
   /* ═══════════════════════════ ACTIONS (PREV / NEXT / SUBMIT) ═══════════════════════════ */
   .wizard__actions {
