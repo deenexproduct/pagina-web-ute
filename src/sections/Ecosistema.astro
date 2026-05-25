@@ -107,7 +107,9 @@ const cards = [
 <style>
   .eco {
     position: relative;
-    background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 50%, var(--color-bg) 100%);
+    background:
+      radial-gradient(75% 55% at 50% 0%, oklch(58% 0.155 254 / 0.08) 0%, transparent 65%),
+      linear-gradient(180deg, var(--color-surface-subtle) 0%, var(--color-brand-100) 55%, var(--color-surface-subtle) 100%);
   }
   .eco__head {
     display: grid; gap: var(--space-3); margin-block-end: var(--space-7);

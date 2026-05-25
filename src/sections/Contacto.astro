@@ -41,9 +41,11 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
       <div class="contact__cta-row">
         <a class="btn btn-outline" href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online</a>
-        <a class="btn btn-outline" href={waLink} {...(hasWhatsapp ? { target: '_blank', rel: 'noopener' } : {})}>
-          WhatsApp comercial
-        </a>
+        {hasWhatsapp && (
+          <a class="btn btn-outline" href={waLink} target="_blank" rel="noopener">
+            WhatsApp comercial
+          </a>
+        )}
       </div>
 
       <div class="contact__channels-wrap">

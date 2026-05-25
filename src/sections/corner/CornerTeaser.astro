@@ -63,9 +63,9 @@ const venues = [
           Conocer Corner Qüem
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
-        <a class="ct__wa-link" href={waLink}>
+        <a class="btn btn-outline" href={waLink}>
           Hablar con comercial
-          <span aria-hidden="true">↗</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </div>
     </div>
@@ -220,24 +220,6 @@ const venues = [
     align-items: center;
     margin-block-start: var(--space-2);
   }
-  .ct__wa-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    padding-block: 0.5rem;
-    border-bottom: 1.5px solid transparent;
-    transition: color var(--dur-fast), border-color var(--dur-fast);
-  }
-  .ct__wa-link:hover {
-    color: var(--color-text-primary);
-    border-color: var(--color-brand-500);
-  }
-  .ct__wa-link span { display: inline-block; transition: transform var(--dur-fast); }
-  .ct__wa-link:hover span { transform: translate(2px, -1px); }
-
   /* ── VISUAL ── */
   .ct__visual {
     display: grid;

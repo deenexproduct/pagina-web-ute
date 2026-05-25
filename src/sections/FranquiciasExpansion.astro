@@ -10,9 +10,9 @@ const { showHead = true } = Astro.props;
  * Franquicias v2 — copy comprimido a 1 frase lede + 3 cards con desc cortas.
  */
 const cards = [
-  { title: 'Franquicias', desc: 'Unidades comerciales con identidad Qüem Central.', icon: 'store', featured: true },
-  { title: 'Corner Qüem', desc: 'Producto congelado dentro de espacios comerciales existentes.', icon: 'corner', featured: false },
-  { title: 'Alianzas comerciales', desc: 'Marcas que necesitan capilaridad y distribución.', icon: 'handshake', featured: false },
+  { title: 'Franquicias', desc: 'Unidades comerciales con identidad Qüem Central.', icon: 'store', featured: true, accent: false },
+  { title: 'Corner Qüem', desc: 'Producto congelado dentro de espacios comerciales existentes.', icon: 'corner', featured: false, accent: true },
+  { title: 'Alianzas comerciales', desc: 'Marcas que necesitan capilaridad y distribución.', icon: 'handshake', featured: false, accent: false },
 ] as const;
 ---
 
@@ -32,7 +32,7 @@ const cards = [
 
     <div class="franq__grid" data-reveal-stagger>
       {cards.map((c) => (
-        <article class:list={['franq-card', c.featured && 'franq-card--featured']} data-reveal>
+        <article class:list={['franq-card', c.featured && 'franq-card--featured', c.accent && 'franq-card--accent']} data-reveal>
           <div class="franq-card__icon" aria-hidden="true">
             {c.icon === 'store' && (
               <svg viewBox="0 0 28 28" fill="none"><path d="M4 11h20l-2-6H6l-2 6Z" stroke="currentColor" stroke-width="1.8"/><path d="M5 11v12h18V11" stroke="currentColor" stroke-width="1.8"/><path d="M10 23v-6h8v6" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -60,6 +60,13 @@ const cards = [
 </section>
 
 <style>
+  .franq {
+    background:
+      radial-gradient(55% 60% at 100% 100%, oklch(62% 0.150 155 / 0.07) 0%, transparent 65%),
+      radial-gradient(40% 40% at 0% 0%, oklch(58% 0.155 254 / 0.05) 0%, transparent 65%),
+      var(--color-bg);
+  }
+
   .franq__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .franq__title {
     font-size: var(--font-size-3xl);
@@ -176,6 +183,31 @@ const cards = [
     background: var(--color-brand-500);
     color: var(--color-text-on-brand);
     transform: translate(2px, -2px);
+  }
+
+  /* FR3: Corner Qüem accent card — verde accent */
+  .franq-card--accent {
+    background: linear-gradient(180deg, oklch(from var(--color-accent-500) l c h / 0.07) 0%, var(--color-bg-elevated) 70%);
+    border-color: oklch(from var(--color-accent-500) l c h / 0.25);
+  }
+  .franq-card--accent::before {
+    background: linear-gradient(90deg, var(--color-accent-500), oklch(from var(--color-accent-500) l c h / 0.6));
+  }
+  .franq-card--accent h3 {
+    color: var(--color-accent-700);
+  }
+  .franq-card--accent .franq-card__icon {
+    background: linear-gradient(135deg, oklch(from var(--color-accent-500) l c h / 0.12), var(--color-bg));
+    color: var(--color-accent-600);
+    border-color: oklch(from var(--color-accent-500) l c h / 0.2);
+  }
+  .franq-card--accent:hover {
+    border-color: var(--color-accent-400);
+  }
+  .franq-card--accent:hover .franq-card__icon {
+    background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-400));
+    color: white;
+    border-color: transparent;
   }
 
   .franq__cta-row { display: flex; justify-content: center; margin-block-start: var(--space-7); }

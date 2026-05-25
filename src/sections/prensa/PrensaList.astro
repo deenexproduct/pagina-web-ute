@@ -325,7 +325,10 @@ const uniqueOutlets = Array.from(new Map(PRESS.map((p) => [p.outletSlug, p.outle
   .pr-list__grid {
     display: grid;
     gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .pr-list__grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   .pr-card {
