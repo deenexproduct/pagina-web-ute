@@ -12,8 +12,8 @@ const { showHead = true } = Astro.props;
  * Resto: cards 1x1 chicas.
  */
 const cards = [
-  { title: 'Distribución B2B', desc: 'Abastecimiento para gastronomía, comercios y eventos.', tone: 'brand-hero', icon: 'b2b', size: 'hero', badge: 'Negocio principal', features: ['Catálogo premium', 'Pedidos online B2B', 'Entrega en zona'] },
-  { title: 'Corner Qüem', desc: 'Productos Qüem dentro de espacios existentes.', tone: 'accent', icon: 'corner', size: 'tall', badge: 'Destacado' },
+  { title: 'Distribución B2B', desc: 'Abastecimiento para gastronomía, comercios y eventos.', tone: 'brand-hero', icon: 'b2b', size: 'hero', features: ['Catálogo premium', 'Pedidos online B2B', 'Entrega en zona'] },
+  { title: 'Corner Qüem', desc: 'Productos Qüem dentro de espacios existentes.', tone: 'accent', icon: 'corner', size: 'tall' },
   { title: 'Logística especializada', desc: 'Última milla AMBA + PBA.', tone: 'brand', icon: 'truck', size: 'wide' },
   { title: 'Franquicias', desc: 'Modelo replicable bajo marca.', tone: 'brand', icon: 'building', size: 'normal' },
   { title: 'Tecnología', desc: 'App, catálogo y pedidos B2B.', tone: 'brand', icon: 'app', size: 'normal' },
@@ -83,12 +83,6 @@ const cards = [
             </ul>
           )}
 
-          {'badge' in c && c.badge && (
-            <div class="eco-card__badge-row" aria-hidden="true">
-              <span class="eco-card__badge">{c.badge}</span>
-              {c.size === 'hero' && <span class="eco-card__pattern"></span>}
-            </div>
-          )}
         </article>
       ))}
     </div>
@@ -256,36 +250,4 @@ const cards = [
 
   /* EC3: Corner Qüem tall card — compact padding */
   .eco-card--tall { padding: var(--space-4); }
-
-  .eco-card__badge-row {
-    margin-block-start: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-  }
-  .eco-card__badge {
-    display: inline-block;
-    padding: 0.3rem 0.75rem;
-    background: var(--color-brand-50);
-    color: var(--color-brand-700);
-    border-radius: var(--radius-pill);
-    font-size: var(--font-size-2xs);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.25);
-  }
-  .eco-card--accent .eco-card__badge {
-    background: var(--color-accent-50);
-    color: var(--color-accent-700);
-    border-color: oklch(from var(--color-accent-500) l c h / 0.25);
-  }
-  .eco-card__pattern {
-    flex: 1; height: 24px;
-    background-image: radial-gradient(circle, oklch(from var(--color-brand-500) l c h / 0.25) 1px, transparent 1px);
-    background-size: 10px 10px;
-    mask-image: linear-gradient(90deg, transparent 0%, black 30%);
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 30%);
-  }
 </style>
