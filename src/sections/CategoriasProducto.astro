@@ -53,7 +53,15 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
                 style={`--cat-hue: ${icon.hue};`}
               >
                 {cat.foto ? (
-                  <img src={link(cat.foto)} alt="" loading="lazy" decoding="async" />
+                  <img
+                    src={link(cat.foto)}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    fetchpriority="low"
+                    width="400"
+                    height="400"
+                  />
                 ) : (
                   <svg class="cat-card__icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
                     <path d={icon.svg} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />

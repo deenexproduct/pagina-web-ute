@@ -6,7 +6,7 @@ import SmoothScrollLenis from '../components/SmoothScrollLenis.astro';
 // @ts-ignore — woff2 importado como URL hashed por Vite para preload dinámico
 import interFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import ScrollToTop from '../components/ui/ScrollToTop.astro';
-import { SEO, SITE_URL, ADDRESS } from '../config/site';
+import { SEO, SITE_URL, ADDRESS, ANALYTICS } from '../config/site';
 
 interface Props {
   title?: string;
@@ -123,6 +123,17 @@ const localBusinessJsonLd = {
 
     <script is:inline type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(localBusinessJsonLd)} />
+
+    {/* Analytics — solo si ANALYTICS.plausibleDomain está seteado en site.ts.
+        Plausible: sin cookies, GDPR-friendly, ~1KB script, no requiere banner. */}
+    {ANALYTICS.plausibleDomain && (
+      <script
+        is:inline
+        defer
+        data-domain={ANALYTICS.plausibleDomain}
+        src={`${ANALYTICS.plausibleHost}/js/script.outbound-links.js`}
+      ></script>
+    )}
   </head>
   <body>
     <a href="#main" class="skip-link">Saltar al contenido</a>

@@ -254,3 +254,30 @@ export const SOCIAL = {
   linkedin: '',  // TODO confirmar LinkedIn empresa
   // facebook: '', // sumar si el cliente lo confirma
 } as const;
+
+/* -------------------------------------------------------------------------- */
+/*  ANALYTICS                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Analytics opt-in vía Plausible (https://plausible.io).
+ *
+ * Si está vacío, NO se inyecta el script. Cuando el cliente confirme:
+ *   1) Crear cuenta en plausible.io (free tier 14d trial, después paid)
+ *   2) Configurar el dominio (ej: 'quem-central.com')
+ *   3) Setear ANALYTICS.plausibleDomain aquí con ese mismo dominio
+ *   4) El script se inyecta automáticamente en BaseLayout
+ *
+ * Alternativa: usar plausible self-hosted en otro dominio:
+ *   ANALYTICS.plausibleHost = 'https://stats.deenex.com'
+ *
+ * Por qué Plausible y no GA4:
+ *   - Sin cookies (no requiere banner de consentimiento)
+ *   - 100% GDPR/LGPD-friendly
+ *   - Script de 1KB vs ~50KB de GA
+ *   - Dashboard simple, sin necesidad de configurar funnels complejos
+ */
+export const ANALYTICS = {
+  plausibleDomain: '', // TODO confirmar dominio + alta en plausible.io
+  plausibleHost: 'https://plausible.io', // default; sobreescribir si self-hosted
+} as const;

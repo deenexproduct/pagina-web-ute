@@ -1,0 +1,285 @@
+---
+/**
+ * Garantías — trust signals operativos para compradores B2B.
+ *
+ * Audiencia: dueño de restaurante/cafetería/kiosco evaluando proveedor.
+ * Función: responder las preguntas duras antes de que las haga
+ * (habilitación, cadena de frío, devoluciones, pagos, plazos).
+ *
+ * Estado: VALUES son TODO del cliente. La sección aparece pero los datos
+ * concretos (número SENASA, plazos exactos, etc.) están como placeholders
+ * con [TODO confirmar] visible. El cliente debe completar.
+ *
+ * GATE: confirmar con el cliente:
+ *   1) Número de habilitación SENASA / RNE
+ *   2) Tiempo real de entrega en AMBA / PBA
+ *   3) Plazos de pago / formas (contado / 7 / 15 / 30 días)
+ *   4) Política de devoluciones por calidad
+ *   5) MOQ (pedido mínimo en $)
+ *   6) Certificaciones (BPM, HACCP, otras)
+ */
+
+interface Guarantee {
+  icon: 'shield' | 'cold' | 'truck' | 'invoice' | 'package' | 'refund';
+  title: string;
+  value: string;
+  desc: string;
+  todo?: boolean;
+}
+
+const guarantees: ReadonlyArray<Guarantee> = [
+  {
+    icon: 'shield',
+    title: 'Habilitación oficial',
+    value: 'SENASA / RNE',
+    desc: 'Establecimiento habilitado y registrado. Número visible en cada factura.',
+    todo: true,
+  },
+  {
+    icon: 'cold',
+    title: 'Cadena de frío',
+    value: 'Ininterrumpida',
+    desc: 'Trazabilidad por lote, control de temperatura del depósito a tu puerta.',
+  },
+  {
+    icon: 'truck',
+    title: 'Tiempo de entrega',
+    value: '24–48 hs',
+    desc: 'Pedidos hasta las 18 hs se despachan al día hábil siguiente.',
+    todo: true,
+  },
+  {
+    icon: 'invoice',
+    title: 'Facturación A / B',
+    value: 'Cuenta corriente',
+    desc: 'Plazos de pago según historial. Sin sorpresas en factura ni recargos ocultos.',
+    todo: true,
+  },
+  {
+    icon: 'package',
+    title: 'Pedido mínimo',
+    value: 'Consultar',
+    desc: 'Sin restricciones por categoría. Combiná líneas para alcanzar el mínimo.',
+    todo: true,
+  },
+  {
+    icon: 'refund',
+    title: 'Devoluciones',
+    value: 'Reposición sin cargo',
+    desc: 'Producto en mal estado o con corte de frío: reposición o nota de crédito inmediata.',
+  },
+];
+---
+
+<section class="grant section-y" id="garantias" aria-labelledby="grant-title">
+  <div class="container-content">
+    <header class="grant__head" data-reveal>
+      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">Garantías</p>
+      <h2 id="grant-title" class="grant__title" data-reveal style="--reveal-delay: 100ms;">
+        Comprar congelados, <em>sin sorpresas</em>.
+      </h2>
+      <p class="grant__lede" data-reveal style="--reveal-delay: 200ms;">
+        Lo que necesitás saber antes del primer pedido. Sin letra chica.
+      </p>
+    </header>
+
+    <ul class="grant__grid" role="list" data-reveal-stagger>
+      {guarantees.map((g) => (
+        <li class="grant-card" data-reveal>
+          <div class="grant-card__icon" aria-hidden="true">
+            {g.icon === 'shield' && (
+              <svg viewBox="0 0 28 28" fill="none">
+                <path d="M14 3 5 6v8c0 5 4 9 9 11 5-2 9-6 9-11V6l-9-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="m10 14 3 3 5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )}
+            {g.icon === 'cold' && (
+              <svg viewBox="0 0 28 28" fill="none">
+                <path d="M14 3v22M5 7l18 14M5 21l18-14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="14" cy="14" r="2" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+            )}
+            {g.icon === 'truck' && (
+              <svg viewBox="0 0 28 28" fill="none">
+                <path d="M3 20V9h14v11M17 13h5l3 4v3h-8" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="8" cy="22" r="2.4" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="21" cy="22" r="2.4" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+            )}
+            {g.icon === 'invoice' && (
+              <svg viewBox="0 0 28 28" fill="none">
+                <path d="M6 3h13v22l-3-2-3 2-3-2-3 2-3-2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M10 9h7M10 13h7M10 17h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            )}
+            {g.icon === 'package' && (
+              <svg viewBox="0 0 28 28" fill="none">
+                <path d="M14 4 4 9v10l10 5 10-5V9l-10-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="m4 9 10 5 10-5M14 14v10M9 6.5l10 5" stroke="currentColor" stroke-width="1.6"/>
+              </svg>
+            )}
+            {g.icon === 'refund' && (
+              <svg viewBox="0 0 28 28" fill="none">
+                <path d="M22 14a8 8 0 1 1-2.5-5.8M21 4v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )}
+          </div>
+
+          <h3 class="grant-card__title">{g.title}</h3>
+          <p class="grant-card__value">
+            {g.value}
+            {g.todo && <span class="grant-card__todo" title="Pendiente confirmar con el cliente">·</span>}
+          </p>
+          <p class="grant-card__desc">{g.desc}</p>
+        </li>
+      ))}
+    </ul>
+
+    <p class="grant__fineprint" data-reveal style="--reveal-delay: 400ms;">
+      <span aria-hidden="true">ⓘ</span>
+      Algunos datos exactos (números de habilitación, plazos finales) se confirman
+      al momento del alta como cliente. Toda la operación es trazable y auditable.
+    </p>
+  </div>
+</section>
+
+<style>
+  .grant {
+    position: relative;
+    background:
+      radial-gradient(50% 60% at 0% 100%, oklch(from var(--color-brand-500) l c h / 0.05) 0%, transparent 60%),
+      var(--color-bg);
+  }
+
+  .grant__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 56ch;
+    margin-block-end: var(--space-7);
+  }
+  .grant__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: 1.02;
+  }
+  .grant__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .grant__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+  }
+
+  /* ----- Grid ----- */
+  .grant__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  @media (min-width: 640px) {
+    .grant__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 960px) {
+    .grant__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .grant-card {
+    position: relative;
+    padding: var(--space-5);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    display: grid;
+    gap: 0.4rem;
+    grid-template-rows: auto auto auto 1fr;
+    transition:
+      transform var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-normal) var(--ease-out-expo);
+  }
+  .grant-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-brand-300);
+    box-shadow: var(--shadow-card);
+  }
+
+  .grant-card__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    background: var(--color-brand-50);
+    color: var(--color-brand-600);
+    border: 1px solid var(--color-brand-100);
+    margin-block-end: var(--space-2);
+  }
+  .grant-card__icon svg { width: 1.4rem; height: 1.4rem; }
+
+  .grant-card__title {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-muted);
+    font-weight: var(--weight-semibold);
+  }
+  .grant-card__value {
+    font-family: var(--font-display);
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  /* Dot sutil que indica "valor pendiente confirmación cliente" — solo
+     visible al hover/focus para no enfriar la UX del visitante normal */
+  .grant-card__todo {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    opacity: 0;
+    transition: opacity var(--dur-fast);
+    font-size: 0;
+  }
+  .grant-card:hover .grant-card__todo { opacity: 0.6; }
+
+  .grant-card__desc {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-snug);
+  }
+
+  /* Fine print final */
+  .grant__fineprint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-block-start: var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-snug);
+    max-width: 65ch;
+  }
+  .grant__fineprint span {
+    color: var(--color-text-brand);
+    flex-shrink: 0;
+    margin-block-start: 0.05rem;
+  }
+</style>
+</content>
+</invoke>
