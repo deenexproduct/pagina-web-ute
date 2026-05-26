@@ -1,5 +1,8 @@
 ---
-import { APP_BASE_URL, EMAILS, whatsappLink, WHATSAPP } from '../config/site';
+import { APP_IS_LIVE, buyOnlineLink, EMAILS, whatsappLink, WHATSAPP } from '../config/site';
+
+const buyHref = buyOnlineLink();
+const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
 
 interface Props {
   showHead?: boolean;
@@ -47,7 +50,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
       </p>
 
       <div class="contact__cta-row">
-        <a class="btn btn-outline" href={APP_BASE_URL} target="_blank" rel="noopener">Comprar online</a>
+        <a class="btn btn-outline" href={buyHref} {...buyTargetProps}>Comprar online</a>
         {hasWhatsapp && (
           <a class="btn btn-outline" href={waLink} target="_blank" rel="noopener">
             WhatsApp comercial

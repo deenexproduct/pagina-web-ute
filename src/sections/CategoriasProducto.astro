@@ -1,5 +1,10 @@
 ---
-import { CATEGORIES, APP_BASE_URL, categoryUrl, link } from '../config/site';
+import { CATEGORIES, APP_IS_LIVE, buyOnlineLink, categoryUrl, link } from '../config/site';
+
+const buyHref = buyOnlineLink();
+const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
+/* También para las cards de categoría: si app no está live → no _blank */
+const catTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
 
 interface Props {
   showHead?: boolean;
@@ -46,7 +51,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
         const icon = iconFor(cat.slug);
         return (
           <li data-reveal>
-            <a class="cat-card" href={categoryUrl(cat)} target="_blank" rel="noopener" aria-label={`${cat.nombre}: abrir en app`}>
+            <a class="cat-card" href={categoryUrl(cat)} {...catTargetProps} aria-label={`${cat.nombre}: abrir en app`}>
               <div
                 class="cat-card__photo"
                 aria-hidden="true"
@@ -81,7 +86,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
     </ul>
 
     <div class="cats__cta-row">
-      <a class="btn btn-primary cats__cta-full" href={APP_BASE_URL} target="_blank" rel="noopener">
+      <a class="btn btn-primary cats__cta-full" href={buyHref} {...buyTargetProps}>
         <span>Ver catálogo completo</span>
         <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>

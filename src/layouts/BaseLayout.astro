@@ -6,7 +6,7 @@ import SmoothScrollLenis from '../components/SmoothScrollLenis.astro';
 // @ts-ignore — woff2 importado como URL hashed por Vite para preload dinámico
 import interFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import ScrollToTop from '../components/ui/ScrollToTop.astro';
-import { SEO, SITE_URL, ADDRESS, ANALYTICS } from '../config/site';
+import { SEO, SITE_URL, ADDRESS, ANALYTICS, link } from '../config/site';
 
 interface Props {
   title?: string;
@@ -28,8 +28,15 @@ const fullTitle = title
   ? SEO.titleTemplate.replace('%s', title)
   : SEO.defaultTitle;
 
-const canonical = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? SITE_URL).toString();
-const ogImage = new URL(image, Astro.site ?? SITE_URL).toString();
+/*
+ * Canonical y OG image son absolutos. Si Astro está configurado con `base`
+ * (caso GH Pages preview = /quem-central-preview/), hay que componer la URL
+ * RELATIVA al base path, no a la raíz del dominio. `link()` se encarga.
+ */
+const canonical = new URL(link(canonicalPath ?? Astro.url.pathname), Astro.site ?? SITE_URL).toString();
+const ogImage = image.startsWith('http')
+  ? image
+  : new URL(link(image), Astro.site ?? SITE_URL).toString();
 
 const orgJsonLd = {
   '@context': 'https://schema.org',

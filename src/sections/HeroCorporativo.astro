@@ -1,5 +1,8 @@
 ---
-import { APP_BASE_URL, CATEGORIES } from '../config/site';
+import { APP_IS_LIVE, buyOnlineLink, CATEGORIES } from '../config/site';
+
+const buyHref = buyOnlineLink();
+const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
 
 /**
  * Hero v2 — Dirección "Promesa + entrada a la app".
@@ -65,7 +68,7 @@ const previewCategories = [
       </p>
 
       <div class="hero__actions" data-reveal style="--reveal-delay: 950ms;">
-        <a class="hero__cta-main" href={APP_BASE_URL} target="_blank" rel="noopener">
+        <a class="hero__cta-main" href={buyHref} {...buyTargetProps}>
           <span class="hero__cta-main-text">Comprar online</span>
           <span class="hero__cta-main-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

@@ -1,16 +1,46 @@
 ---
+import { contactLink } from '../config/site';
+
 interface Props {
   showHead?: boolean;
 }
 const { showHead = true } = Astro.props;
 
 /**
- * Franquicias v2 — copy comprimido a 1 frase lede + 3 cards con desc cortas.
+ * Franquicias v3 — cards clickables que llevan al form con tipo prefijado.
+ * Cada card matchea con un value del wizard:
+ *   - "Franquicias"           → wizard arranca en step 2 con tipo "Franquicias"
+ *   - "Corner Qüem"           → step 2 con tipo "Corner Qüem"
+ *   - "Proveedores / marcas"  → step 2 con tipo "Proveedores / marcas"
  */
 const cards = [
-  { title: 'Franquicias', desc: 'Unidades comerciales con identidad Qüem Central.', icon: 'store', featured: true, accent: false },
-  { title: 'Corner Qüem', desc: 'Producto congelado dentro de espacios comerciales existentes.', icon: 'corner', featured: false, accent: true },
-  { title: 'Alianzas comerciales', desc: 'Marcas que necesitan capilaridad y distribución.', icon: 'handshake', featured: false, accent: false },
+  {
+    title: 'Franquicias',
+    desc: 'Unidades comerciales con identidad Qüem Central.',
+    icon: 'store',
+    featured: true,
+    accent: false,
+    ctaTipo: 'Franquicias',
+    ctaText: 'Aplicar a franquicia',
+  },
+  {
+    title: 'Corner Qüem',
+    desc: 'Producto congelado dentro de espacios comerciales existentes.',
+    icon: 'corner',
+    featured: false,
+    accent: true,
+    ctaTipo: 'Corner Qüem',
+    ctaText: 'Sumar un corner',
+  },
+  {
+    title: 'Alianzas comerciales',
+    desc: 'Marcas que necesitan capilaridad y distribución.',
+    icon: 'handshake',
+    featured: false,
+    accent: false,
+    ctaTipo: 'Proveedores / marcas',
+    ctaText: 'Proponer alianza',
+  },
 ] as const;
 ---
 
@@ -30,7 +60,12 @@ const cards = [
 
     <div class="franq__grid" data-reveal-stagger>
       {cards.map((c) => (
-        <article class:list={['franq-card', c.featured && 'franq-card--featured', c.accent && 'franq-card--accent']} data-reveal>
+        <a
+          class:list={['franq-card', c.featured && 'franq-card--featured', c.accent && 'franq-card--accent']}
+          href={contactLink(c.ctaTipo)}
+          data-reveal
+          aria-label={`${c.title}: ${c.ctaText}`}
+        >
           <div class="franq-card__icon" aria-hidden="true">
             {c.icon === 'store' && (
               <svg viewBox="0 0 28 28" fill="none"><path d="M4 11h20l-2-6H6l-2 6Z" stroke="currentColor" stroke-width="1.8"/><path d="M5 11v12h18V11" stroke="currentColor" stroke-width="1.8"/><path d="M10 23v-6h8v6" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -44,7 +79,11 @@ const cards = [
           </div>
           <h3>{c.title}</h3>
           <p>{c.desc}</p>
-        </article>
+          <span class="franq-card__cta">
+            {c.ctaText}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
       ))}
     </div>
 
@@ -87,12 +126,39 @@ const cards = [
 
   .franq-card {
     position: relative;
+    display: grid;
+    gap: 0.65rem;
     padding: var(--space-6);
     background-color: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
     transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
     overflow: hidden;
+    /* Card como link */
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .franq-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-block-start: var(--space-2);
+    padding-block-start: var(--space-3);
+    border-top: 1px solid var(--color-border-subtle);
+    color: var(--color-text-brand);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    transition: color var(--dur-fast);
+  }
+  .franq-card__cta svg {
+    transition: transform var(--dur-fast) var(--ease-standard);
+  }
+  .franq-card:hover .franq-card__cta {
+    color: var(--color-text-primary);
+  }
+  .franq-card:hover .franq-card__cta svg {
+    transform: translateX(3px);
   }
   .franq-card::after {
     content: '';

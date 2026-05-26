@@ -26,6 +26,41 @@ export const SITE_URL = `https://${SITE_DOMAIN}`;
 /** URL base de la app/catálogo donde sucede la conversión. */
 export const APP_BASE_URL = 'https://app.quem-central.com'; // TODO confirmar app deploy
 
+/**
+ * Switch operativo: ¿la app de compra ya está live y deployada?
+ *
+ * Mientras esté en `false`, todos los CTAs "Comprar online" caen al form
+ * de contacto en lugar de un link muerto a `app.quem-central.com`.
+ * Cuando el cliente confirme que la app está activa, poner `true`.
+ *
+ * Por qué no usamos `fetch()` para detectar runtime: CORS no permite
+ * detectar disponibilidad de otro dominio confiablemente. Mejor toggle.
+ */
+export const APP_IS_LIVE = false; // TODO poner en true cuando app.quem-central.com esté deployada
+
+/**
+ * Helper para CTAs "Comprar online" — graceful degradation.
+ *
+ * - Si APP_IS_LIVE → devuelve la URL real de la app.
+ * - Si no → devuelve el form de contacto con tipo "Compra B2B" prefijado.
+ *   El wizard lee `?tipo=Compra B2B` y abre directo en el paso 2.
+ *
+ * Usar en TODOS los lugares del sitio donde se invita a comprar.
+ */
+export const buyOnlineLink = (): string => {
+  if (APP_IS_LIVE) return APP_BASE_URL;
+  return link('/?tipo=Compra%20B2B#contacto');
+};
+
+/**
+ * Helper genérico: link al wizard con tipo prefijado.
+ * Útil para "Aplicar a franquicia", "Hablar con corner", etc.
+ */
+export const contactLink = (tipo?: string): string => {
+  if (!tipo) return link('/#contacto');
+  return link(`/?tipo=${encodeURIComponent(tipo)}#contacto`);
+};
+
 /* -------------------------------------------------------------------------- */
 /*  CONTACTO — MAILS Y WHATSAPP                                               */
 /* -------------------------------------------------------------------------- */
@@ -135,9 +170,13 @@ export interface Category {
   appUrl?: string;
 }
 
-/** Helper: URL final por categoría. */
-export const categoryUrl = (cat: Category): string =>
-  cat.appUrl ?? `${APP_BASE_URL}/categoria/${cat.slug}`;
+/** Helper: URL final por categoría.
+ *  Si APP_IS_LIVE=false, cae al form con tipo "Compra B2B" prefill,
+ *  porque el deep-link a app.quem-central.com/categoria/X no existe. */
+export const categoryUrl = (cat: Category): string => {
+  if (!APP_IS_LIVE) return buyOnlineLink();
+  return cat.appUrl ?? `${APP_BASE_URL}/categoria/${cat.slug}`;
+};
 
 /**
  * Categorías iniciales — orden del brief.
