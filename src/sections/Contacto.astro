@@ -553,8 +553,13 @@ const hasWhatsapp = WHATSAPP.length > 0;
 <style>
   .contact__inner {
     display: grid;
+    /* Columna única explícita — igual que cn-hero__inner, evita que el
+       auto track se expanda al min-content de los hijos (grid auto-min bug). */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-7);
   }
+  .contact__copy,
+  .contact__form { min-width: 0; }
   @media (min-width: 960px) {
     .contact__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
   }

@@ -151,9 +151,12 @@ const mensajes = [
   }
   .plat__inner {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-7);
     align-items: center;
   }
+  .plat__copy,
+  .plat__video-wrap { min-width: 0; }
   @media (min-width: 960px) {
     .plat__inner { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
   }

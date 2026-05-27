@@ -123,9 +123,15 @@ const cornerContactLink = contactLink('Corner Qüem');
 
   .cn-hero__inner {
     display: grid;
+    /* Mobile: 1 columna explícita con minmax(0,1fr) para que los grid items
+       no expandan el track más allá del viewport (grid auto-min bug). */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-7);
     align-items: center;
   }
+  /* Los grid items deben poder colapsar por debajo de su min-content */
+  .cn-hero__copy,
+  .cn-hero__panel { min-width: 0; }
   @media (min-width: 960px) {
     .cn-hero__inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-8); }
   }

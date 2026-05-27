@@ -95,10 +95,19 @@ import Contacto from '../sections/Contacto.astro';
     color: var(--color-text-muted);
     font-weight: var(--weight-bold);
     text-align: center;
-    flex-shrink: 0;
+    /* Permite shrink + wrap en viewports angostos. En desktop el texto
+       entra en una línea; en mobile ≤540px wrappea sin romper el pill. */
+    flex-shrink: 1;
+    min-width: 0;
+    white-space: normal;
     padding: 0.4rem 0.85rem;
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-pill);
+  }
+  /* En móvil muy angosto, las líneas laterales se achican para dejar
+     al menos la mitad del ancho al label centrado. */
+  @media (max-width: 479px) {
+    .partners-divider__line { flex: 0 0 clamp(12px, 5vw, 32px); }
   }
 </style>
