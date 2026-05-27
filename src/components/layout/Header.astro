@@ -195,7 +195,11 @@ const buyTargetProps = APP_IS_LIVE
           setActive(visible.target.id);
         }
       },
-      { rootMargin: '-25% 0px -55% 0px', threshold: 0 },
+      /* Carril central más amplio para que el "scroll-to-section" via anchor
+         click coincida con el indicator. Antes: -25% top + -55% bottom
+         (carril de 20%) → el item activo a veces marcaba la sección de abajo.
+         Ahora: -18% top + -40% bottom (carril de 42%) → más permisivo. */
+      { rootMargin: '-18% 0px -40% 0px', threshold: 0 },
     );
 
     sections.forEach((s) => observer.observe(s));

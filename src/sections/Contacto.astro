@@ -178,7 +178,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
             </label>
           ))}
         </div>
-        <small class="field__hint" data-error-for="tipo" hidden></small>
+        <small class="field__hint" data-error-for="tipo" aria-live="polite" hidden></small>
 
         <div class="wizard__actions">
           <span aria-hidden="true"></span>
@@ -198,24 +198,24 @@ const hasWhatsapp = WHATSAPP.length > 0;
 
         <div class="field">
           <label for="f-nombre">Nombre y apellido <span class="req">*</span></label>
-          <input id="f-nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="f-nombre-hint" />
-          <small id="f-nombre-hint" class="field__hint" data-error-for="nombre" hidden></small>
+          <input id="f-nombre" name="nombre" type="text" autocomplete="name" required maxlength="80" aria-describedby="f-nombre-hint" />
+          <small id="f-nombre-hint" class="field__hint" data-error-for="nombre" aria-live="polite" hidden></small>
         </div>
 
         <div class="field">
           <label for="f-empresa">Empresa</label>
-          <input id="f-empresa" name="empresa" type="text" autocomplete="organization" placeholder="Razón social o nombre del local" />
+          <input id="f-empresa" name="empresa" type="text" autocomplete="organization" maxlength="100" placeholder="Razón social o nombre del local" />
         </div>
 
         <div class="field-row">
           <div class="field">
             <label for="f-email">Email <span class="req">*</span></label>
-            <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-hint" />
-            <small id="f-email-hint" class="field__hint" data-error-for="email" hidden></small>
+            <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="120" aria-describedby="f-email-hint" />
+            <small id="f-email-hint" class="field__hint" data-error-for="email" aria-live="polite" hidden></small>
           </div>
           <div class="field">
             <label for="f-tel">Teléfono</label>
-            <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" placeholder="11 1234-5678" />
+            <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="11 1234-5678" />
           </div>
         </div>
 
@@ -239,9 +239,12 @@ const hasWhatsapp = WHATSAPP.length > 0;
         </div>
 
         <div class="field">
-          <label for="f-msg">Mensaje <span class="req">*</span></label>
-          <textarea id="f-msg" name="mensaje" rows="5" required aria-describedby="f-msg-hint" placeholder="Contanos tu tipo de negocio, qué productos te interesan o cuánto volumen manejás."></textarea>
-          <small id="f-msg-hint" class="field__hint" data-error-for="mensaje" hidden></small>
+          <div class="field__label-row">
+            <label for="f-msg">Mensaje <span class="req">*</span></label>
+            <small class="field__counter" data-msg-counter aria-live="polite">0 / 1500</small>
+          </div>
+          <textarea id="f-msg" name="mensaje" rows="5" required maxlength="1500" aria-describedby="f-msg-hint" placeholder="Contanos tu tipo de negocio, qué productos te interesan o cuánto volumen manejás."></textarea>
+          <small id="f-msg-hint" class="field__hint" data-error-for="mensaje" aria-live="polite" hidden></small>
         </div>
 
         {/*
@@ -394,6 +397,20 @@ const hasWhatsapp = WHATSAPP.length > 0;
       el.addEventListener('change', () => clearError(el, el.name));
     });
 
+    /* Char counter del textarea — feedback visual del límite */
+    const msgInput = form.querySelector<HTMLTextAreaElement>('#f-msg');
+    const counter = form.querySelector<HTMLElement>('[data-msg-counter]');
+    if (msgInput && counter) {
+      const maxLen = Number(msgInput.getAttribute('maxlength') ?? 1500);
+      const updateCounter = (): void => {
+        const len = msgInput.value.length;
+        counter.textContent = `${len} / ${maxLen}`;
+        counter.classList.toggle('field__counter--warn', len > maxLen * 0.9);
+      };
+      msgInput.addEventListener('input', updateCounter);
+      updateCounter();
+    }
+
     /* Botones Siguiente */
     form.querySelectorAll<HTMLButtonElement>('[data-wizard-next]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -416,6 +433,7 @@ const hasWhatsapp = WHATSAPP.length > 0;
       status.removeAttribute('data-form-status-type');
 
       const data = new FormData(form);
+      const submitBtn = form.querySelector<HTMLButtonElement>('.wizard__submit');
 
       /* Honeypot: si tiene contenido, es bot — descartar silenciosamente */
       if (String(data.get('website') ?? '').trim() !== '') {
@@ -431,6 +449,15 @@ const hasWhatsapp = WHATSAPP.length > 0;
         status.textContent = 'Revisá los campos marcados.';
         status.setAttribute('data-form-status-type', 'error');
         return;
+      }
+
+      /* Guard contra doble click: deshabilitar el botón + estado "Enviando…".
+         Si el user hace 3 clicks rápidos, solo el primero dispara el mailto. */
+      if (submitBtn) {
+        if (submitBtn.disabled) return;
+        submitBtn.disabled = true;
+        submitBtn.dataset.originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = 'Enviando…';
       }
 
       /*
@@ -886,6 +913,22 @@ const hasWhatsapp = WHATSAPP.length > 0;
   .field label {
     font-size: var(--font-size-sm);
     color: var(--color-text-primary);
+    font-weight: var(--weight-semibold);
+  }
+  .field__label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .field__counter {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+    transition: color var(--dur-fast);
+  }
+  .field__counter--warn {
+    color: var(--color-accent-700);
     font-weight: var(--weight-semibold);
   }
   .req { color: var(--color-brand-600); }
