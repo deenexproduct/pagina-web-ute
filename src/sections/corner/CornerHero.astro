@@ -1,6 +1,6 @@
 ---
-import { link, whatsappLink } from '../../config/site';
-const waLink = whatsappLink();
+import { contactLink } from '../../config/site';
+const cornerContactLink = contactLink('Corner Qüem');
 
 /**
  * Corner QÜEM — hero v2 comprimido.
@@ -24,7 +24,7 @@ const waLink = whatsappLink();
         Retail congelado llave en mano. Instalado dentro de tu comercio.
       </p>
       <div class="cn-hero__cta-row" data-reveal style="--reveal-delay: 300ms;">
-        <a class="btn btn-primary cn-hero__cta-main" href={waLink}>
+        <a class="btn btn-primary cn-hero__cta-main" href={cornerContactLink}>
           Hablar con comercial
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -107,15 +107,15 @@ const waLink = whatsappLink();
     inset: 0;
     z-index: -1;
     background:
-      radial-gradient(50% 60% at 100% 0%, oklch(58% 0.155 254 / 0.18) 0%, transparent 65%),
-      radial-gradient(40% 50% at 0% 100%, oklch(62% 0.150 155 / 0.12) 0%, transparent 65%),
+      radial-gradient(50% 60% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.18) 0%, transparent 65%),
+      radial-gradient(40% 50% at 0% 100%, oklch(from var(--color-accent-500) l c h / 0.18) 0%, transparent 65%),
       linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg) 100%);
   }
   .cn-hero__bg::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(from var(--color-brand-500) l c h / 0.06) 1px, transparent 1px);
     background-size: 28px 28px;
     mask-image: linear-gradient(180deg, black 0%, transparent 90%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 90%);
@@ -150,12 +150,12 @@ const waLink = whatsappLink();
     height: 7px;
     border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
+    box-shadow: 0 0 0 4px oklch(from var(--color-accent-500) l c h / 0.30);
     animation: pulse 2.4s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18); }
-    50%      { box-shadow: 0 0 0 7px oklch(62% 0.150 155 / 0.06); }
+    0%, 100% { box-shadow: 0 0 0 4px oklch(from var(--color-accent-500) l c h / 0.30); }
+    50%      { box-shadow: 0 0 0 7px oklch(from var(--color-accent-500) l c h / 0.10); }
   }
   @media (prefers-reduced-motion: reduce) { .cn-hero__tag-dot { animation: none; } }
 
@@ -187,9 +187,9 @@ const waLink = whatsappLink();
     padding-inline: 1.5rem;
     padding-block: 1rem;
     font-size: var(--font-size-sm);
-    box-shadow: 0 6px 18px oklch(62% 0.150 155 / 0.32);
+    box-shadow: 0 6px 18px oklch(from var(--color-brand-500) l c h / 0.32);
   }
-  .cn-hero__cta-main:hover { box-shadow: 0 8px 24px oklch(62% 0.150 155 / 0.40); }
+  .cn-hero__cta-main:hover { box-shadow: 0 8px 24px oklch(from var(--color-brand-500) l c h / 0.40); }
 
   .cn-hero__highlights {
     display: grid;
@@ -231,7 +231,7 @@ const waLink = whatsappLink();
   .cn-hero__panel-display {
     aspect-ratio: 4 / 3;
     border-radius: var(--radius-xl);
-    background: linear-gradient(180deg, oklch(96% 0.005 240) 0%, oklch(91% 0.012 240) 100%);
+    background: linear-gradient(180deg, var(--color-neutral-50) 0%, var(--color-neutral-100) 100%);
     border: 1px solid var(--color-border-subtle);
     padding: var(--space-3);
     display: grid;
@@ -253,7 +253,7 @@ const waLink = whatsappLink();
     height: 6px;
     border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 8px oklch(62% 0.150 155 / 0.7);
+    box-shadow: 0 0 8px oklch(from var(--color-accent-500) l c h / 0.7);
   }
   .cn-hero__panel-display-mid {
     display: grid;

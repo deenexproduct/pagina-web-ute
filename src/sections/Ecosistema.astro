@@ -1,4 +1,6 @@
 ---
+import { link } from '../config/site';
+
 interface Props {
   showHead?: boolean;
 }
@@ -11,9 +13,13 @@ const { showHead = true } = Astro.props;
  * Wide: Logística (2x1).
  * Resto: cards 1x1 chicas.
  */
+/*
+ * Cards del bento. Los que tienen `href` se renderizan como <a> clickable
+ * (Corner Qüem → /corner-quem). El resto son <article> informativos.
+ */
 const cards = [
   { title: 'Distribución B2B', desc: 'Abastecimiento para gastronomía, comercios y eventos.', tone: 'brand-hero', icon: 'b2b', size: 'hero', features: ['Catálogo premium', 'Pedidos online B2B', 'Entrega en zona'] },
-  { title: 'Corner Qüem', desc: 'Productos Qüem dentro de espacios existentes.', tone: 'accent', icon: 'corner', size: 'tall' },
+  { title: 'Corner Qüem', desc: 'Productos Qüem dentro de espacios existentes.', tone: 'accent', icon: 'corner', size: 'tall', href: '/corner-quem' },
   { title: 'Logística especializada', desc: 'Última milla AMBA + PBA.', tone: 'brand', icon: 'truck', size: 'wide' },
   { title: 'Franquicias', desc: 'Modelo replicable bajo marca.', tone: 'brand', icon: 'building', size: 'normal' },
   { title: 'Tecnología', desc: 'App, catálogo y pedidos B2B.', tone: 'brand', icon: 'app', size: 'normal' },
@@ -37,10 +43,13 @@ const cards = [
     )}
 
     <div class="eco__bento" data-reveal-stagger>
-      {cards.map((c) => (
-        <article
-          class:list={['eco-card', `eco-card--${c.tone}`, `eco-card--${c.size}`]}
+      {cards.map((c) => {
+        const Tag = 'href' in c && c.href ? 'a' : 'article';
+        return (
+        <Tag
+          class:list={['eco-card', `eco-card--${c.tone}`, `eco-card--${c.size}`, 'href' in c && c.href && 'eco-card--link']}
           data-reveal
+          {...('href' in c && c.href ? { href: link(c.href) } : {})}
         >
           <div class="eco-card__icon" aria-hidden="true">
             {c.icon === 'b2b' && (
@@ -80,8 +89,9 @@ const cards = [
             </ul>
           )}
 
-        </article>
-      ))}
+        </Tag>
+        );
+      })}
     </div>
 
   </div>
@@ -91,7 +101,7 @@ const cards = [
   .eco {
     position: relative;
     background:
-      radial-gradient(75% 55% at 50% 0%, oklch(58% 0.155 254 / 0.08) 0%, transparent 65%),
+      radial-gradient(75% 55% at 50% 0%, oklch(from var(--color-brand-500) l c h / 0.08) 0%, transparent 65%),
       linear-gradient(180deg, var(--color-surface-subtle) 0%, var(--color-brand-100) 55%, var(--color-surface-subtle) 100%);
   }
   .eco__head {
@@ -247,4 +257,21 @@ const cards = [
 
   /* EC3: Corner Qüem tall card — compact padding */
   .eco-card--tall { padding: var(--space-4); }
+
+  /* Reset link styles para cards clickables (Corner Qüem → /corner-quem) */
+  a.eco-card { color: inherit; text-decoration: none; cursor: pointer; }
+  .eco-card--link::after {
+    content: '↗';
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    transition: transform var(--dur-fast), color var(--dur-fast);
+    z-index: 1;
+  }
+  .eco-card--link:hover::after {
+    transform: translate(2px, -2px);
+    color: var(--color-text-brand);
+  }
 </style>

@@ -1,7 +1,10 @@
 ---
+import { contactLink } from '../../config/site';
+
 /**
  * Corner QÜEM — propuesta de valor v2.
  * Quote final = brief, columnas split mantenidas, items comprimidos.
+ * + CTA final que cierra la página /corner-quem (evita callejón sin salida).
  */
 const noNeed = [
   'Cocina',
@@ -68,10 +71,67 @@ const quemAporta = [
       </article>
     </div>
 
+    <div class="cn-value__final" data-reveal style="--reveal-delay: 300ms;">
+      <div class="cn-value__final-inner">
+        <p class="cn-value__final-eyebrow">¿Sumás un Corner Qüem?</p>
+        <h3 class="cn-value__final-title">Coordinamos una visita y armamos la propuesta para tu espacio.</h3>
+        <div class="cn-value__final-actions">
+          <a class="btn btn-primary" href={contactLink('Corner Qüem')}>
+            Hablar con comercial
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
+  /* CTA final — cierra la página /corner-quem con un llamado claro */
+  .cn-value__final {
+    margin-block-start: var(--space-8);
+  }
+  .cn-value__final-inner {
+    padding: var(--space-6);
+    background: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-bg-elevated) 70%);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.20);
+    border-radius: var(--radius-2xl);
+    display: grid;
+    gap: var(--space-3);
+    text-align: center;
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+  .cn-value__final-eyebrow {
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-text-brand);
+    font-weight: var(--weight-bold);
+  }
+  .cn-value__final-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  .cn-value__final-actions {
+    display: flex;
+    justify-content: center;
+    margin-block-start: var(--space-2);
+  }
+  .cn-value__final-actions svg {
+    transition: transform var(--dur-fast);
+  }
+  .cn-value__final-actions a:hover svg {
+    transform: translateX(3px);
+  }
+
+
   .cn-value__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
   .cn-value__title {
     font-size: var(--font-size-3xl);

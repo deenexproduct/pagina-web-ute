@@ -1,4 +1,6 @@
 ---
+import { contactLink } from '../../config/site';
+
 /**
  * Corner QÜEM — dónde funciona v2.
  * Lede comprimido, grid de venues mantenido (es la propuesta).
@@ -81,7 +83,7 @@ const venues = [
     </ul>
 
     <p class="cn-where__foot">
-      ¿No ves tu espacio? <a href="/#contacto" class="cn-where__foot-link">Hablemos →</a>
+      ¿No ves tu espacio? <a href={contactLink('Corner Qüem')} class="cn-where__foot-link">Hablemos →</a>
     </p>
   </div>
 </section>
