@@ -36,6 +36,12 @@ const mensajes = [
         ))}
       </ul>
 
+      <a class="plat__next" href={link('/#productos')} data-reveal style="--reveal-delay: 400ms;">
+        Ver el catálogo
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
     </div>
 
     <div class="plat__video-wrap" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
@@ -61,6 +67,22 @@ const mensajes = [
           <span class="plat__video-badge-dot"></span>
           Demo
         </div>
+        {/*
+          Botón play visible si autoplay fue rechazado (iOS low-power mode,
+          Safari, Chrome con autoplay block, etc.). El script lo muestra
+          on-demand. Por default está hidden.
+        */}
+        <button
+          type="button"
+          class="plat__video-play"
+          data-video-play
+          aria-label="Reproducir video"
+          hidden
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
       </div>
       <div class="plat__video-glow" aria-hidden="true"></div>
     </div>
@@ -84,9 +106,24 @@ const mensajes = [
     if (!src || v.src) return;
     v.src = src;
     v.load();
-    // play() puede rechazar si el browser tiene políticas anti-autoplay
-    // — está OK silenciar el error, el user puede tocar para reproducir
-    v.play().catch(() => {});
+
+    // Si autoplay falla (iOS low-power, Safari, etc.) mostramos un botón
+    // play visible. El usuario hace click y reproducimos manualmente.
+    v.play().catch(() => {
+      const frame = v.closest('.plat__video-frame');
+      const playBtn = frame?.querySelector<HTMLButtonElement>('[data-video-play]');
+      if (playBtn) {
+        playBtn.hidden = false;
+        playBtn.addEventListener(
+          'click',
+          () => {
+            v.play().catch(() => {});
+            playBtn.hidden = true;
+          },
+          { once: true },
+        );
+      }
+    });
   };
 
   if ('IntersectionObserver' in window) {
@@ -159,6 +196,27 @@ const mensajes = [
     background: var(--color-accent-100);
     color: var(--color-accent-700);
   }
+  /* CTA discreto que cierra la sección y empuja a Categorías */
+  .plat__next {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-block-start: var(--space-4);
+    padding-block: 0.45rem;
+    color: var(--color-text-brand);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    border-bottom: 1.5px solid transparent;
+    width: max-content;
+    transition: color var(--dur-fast), border-color var(--dur-fast);
+  }
+  .plat__next svg { transition: transform var(--dur-fast); }
+  .plat__next:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-brand-500);
+  }
+  .plat__next:hover svg { transform: translateX(3px); }
+
   /* ===== Video showcase ===================================== */
   .plat__video-wrap {
     position: relative;
@@ -234,6 +292,35 @@ const mensajes = [
   }
   @media (prefers-reduced-motion: reduce) {
     .plat__video-badge-dot { animation: none; }
+  }
+
+  /* Botón play fallback — visible si autoplay rechazado */
+  .plat__video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    background: oklch(100% 0 0 / 0.9);
+    color: var(--color-brand-700);
+    border: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow:
+      0 8px 24px oklch(15% 0.018 95 / 0.30),
+      0 0 0 4px oklch(100% 0 0 / 0.15);
+    transition: transform var(--dur-fast), background var(--dur-fast);
+    z-index: 2;
+  }
+  .plat__video-play:hover {
+    transform: translate(-50%, -50%) scale(1.06);
+    background: oklch(100% 0 0 / 1);
+  }
+  .plat__video-play svg {
+    margin-left: 3px; /* ajuste óptico — el triángulo se ve mejor offset */
   }
 
   .plat__video-glow {

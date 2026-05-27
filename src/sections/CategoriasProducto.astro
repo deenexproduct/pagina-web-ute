@@ -5,6 +5,8 @@ const buyHref = buyOnlineLink();
 const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
 /* También para las cards de categoría: si app no está live → no _blank */
 const catTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
+/* aria-label coherente con el destino real del click */
+const catAriaSuffix = APP_IS_LIVE ? 'abrir en app' : 'hablar con ventas';
 
 interface Props {
   showHead?: boolean;
@@ -51,7 +53,7 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
         const icon = iconFor(cat.slug);
         return (
           <li data-reveal>
-            <a class="cat-card" href={categoryUrl(cat)} {...catTargetProps} aria-label={`${cat.nombre}: abrir en app`}>
+            <a class="cat-card" href={categoryUrl(cat)} {...catTargetProps} aria-label={`${cat.nombre}: ${catAriaSuffix}`}>
               <div
                 class="cat-card__photo"
                 aria-hidden="true"
@@ -165,18 +167,23 @@ const iconFor = (slug: string) => ICONS[slug] ?? fallback;
   }
   .cat-card:hover .cat-card__photo img { transform: scale(1.06) rotate(-1.5deg); }
 
+  /* Icon placeholder — usamos cuando todavía falta la foto real del cliente.
+     Para minimizar la inconsistencia visual con las cards que SÍ tienen
+     foto, hacemos el ícono más grande (75%), con drop-shadow más fuerte
+     y mismo hover behavior. */
   .cat-card__icon {
     position: relative;
     z-index: 1;
-    width: 50%;
-    height: 50%;
-    max-width: 4rem;
-    max-height: 4rem;
+    width: 75%;
+    height: 75%;
+    max-width: 7rem;
+    max-height: 7rem;
     color: oklch(40% 0.14 var(--cat-hue));
-    filter: drop-shadow(0 4px 8px oklch(40% 0.14 var(--cat-hue) / 0.18));
+    filter: drop-shadow(0 6px 14px oklch(40% 0.14 var(--cat-hue) / 0.22));
     transition: transform var(--dur-normal) var(--ease-out-expo);
+    stroke-width: 1.4;
   }
-  .cat-card:hover .cat-card__icon { transform: scale(1.08) rotate(-2deg); }
+  .cat-card:hover .cat-card__icon { transform: scale(1.06) rotate(-1.5deg); }
 
   .cat-card__meta {
     display: flex;

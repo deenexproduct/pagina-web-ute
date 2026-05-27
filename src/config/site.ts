@@ -232,15 +232,20 @@ export const link = (path: string): string => {
  * `<section>` correspondiente para que el scroll-spy del header lo
  * detecte e ilumine.
  */
+/*
+ * Nav slim: 6 items + CTA "Comprar online" en el extremo derecho.
+ * "Inicio" omitido porque el LOGO de la izquierda ya hace ese rol.
+ * "Partners" es el bridge al partner flow (debajo del divider).
+ */
 export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
-  /* BUYER FLOW — orden del scroll real del comprador */
-  { label: 'Inicio',     href: '/',              sectionId: 'top' },
+  /* BUYER FLOW */
   { label: 'Plataforma', href: '/#plataforma',   sectionId: 'plataforma' },
   { label: 'Productos',  href: '/#productos',    sectionId: 'productos' },
   { label: 'Garantías',  href: '/#garantias',    sectionId: 'garantias' },
   { label: 'Prensa',     href: '/#prensa',       sectionId: 'prensa' },
-  /* PARTNER FLOW — link único al divider que abre las secciones partner */
+  /* PARTNER FLOW */
   { label: 'Partners',   href: '/#partners',     sectionId: 'partners' },
+  /* CONVERSION */
   { label: 'Contacto',   href: '/#contacto',     sectionId: 'contacto' },
 ] as const;
 

@@ -36,8 +36,14 @@ const clients: ReadonlyArray<ClientLogo> = [
 ];
 
 const isPlaceholder = clients.every((c) => !c.logo);
+/* GATE: si NO hay ningún logo real cargado, NO renderizamos la sección.
+   Esto evita mostrar 8 cuadrados con líneas punteadas (sensación de
+   "sitio en construcción"). Cuando el cliente provea logos y se setee
+   alguno en `clients[].logo`, la sección reaparece automáticamente. */
+const hideSection = isPlaceholder;
 ---
 
+{!hideSection && (
 <section class="trust section-y" aria-labelledby="trust-title">
   <div class="container-content trust__inner">
     <header class="trust__head" data-reveal>
@@ -84,6 +90,7 @@ const isPlaceholder = clients.every((c) => !c.logo);
     )}
   </div>
 </section>
+)}
 
 <style>
   .trust {

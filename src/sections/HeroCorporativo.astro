@@ -1,5 +1,5 @@
 ---
-import { APP_IS_LIVE, buyOnlineLink, CATEGORIES } from '../config/site';
+import { APP_IS_LIVE, buyOnlineLink, CATEGORIES, link } from '../config/site';
 
 const buyHref = buyOnlineLink();
 const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
@@ -45,9 +45,9 @@ const previewCategories = [
     <!-- COPY -->
     <div class="hero__copy">
       <h1 id="hero-title" class="hero__title">
-        <span class="hero__title-line" data-reveal style="--reveal-delay: 250ms; --reveal-duration: 800ms;">Comprá alimentos</span>
+        <span class="hero__title-line" data-reveal style="--reveal-delay: 250ms; --reveal-duration: 800ms;">{APP_IS_LIVE ? 'Comprá alimentos' : 'Tu proveedor de'}</span>
         <span class="hero__title-line hero__title-line--gradient" data-reveal style="--reveal-delay: 400ms; --reveal-duration: 800ms;">congelados</span>
-        <span class="hero__title-line" data-reveal style="--reveal-delay: 550ms; --reveal-duration: 800ms;">con un click.</span>
+        <span class="hero__title-line" data-reveal style="--reveal-delay: 550ms; --reveal-duration: 800ms;">{APP_IS_LIVE ? 'con un click.' : 'sin vueltas.'}</span>
       </h1>
 
       <p class="hero__meta" data-reveal style="--reveal-delay: 800ms;">
@@ -77,7 +77,7 @@ const previewCategories = [
           </span>
           <span class="hero__cta-main-shine" aria-hidden="true"></span>
         </a>
-        <a class="hero__cta-alt" href="#contacto">
+        <a class="hero__cta-alt" href={link('/#contacto')}>
           Hablar con ventas
           <span aria-hidden="true">→</span>
         </a>
