@@ -36,7 +36,12 @@
     }, { passive: true });
 
     btn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number) => void } }).__lenis;
+      if (lenis) {
+        lenis.scrollTo(0);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   }
 </script>
@@ -57,8 +62,8 @@
     border: none;
     cursor: pointer;
     box-shadow:
-      0 4px 14px oklch(42% 0.190 252 / 0.35),
-      0 1px 3px oklch(42% 0.190 252 / 0.18);
+      0 4px 14px oklch(from var(--color-brand-500) l c h / 0.35),
+      0 1px 3px oklch(from var(--color-brand-500) l c h / 0.18);
     transition:
       transform var(--dur-fast) var(--ease-standard),
       box-shadow var(--dur-fast) var(--ease-standard),
@@ -74,8 +79,8 @@
   .scroll-top:hover {
     transform: translateY(-3px) scale(1.06);
     box-shadow:
-      0 8px 22px oklch(42% 0.190 252 / 0.45),
-      0 2px 6px oklch(42% 0.190 252 / 0.22);
+      0 8px 22px oklch(from var(--color-brand-500) l c h / 0.45),
+      0 2px 6px oklch(from var(--color-brand-500) l c h / 0.22);
   }
   .scroll-top:active {
     transform: translateY(0) scale(0.97);

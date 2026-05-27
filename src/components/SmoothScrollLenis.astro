@@ -28,6 +28,11 @@
 
     document.documentElement.classList.add('has-lenis');
 
+    /* Exponer la instancia para que otros scripts (Header, ScrollToTop)
+       puedan usar lenis.scrollTo() en lugar de window.scrollTo, que
+       Lenis intercepta y puede no responder correctamente. */
+    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+
     const raf = (time: number): void => {
       lenis.raf(time);
       requestAnimationFrame(raf);

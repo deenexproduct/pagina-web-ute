@@ -85,20 +85,69 @@ const buyTargetProps = APP_IS_LIVE
   const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link], [data-menu-link]');
 
   /* mobile toggle */
+  const closeMenu = (): void => {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', 'false');
+    menu.hidden = true;
+    document.body.classList.remove('has-mobile-nav-open');
+  };
+
   if (toggle && menu) {
-    toggle.addEventListener('click', () => {
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       const open = toggle.getAttribute('aria-expanded') === 'true';
       toggle.setAttribute('aria-expanded', String(!open));
       menu.hidden = open;
       document.body.classList.toggle('has-mobile-nav-open', !open);
     });
-    menuLinks.forEach((l) =>
-      l.addEventListener('click', () => {
-        toggle.setAttribute('aria-expanded', 'false');
-        menu.hidden = true;
-        document.body.classList.remove('has-mobile-nav-open');
-      }),
-    );
+    menuLinks.forEach((l) => l.addEventListener('click', closeMenu));
+
+    /* Cerrar al click fuera del menu o del toggle */
+    document.addEventListener('click', (e) => {
+      if (menu.hidden) return;
+      const target = e.target as Node;
+      if (!menu.contains(target) && !toggle.contains(target)) {
+        closeMenu();
+      }
+    });
+
+    /* Cerrar con Escape */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        closeMenu();
+        toggle.focus();
+      }
+    });
+  }
+
+  /* Helper: scroll suave que respeta Lenis si está activo */
+  const smoothScrollToTop = (): void => {
+    const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number) => void } }).__lenis;
+    if (lenis) {
+      lenis.scrollTo(0);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  /* Click en el logo: si ya estamos en la home, scroll suave al tope
+     en lugar de un reload completo. Si estamos en /corner-quem u otra
+     ruta, dejamos que el navegador navegue normalmente. */
+  const brandLink = document.querySelector<HTMLAnchorElement>('.site-header__brand');
+  if (brandLink) {
+    brandLink.addEventListener('click', (e) => {
+      const homeHref = brandLink.getAttribute('href') ?? '/';
+      const cleanPath = window.location.pathname.replace(/\/$/, '');
+      const cleanHref = homeHref.replace(/\/$/, '');
+      if (cleanPath === cleanHref) {
+        e.preventDefault();
+        smoothScrollToTop();
+        /* También limpia el hash para evitar que un siguiente click recargue */
+        if (window.location.hash) {
+          history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    });
   }
 
   /* sticky scroll class */
@@ -231,7 +280,7 @@ const buyTargetProps = APP_IS_LIVE
     letter-spacing: -0.06em;
     box-shadow:
       inset 0 1px 0 oklch(100% 0 0 / 0.18),
-      0 4px 12px oklch(42% 0.19 252 / 0.32);
+      0 4px 12px oklch(from var(--color-brand-500) l c h / 0.32);
   }
   .brand-mark::after {
     content: '';
@@ -323,11 +372,11 @@ const buyTargetProps = APP_IS_LIVE
        grandes (>1440px) recuperamos el padding original via clamp. */
     padding: 0.6rem clamp(0.8rem, 0.6rem + 0.4vw, 1.1rem);
     font-size: clamp(0.83rem, 0.78rem + 0.18vw, 0.95rem);
-    box-shadow: 0 4px 12px oklch(42% 0.190 252 / 0.28);
+    box-shadow: 0 4px 12px oklch(from var(--color-brand-500) l c h / 0.28);
     white-space: nowrap;
   }
   .site-header__cta:hover {
-    box-shadow: 0 6px 18px oklch(42% 0.190 252 / 0.38);
+    box-shadow: 0 6px 18px oklch(from var(--color-brand-500) l c h / 0.38);
   }
   .site-header__menu-toggle {
     display: inline-grid;
