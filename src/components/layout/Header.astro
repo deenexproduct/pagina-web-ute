@@ -253,6 +253,7 @@ const buyTargetProps = APP_IS_LIVE
     align-items: center;
     gap: 0.6rem;
     flex-shrink: 0;
+    min-block-size: 44px;
     font-family: var(--font-display);
     font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-tight);
@@ -320,7 +321,9 @@ const buyTargetProps = APP_IS_LIVE
   }
   .nav-link {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
     /* Tipografía un punto más chica en el nav desktop — los items son muchos
        y van a tener que convivir con el resto del header. El font-size-sm
        de fluid type sigue siendo legible. */

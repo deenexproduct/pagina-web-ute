@@ -299,6 +299,19 @@ const venues = [
     font-weight: var(--weight-medium);
     white-space: nowrap;
   }
+  /* "+4 más" chip — move tap area entirely onto the <a> so the
+     full 44px min touch target is clickable (not just the text node) */
+  .ct__venue-more {
+    padding: 0;
+    min-block-size: 44px;
+  }
+  .ct__venue-more-link {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    min-block-size: 44px;
+    padding: 0.35rem 0.75rem;
+  }
   .ct__venue-chip {
     background: var(--color-brand-50);
     color: var(--color-brand-700);
