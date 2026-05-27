@@ -29,11 +29,19 @@ const fullTitle = title
   : SEO.defaultTitle;
 
 /*
- * Canonical y OG image son absolutos. Si Astro está configurado con `base`
- * (caso GH Pages preview = /quem-central-preview/), hay que componer la URL
- * RELATIVA al base path, no a la raíz del dominio. `link()` se encarga.
+ * Canonical y OG URL — composición:
+ *   - canonicalPath (prop) es RELATIVO al site root (ej: '/corner-quem').
+ *     Pasa por link() para prefijar el base path.
+ *   - Si no se pasa canonicalPath, Astro.url ya es la URL completa de
+ *     la página actual (incluye base path). Usar directo, SIN link()
+ *     (sino se duplicaría el base, bug: ".../quem-central-preview/quem-central-preview").
+ *
+ * OG image siempre es RELATIVO al site root (ej: '/og-default.jpg'),
+ * así que pasa por link() para componer con base correctamente.
  */
-const canonical = new URL(link(canonicalPath ?? Astro.url.pathname), Astro.site ?? SITE_URL).toString();
+const canonical = canonicalPath
+  ? new URL(link(canonicalPath), Astro.site ?? SITE_URL).toString()
+  : Astro.url.toString();
 const ogImage = image.startsWith('http')
   ? image
   : new URL(link(image), Astro.site ?? SITE_URL).toString();
@@ -114,12 +122,13 @@ const localBusinessJsonLd = {
     <meta name="twitter:image" content={ogImage} />
     {SEO.twitterHandle && <meta name="twitter:site" content={SEO.twitterHandle} />}
 
-    <!-- Favicons (placeholders — reemplazar cuando llegue logo final) -->
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Favicons (placeholders — reemplazar cuando llegue logo final).
+         Pasan por link() para respetar el base path en preview (GH Pages). -->
+    <link rel="icon" href={link('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={link('/apple-touch-icon.png')} />
 
     <!-- PWA manifest -->
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="manifest" href={link('/manifest.webmanifest')} />
 
     <!--
       Preload Inter Variable latin para que arranque a descargar antes de que
