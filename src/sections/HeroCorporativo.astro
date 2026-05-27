@@ -718,9 +718,12 @@ const previewCategories = [
     left: -8%;
     animation: hero-chip-float-a 7s ease-in-out infinite;
   }
-  /* Prevent chip from clipping on mid-range viewports */
+  /* Prevent chip from clipping on mid-range viewports (641-1120px).
+     En este rango el viewport es chico pero el media query de 640px no
+     dispara — los chips con right/left negativos se cortaban. */
   @media (min-width: 641px) and (max-width: 1120px) {
     .hero__phone-chip--stock { left: 2%; }
+    .hero__phone-chip--coverage { right: 2%; }
   }
   .hero__phone-chip--coverage {
     bottom: 22%;
