@@ -1,8 +1,13 @@
 ---
+import { buyOnlineLink, APP_IS_LIVE } from '../config/site';
+
 interface Props {
   showHead?: boolean;
 }
 const { showHead = true } = Astro.props;
+
+const buyHref = buyOnlineLink();
+const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
 
 /**
  * Unidades de negocio v3 — bento grid.
@@ -122,7 +127,7 @@ const unidades = [
     </ol>
 
     <div class="un__cta" data-reveal style="--reveal-delay:600ms;">
-      <a class="btn btn-primary" href="https://app.quem-central.com" target="_blank" rel="noopener">
+      <a class="btn btn-primary" href={buyHref} {...buyTargetProps}>
         Empezar a comprar
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>

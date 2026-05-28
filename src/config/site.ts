@@ -233,20 +233,22 @@ export const link = (path: string): string => {
  * detecte e ilumine.
  */
 /*
- * Nav slim: 6 items + CTA "Comprar online" en el extremo derecho.
+ * Nav slim: 7 items + CTA "Comprar online" en el extremo derecho.
  * "Inicio" omitido porque el LOGO de la izquierda ya hace ese rol.
+ * "Corner Qüem" es la única ruta real del nav (sin sectionId → sin scroll-spy).
  * "Partners" es el bridge al partner flow (debajo del divider).
  */
 export const NAV_PRIMARY: ReadonlyArray<NavItem & { sectionId?: string }> = [
   /* BUYER FLOW */
-  { label: 'Plataforma', href: '/#plataforma',   sectionId: 'plataforma' },
-  { label: 'Productos',  href: '/#productos',    sectionId: 'productos' },
-  { label: 'Garantías',  href: '/#garantias',    sectionId: 'garantias' },
-  { label: 'Prensa',     href: '/#prensa',       sectionId: 'prensa' },
+  { label: 'Plataforma',   href: '/#plataforma',   sectionId: 'plataforma' },
+  { label: 'Productos',    href: '/#productos',    sectionId: 'productos' },
+  { label: 'Corner Qüem', href: '/corner-quem' },  // página propia — sin scroll-spy
+  { label: 'Garantías',   href: '/#garantias',    sectionId: 'garantias' },
+  { label: 'Prensa',      href: '/#prensa',       sectionId: 'prensa' },
   /* PARTNER FLOW */
-  { label: 'Partners',   href: '/#partners',     sectionId: 'partners' },
+  { label: 'Partners',    href: '/#partners',     sectionId: 'partners' },
   /* CONVERSION */
-  { label: 'Contacto',   href: '/#contacto',     sectionId: 'contacto' },
+  { label: 'Contacto',    href: '/#contacto',     sectionId: 'contacto' },
 ] as const;
 
 /* -------------------------------------------------------------------------- */

@@ -1,6 +1,8 @@
 ---
 import { link } from '../../config/site';
 
+const year = new Date().getFullYear();
+
 /**
  * Footer minimalista v4 — solo brand centrado + credit centrado.
  *
@@ -22,8 +24,9 @@ import { link } from '../../config/site';
   </div>
 
   <div class="container-content site-footer__bar">
+    <span class="site-footer__legal">© {year} Qüem Central. Todos los derechos reservados.</span>
     <span class="site-footer__credit">
-      Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a> — Software para cadenas gastronómicas
+      Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a>
     </span>
   </div>
 </footer>
@@ -94,16 +97,21 @@ import { link } from '../../config/site';
     font-weight: var(--weight-medium);
   }
 
-  /* ===== Bottom bar — credit centrado ===================================== */
+  /* ===== Bottom bar — legal + credit centrados ============================ */
   .site-footer__bar {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: var(--space-1);
     padding-block: var(--space-4) var(--space-5);
     border-top: 1px solid var(--color-border-subtle);
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
     text-align: center;
+  }
+  .site-footer__legal {
+    color: var(--color-text-muted);
   }
   .site-footer__credit {
     color: var(--color-text-secondary);

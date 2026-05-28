@@ -47,7 +47,7 @@ Lo que vive en `site.ts`:
 - `TEAM` — Walter, Matías, Joaquín (en ese orden).
 - `SHOW_METRICS` — `false` por default. Cuando el cliente habilite datos reales, poner en `true` y completar `METRICS`. **No inventar números.**
 - `CATEGORIES` — 11 categorías iniciales del brief, con slug + nombre + foto + appUrl opcionales.
-- `NAV_PRIMARY` — 8 items del header del brief.
+- `NAV_PRIMARY` — 7 items: Plataforma, Productos, Corner Qüem, Garantías, Prensa, Partners, Contacto. Corner Qüem es la única ruta real (sin sectionId). El resto son anchors a secciones de la home.
 - `SEO` — title, description, keywords, og default.
 - `ADDRESS` — dirección física si corresponde. *TODO si aplica.*
 - `SOCIAL` — instagram, linkedin (vacíos por default; si vacío no se renderiza en footer).
@@ -64,43 +64,50 @@ pagina-web-ute/                   # nombre histórico del repo
 ├── docs/
 │   ├── brief-quem-central.md     # transcripción del brief del cliente
 │   └── brief-quem-central.pdf
-├── public/                       # static assets (favicon, robots)
+├── public/                       # static assets (favicon, robots, og, video)
 ├── src/
 │   ├── assets/
 │   │   └── brand/                # TODO logo definitivo desde Drive
 │   ├── components/
 │   │   ├── layout/               # Header.astro, Footer.astro
-│   │   ├── ui/, icons/           # primitives e iconos custom
-│   │   └── SmoothScroll.tsx      # Lenis React island
+│   │   ├── ui/                   # primitives (ScrollToTop, etc.)
+│   │   └── SmoothScrollLenis.astro
 │   ├── config/
 │   │   └── site.ts               # FUENTE ÚNICA DE VERDAD config variable
-│   ├── content/                  # content collections (futuro)
 │   ├── layouts/
-│   │   └── BaseLayout.astro      # SEO + JSON-LD Organization/LocalBusiness + Header + Footer
-│   ├── lib/                      # motion.ts (utils)
-│   ├── sections/                 # 11 secciones de la home
+│   │   └── BaseLayout.astro      # SEO + JSON-LD + Header + Footer + scripts
+│   ├── lib/                      # utils
+│   ├── sections/                 # secciones de la home
 │   │   ├── HeroCorporativo.astro
+│   │   ├── ProofStrip.astro      # banda trust signal (fuente: La Nación oct 2023)
 │   │   ├── QueEsQuemCentral.astro
-│   │   ├── Ecosistema.astro
-│   │   ├── UnidadesDeNegocio.astro
-│   │   ├── CornerQuem.astro
-│   │   ├── CategoriasProducto.astro
 │   │   ├── PlataformaApp.astro
+│   │   ├── CategoriasProducto.astro
+│   │   ├── Garantias.astro
+│   │   ├── QuemEnNumeros.astro   # logos clientes — oculto hasta tener assets reales
+│   │   ├── Ecosistema.astro
 │   │   ├── FranquiciasExpansion.astro
-│   │   ├── QuemEnNumeros.astro
 │   │   ├── EquipoDirectivo.astro
-│   │   └── Contacto.astro
+│   │   ├── Contacto.astro
+│   │   ├── UnidadesDeNegocio.astro  # DEAD CODE — no importado en index.astro
+│   │   ├── corner/               # secciones de /corner-quem
+│   │   │   ├── CornerHero.astro
+│   │   │   ├── CornerFormatos.astro
+│   │   │   ├── CornerIncluye.astro
+│   │   │   ├── CornerDonde.astro
+│   │   │   ├── CornerValor.astro
+│   │   │   └── CornerTeaser.astro  # teaser en home, importado desde index.astro
+│   │   └── prensa/               # secciones de prensa
+│   │       ├── PrensaList.astro  # importado en home
+│   │       ├── PrensaHero.astro
+│   │       └── PrensaContact.astro
 │   ├── styles/
 │   │   ├── tokens.css            # design tokens — FUENTE ÚNICA DE VERDAD visual
 │   │   └── global.css            # reset + @theme + bases + .btn presets
 │   └── pages/
-│       ├── index.astro           # home con las 11 secciones en orden
-│       ├── ecosistema.astro      # /ecosistema
-│       ├── unidades-de-negocio.astro
-│       ├── corner-quem.astro
-│       ├── productos.astro
-│       ├── franquicias.astro
-│       └── contacto.astro
+│       ├── index.astro           # home
+│       ├── corner-quem.astro     # /corner-quem
+│       └── 404.astro             # /404
 ├── astro.config.mjs
 ├── tsconfig.json
 ├── eslint.config.js
@@ -114,24 +121,31 @@ Cualquier nueva sección de la home → `src/sections/`. Cualquier componente re
 
 ---
 
-## Arquitectura del sitio (orden EXACTO del brief)
+## Arquitectura del sitio (orden REAL en index.astro — 2026-05-27)
 
 Home (`/`):
 1. Header (sticky, CTA Comprar online siempre visible)
-2. Hero corporativo
-3. Qué es QUEM Central
-4. Ecosistema QUEM Central
-5. Unidades de negocio
-6. Corner QUEM (sección destacada propia)
-7. Categorías de producto
-8. Plataforma / Comprar online
-9. Franquicias y expansión
-10. QUEM en números (toggle `SHOW_METRICS`)
-11. Equipo directivo
-12. Contacto
-13. Footer
+2. HeroCorporativo
+3. ProofStrip (trust signal desde prensa pública — siempre visible)
+4. QueEsQuemCentral
+5. PlataformaApp
+6. CategoriasProducto
+7. Garantias
+8. QuemEnNumeros (logos clientes — **oculto** hasta tener assets reales; `hideSection=true`)
+9. PrensaList
+10. [divider partners]
+11. Ecosistema
+12. CornerTeaser (teaser → enlace a `/corner-quem`)
+13. FranquiciasExpansion
+14. EquipoDirectivo
+15. Contacto
+16. Footer
 
-Rutas: `/`, `/ecosistema`, `/unidades-de-negocio`, `/corner-quem`, `/productos`, `/franquicias`, `/contacto`. Cada ruta interna reusa las secciones modulares con `showHead` y `defaultTipo` (en Contacto) para personalizar.
+Página `/corner-quem`: CornerHero → CornerFormatos → CornerIncluye → CornerDonde → CornerValor.
+
+Rutas activas: `/` (home), `/corner-quem`, `/404`. No existen rutas separadas para ecosistema, unidades, productos, franquicias ni contacto.
+
+> **Dead code**: `UnidadesDeNegocio.astro` existe en `src/sections/` pero NO se importa en `index.astro`. Mantener hasta decisión del cliente sobre si re-integrar o eliminar.
 
 ---
 
@@ -154,14 +168,16 @@ Mood: empresa con ecosistema, sólida, tech-friendly, no parece tienda online. I
 
 ### Paleta (en `tokens.css`)
 
-| Rol            | Hex      | OKLCH                     | Uso                                          |
-|----------------|----------|---------------------------|----------------------------------------------|
-| Crema base     | `#F8F9FB`| `oklch(98% 0.003 240)`    | bg light                                     |
-| Tinta          | `#111623`| `oklch(15% 0.018 240)`    | text-primary, footer bg                      |
-| Brand 500      | `#2854C5`| `oklch(50% 0.180 250)`    | azul corporativo (links, isotipo, eyebrows)  |
-| Accent 500     | `#1FB874`| `oklch(62% 0.150 155)`    | verde acento (CTA Comprar online)            |
+> **Estado real (2026-05-25)**: tokens.css usa paleta editorial oliva/dorado, heredada del sitio UTE original. El brief inicial (2026-05-23) especificaba azul/verde — ese cambio fue revertido deliberadamente. Si se vuelve al azul/verde, actualizar este archivo Y tokens.css.
 
-Roles semánticos: `--color-bg`, `--color-text-primary`, `--color-text-brand` (azul), `--color-text-accent` (verde).
+| Rol            | Hex (aprox) | OKLCH                       | Uso                                        |
+|----------------|-------------|-----------------------------|--------------------------------------------|
+| Crema base     | `#F8F9FB`   | `oklch(98% 0.003 240)`      | bg light                                   |
+| Tinta          | `#111623`   | `oklch(15% 0.018 240)`      | text-primary                               |
+| Brand 500      | `#93936E`   | `oklch(60% 0.030 100)`      | oliva/caqui (links, isotipo, eyebrows)     |
+| Accent 500     | `#E1DF84`   | `oklch(88% 0.115 105)`      | dorado/amarillo (CTA Comprar online)       |
+
+Roles semánticos: `--color-bg`, `--color-text-primary`, `--color-text-brand` (oliva), `--color-text-accent` (dorado).
 
 ### Tipografía
 
@@ -170,8 +186,8 @@ Roles semánticos: `--color-bg`, `--color-text-primary`, `--color-text-brand` (a
 
 ### CTAs
 
-- **Primario** `.btn .btn-primary` = verde acento. Para "Comprar online".
-- **Secundario** `.btn .btn-secondary` = azul corporativo. Para CTAs de conversión secundaria (Consultar, Quiero conocer).
+- **Primario** `.btn .btn-primary` = dorado/accent. Para "Comprar online".
+- **Secundario** `.btn .btn-secondary` = oliva/brand. Para CTAs de conversión secundaria.
 - **Outline / Ghost** para tertiary.
 
 Touch targets ≥44×44 obligatorio.
