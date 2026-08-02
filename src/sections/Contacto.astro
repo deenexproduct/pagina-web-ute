@@ -863,6 +863,10 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
     const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]');
 
     let sending = false;
+    /* El camino `mailto:` no pasa por `sending`, así que un doble clic abría
+       el cliente de correo dos veces. Cooldown corto: mata el doble clic
+       accidental sin bloquear el reintento explícito del handoff. */
+    let ultimoMailto = 0;
 
     /* ------------------------------------------------------- errores --- */
 
@@ -940,6 +944,14 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
             clearError(field, field.name);
           }
           return;
+        }
+
+        /* `required` de HTML da por válido "   ": un lead se enviaba con
+           nombre y mensaje de puros espacios. Normalizamos antes de validar,
+           así además viaja limpio lo que el lead efectivamente escribió. */
+        if (typeof field.value === 'string' && field.type !== 'radio') {
+          const limpio = field.value.trim();
+          if (limpio !== field.value) field.value = limpio;
         }
 
         if (!field.checkValidity()) {
@@ -1057,18 +1069,23 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
       const interes = val(data, 'interes');
       const label = CFG.labels[interes] ?? interes;
       const destino = CFG.routing[interes] ?? CFG.fallbackEmail;
+      /* RFC 6068: el query de un `mailto:` va percent-encoded, NO en
+         x-www-form-urlencoded. URLSearchParams codifica el espacio como `+`,
+         que en un mailto es un signo más literal — el lead recibiría
+         "Hola+quería+consultar". Y los saltos de línea van CRLF. */
       const body =
-        `${S.mailNombre}: ${val(data, 'nombre')}\n` +
-        `${S.mailEmpresa}: ${val(data, 'empresa') || S.mailVacio}\n` +
-        `${S.mailInteres}: ${label}\n` +
-        `${S.mailTelefono}: ${val(data, 'telefono') || S.mailVacio}\n` +
-        `${S.mailEmail}: ${val(data, 'email')}\n\n` +
-        `${S.mailMensaje}:\n${val(data, 'mensaje')}\n`;
-      const params = new URLSearchParams({
-        subject: `${S.mailSubject} · ${label}`,
-        body,
-      });
-      return `mailto:${destino}?${params.toString()}`;
+        `${S.mailNombre}: ${val(data, 'nombre')}\r\n` +
+        `${S.mailEmpresa}: ${val(data, 'empresa') || S.mailVacio}\r\n` +
+        `${S.mailInteres}: ${label}\r\n` +
+        `${S.mailTelefono}: ${val(data, 'telefono') || S.mailVacio}\r\n` +
+        `${S.mailEmail}: ${val(data, 'email')}\r\n\r\n` +
+        `${S.mailMensaje}:\r\n${val(data, 'mensaje')}\r\n`;
+      const subject = `${S.mailSubject} · ${label}`;
+      return (
+        `mailto:${destino}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`
+      );
     };
 
     /** Handoff honesto: se dice qué pasó de verdad, sin declarar envío. */
@@ -1167,13 +1184,33 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
         return;
       }
 
-      if (!validateStep(getCurrentStep())) {
-        setStatus(S.statusReview, 'error');
+      /* Enter dentro de un input dispara submit implícito desde CUALQUIER
+         paso. Antes se validaba solo el paso actual, así que un Enter en el
+         paso 1 mandaba la consulta sin nombre, sin email y sin mensaje.
+         Si todavía no estamos en el último paso, Enter = "Siguiente". */
+      const pasoActual = getCurrentStep();
+      if (pasoActual < TOTAL_STEPS) {
+        if (validateStep(pasoActual)) goToStep(pasoActual + 1);
+        else setStatus(S.statusReview, 'error');
         return;
+      }
+
+      /* En el último paso validamos TODOS los pasos, no solo éste: si alguno
+         anterior quedó inválido, saltamos a él en vez de enviar incompleto. */
+      for (let paso = 1; paso <= TOTAL_STEPS; paso += 1) {
+        if (!validateStep(paso)) {
+          if (paso !== pasoActual) goToStep(paso);
+          setStatus(S.statusReview, 'error');
+          return;
+        }
       }
 
       /* Sin backend: handoff honesto a mailto. Nunca decimos "enviado". */
       if (!CFG.hasBackend) {
+        const ahora = Date.now();
+        if (ahora - ultimoMailto < 1500) return;
+        ultimoMailto = ahora;
+
         const interes = val(data, 'interes');
         const destino = CFG.routing[interes] ?? CFG.fallbackEmail;
         const mailto = buildMailto(data);
@@ -1320,6 +1357,11 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
   /* ═══════════════════════════ FORM SHELL ═══════════════════════════ */
   .contact__form {
     display: grid;
+    /* `minmax(0, 1fr)` y no el track implícito `auto`: los <fieldset> de los
+       pasos tienen un min-inline-size intrínseco que estiraba la columna a
+       307px dentro de una caja de 269px, y todo el wizard se salía de la
+       tarjeta en mobile. El track explícito lo clava al contenedor. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
     padding: var(--space-6);
     background: var(--color-bg-elevated);
@@ -1372,9 +1414,14 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
   }
 
   /* ═══════════════════════════ PROGRESO ═══════════════════════════ */
+  /* `min-width: 0` es lo que impide que el indicador estire su track: como
+     grid item, por defecto es `min-width: auto` y se niega a achicarse por
+     debajo de su ancho mín-contenido. Sin esto, a 375px el bloque medía
+     307px dentro de una caja de 271px y se salía 6px de la tarjeta. */
   .wizard__progress {
     display: grid;
     gap: var(--space-3);
+    min-width: 0;
   }
   .wizard__steps {
     display: flex;
@@ -1383,15 +1430,38 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
     list-style: none;
     padding: 0;
     margin: 0;
+    min-width: 0;
   }
   .wizard__step {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    min-width: 0;
     color: var(--color-text-muted);
     font-size: var(--font-size-xs);
     font-weight: var(--weight-semibold);
     transition: color var(--dur-fast) var(--ease-standard);
+  }
+
+  /* En pantallas angostas las 3 etiquetas no entran junto a sus círculos.
+     Se ocultan VISUALMENTE (no con display:none): el lector de pantalla las
+     sigue anunciando y quedan los círculos numerados + la barra. */
+  @media (max-width: 480px) {
+    .wizard__step-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+    .wizard__steps {
+      justify-content: flex-start;
+      gap: var(--space-4);
+    }
   }
   .wizard__step-num {
     display: grid;
@@ -1415,10 +1485,12 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
   .wizard__step.is-active {
     color: var(--color-text-primary);
   }
+  /* brand-600, no brand-500: acá va el número del paso en blanco y es texto
+     real (1·2·3), así que necesita 4.5:1. brand-500 da 3.93:1. */
   .wizard__step.is-active .wizard__step-num {
-    background: var(--color-brand-500);
+    background: var(--color-brand-600);
     color: var(--color-text-on-brand);
-    border-color: var(--color-brand-500);
+    border-color: var(--color-brand-600);
     box-shadow: var(--shadow-glow-brand);
   }
   .wizard__step.is-complete .wizard__step-num {
@@ -1463,6 +1535,10 @@ const clientConfigJson = JSON.stringify(clientConfig).replace(/</g, '\\u003c');
     border: 0;
     padding: 0;
     margin: 0;
+    /* Los <fieldset> traen un min-inline-size intrínseco del UA que ignora el
+       `min-width` heredado: sin esto estiran la columna del formulario. */
+    min-inline-size: 0;
+    min-width: 0;
     display: none;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);

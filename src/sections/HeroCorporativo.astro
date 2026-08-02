@@ -17,7 +17,7 @@
  * —mesh + orbs + trama de puntos— que se lee como decisión, no como hueco.
  * Cuando llegue el asset definitivo se prende solo, sin tocar este archivo.
  */
-import { BRAND, hasHeroVideo, hasWhatsapp, HERO_VIDEO, whatsappLink } from '../config/site';
+import { BRAND, hasHeroVideo, hasWhatsapp, HERO_VIDEO, link, whatsappLink } from '../config/site';
 import { getLangFromUrl, localizedPath, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
@@ -96,13 +96,18 @@ const REDUCED_MOTION_GUARD = `
             loop
             playsinline
             preload="metadata"
-            poster={HERO_VIDEO.poster || undefined}
+            poster={HERO_VIDEO.poster ? link(HERO_VIDEO.poster) : undefined}
           >
-            {HERO_VIDEO.webm.length > 0 && <source src={HERO_VIDEO.webm} type="video/webm" />}
-            <source src={HERO_VIDEO.mp4} type="video/mp4" />
+            {HERO_VIDEO.webm.length > 0 && (
+              <source src={link(HERO_VIDEO.webm)} type="video/webm" />
+            )}
+            <source src={link(HERO_VIDEO.mp4)} type="video/mp4" />
           </video>
           {HERO_VIDEO.poster.length > 0 && (
-            <div class="hero__poster" style={`background-image: url('${HERO_VIDEO.poster}');`} />
+            <div
+              class="hero__poster"
+              style={`background-image: url('${link(HERO_VIDEO.poster)}');`}
+            />
           )}
           <div class="hero__scrim" />
         </Fragment>

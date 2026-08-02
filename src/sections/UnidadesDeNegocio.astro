@@ -29,7 +29,7 @@
  * Tampoco fija fondo propio: hereda `--color-bg` de la página para que el
  * `CTABand variant="subtle"` de arriba siga leyéndose como un escalón.
  */
-import { UNIDADES, type UnidadSlug } from '../config/site';
+import { link, UNIDADES, type UnidadSlug } from '../config/site';
 import { getLangFromUrl, useTranslations, type Lang } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
@@ -143,7 +143,7 @@ const unidades = UNIDADES.map((u, i) => {
               {u.imagen ? (
                 <img
                   class="unidad__img"
-                  src={u.imagen}
+                  src={link(u.imagen)}
                   alt={`${c.altPrefix} ${u.nombre}`}
                   loading="lazy"
                   decoding="async"

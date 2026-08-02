@@ -33,7 +33,7 @@
  *    MEDIA.src acá abajo.
  */
 import { getLangFromUrl, localizedPath, type Lang } from '../i18n/utils';
-import { METRICS, METRICS_SOURCE, NAV_PRIMARY, type Metric } from '../config/site';
+import { link, METRICS, METRICS_SOURCE, NAV_PRIMARY, type Metric } from '../config/site';
 
 const lang = getLangFromUrl(Astro.url);
 
@@ -175,8 +175,8 @@ const prensaUrl = prensaHref ? localizedPath(prensaHref, lang) : '';
                    El poster cubre el caso de reduced-motion y de red lenta. */
                 <video
                   class="ns__asset"
-                  src={MEDIA.src}
-                  poster={MEDIA.poster}
+                  src={link(MEDIA.src)}
+                  poster={MEDIA.poster ? link(MEDIA.poster) : undefined}
                   autoplay
                   muted
                   loop
@@ -187,7 +187,7 @@ const prensaUrl = prensaHref ? localizedPath(prensaHref, lang) : '';
               ) : (
                 <img
                   class="ns__asset"
-                  src={MEDIA.src}
+                  src={link(MEDIA.src)}
                   alt={c.mediaAlt}
                   loading="lazy"
                   decoding="async"
