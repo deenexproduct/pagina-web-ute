@@ -46,7 +46,13 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          GITHUB_PAGES: '1'
+          # astro.config.mjs lee PUBLIC_SITE y PUBLIC_BASE. Antes acá se
+          # seteaba GITHUB_PAGES, que no lo lee nadie: el build salía con
+          # base '/' mientras Pages sirve desde '/pagina-web-ute/', así que
+          # todos los assets daban 404. Se derivan del repo para que sigan
+          # siendo correctos si se renombra.
+          PUBLIC_SITE: https://${{ github.repository_owner }}.github.io
+          PUBLIC_BASE: /${{ github.event.repository.name }}/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
