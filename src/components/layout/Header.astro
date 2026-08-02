@@ -184,6 +184,31 @@ const langItems = ALL_LANGS.map((l) => ({
     '[data-nav-link], [data-menu-link]',
   );
 
+  /* ─────────────────────────────────────────────────────────────────────
+   * Selector de idioma: conservar el contexto de lectura.
+   *
+   * `alternatePath()` solo traduce el pathname, así que el ancla y el query
+   * se perdían: quien leía /en#unidades y cambiaba a español aterrizaba en
+   * el tope del home, y una CTA con ?interes=corner perdía la preselección
+   * del formulario. El hash no existe en build (es client-side), por eso el
+   * arreglo va acá y NO dentro de alternatePath — esa función también
+   * alimenta los hreflang, que deben quedar SIN fragmento.
+   * ───────────────────────────────────────────────────────────────────── */
+  const langItems = document.querySelectorAll<HTMLAnchorElement>('.lang-switch__item');
+  const baseHrefs = new WeakMap<HTMLAnchorElement, string>();
+  langItems.forEach((a) => baseHrefs.set(a, a.getAttribute('href') ?? ''));
+
+  const syncLangHrefs = (): void => {
+    const contexto = window.location.search + window.location.hash;
+    langItems.forEach((a) => {
+      const base = baseHrefs.get(a);
+      if (base) a.setAttribute('href', base + contexto);
+    });
+  };
+
+  syncLangHrefs();
+  window.addEventListener('hashchange', syncLangHrefs);
+
   /* Label del toggle: "Abrir menú" / "Cerrar menú", ya traducido y
      servido en data-attributes desde el frontmatter. */
   const menuLabel = toggle?.querySelector<HTMLElement>('[data-menu-label]') ?? null;

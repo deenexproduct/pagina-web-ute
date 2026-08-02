@@ -81,7 +81,10 @@ export const UI = {
     'nav.aria': 'Main navigation',
     'nav.abrir': 'Open menu',
     'nav.cerrar': 'Close menu',
-    'nav.inicio': 'Back to top',
+    /* 'Go to homepage', NO 'Back to top': este control NAVEGA al home.
+       'Back to top' es el del botón flotante (a11y.top) y tener los dos con
+       el mismo nombre accesible los volvía indistinguibles en inglés. */
+    'nav.inicio': 'Go to homepage',
 
     'lang.aria': 'Change language',
     'lang.es': 'Ver en español',
