@@ -1,5 +1,17 @@
 ---
 /**
+ * ⚠️ SUPERSEDED EN FASE 1 — NO IMPORTAR EN index.astro.
+ *
+ * Los números clave ahora viven dentro de `sections/QuienesSomos.astro`
+ * (spec punto 5), leídos de `METRICS` / `METRICS_SOURCE` de site.ts, con
+ * copy ES/EN y la atribución sin link externo. Este archivo queda como
+ * referencia del markup original; su dataset está hardcodeado, en
+ * español y duplica el de site.ts, así que NO es la fuente de verdad.
+ *
+ * Si se decidiera volver a una banda arriba del fold: reescribirla
+ * consumiendo site.ts + i18n, no reactivar esta tal cual.
+ *
+ * ────────────────────────────────────────────────────────────────────
  * ProofStrip — banda de números reales y verificables, justo después del Hero.
  *
  * Sourceados de cobertura La Nación (Oct 2023) — NO inventados:
@@ -12,9 +24,9 @@
  * no necesite scrollear hasta Prensa para validar que somos serios.
  */
 const items = [
-  { value: '2018',       label: 'Fundada',          sub: 'operación continua' },
-  { value: '21',         label: 'Tiendas',          sub: '15 franquiciadas' },
-  { value: '$800M',      label: 'Facturación',      sub: 'anual reportada' },
+  { value: '2018', label: 'Fundada', sub: 'operación continua' },
+  { value: '21', label: 'Tiendas', sub: '15 franquiciadas' },
+  { value: '$800M', label: 'Facturación', sub: 'anual reportada' },
   { value: 'AMBA + PBA', label: 'Cobertura propia', sub: '+ Colombia 2026' },
 ] as const;
 ---
@@ -27,19 +39,24 @@ const items = [
     </p>
 
     <ul class="proof__list" data-reveal-stagger role="list">
-      {items.map((it, idx) => (
-        <li class="proof-item" data-reveal style={`--reveal-delay: ${100 + idx * 80}ms;`}>
-          <span class="proof-item__value">{it.value}</span>
-          <span class="proof-item__label">{it.label}</span>
-          <span class="proof-item__sub">{it.sub}</span>
-        </li>
-      ))}
+      {
+        items.map((it, idx) => (
+          <li class="proof-item" data-reveal style={`--reveal-delay: ${100 + idx * 80}ms;`}>
+            <span class="proof-item__value">{it.value}</span>
+            <span class="proof-item__label">{it.label}</span>
+            <span class="proof-item__sub">{it.sub}</span>
+          </li>
+        ))
+      }
     </ul>
 
     <p class="proof__source" data-reveal style="--reveal-delay: 500ms;">
       Fuente:
-      <a href="https://www.lanacion.com.ar/economia/se-hizo-socio-para-ayudar-a-un-amigo-y-termino-adquiriendo-un-emprendimiento-de-congelados-que-nid16102023/" target="_blank" rel="noopener noreferrer">La Nación, oct. 2023</a>.
-      Mencionado también en iProfesional y TN.
+      <a
+        href="https://www.lanacion.com.ar/economia/se-hizo-socio-para-ayudar-a-un-amigo-y-termino-adquiriendo-un-emprendimiento-de-congelados-que-nid16102023/"
+        target="_blank"
+        rel="noopener noreferrer">La Nación, oct. 2023</a
+      >. Mencionado también en iProfesional y TN.
     </p>
   </div>
 </aside>
@@ -57,7 +74,7 @@ const items = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: radial-gradient(circle, oklch(60% 0.030 100 / 0.04) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(60% 0.03 100 / 0.04) 1px, transparent 1px);
     background-size: 32px 32px;
     mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 90%);
     -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 90%);
@@ -74,9 +91,9 @@ const items = [
     gap: 0.55rem;
     width: max-content;
     padding: 0.35rem 0.85rem;
-    background: oklch(from var(--color-brand-500) l c h / 0.10);
+    background: oklch(from var(--color-brand-500) l c h / 0.1);
     color: var(--color-text-brand);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.20);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.2);
     border-radius: var(--radius-pill);
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
@@ -154,12 +171,12 @@ const items = [
     text-decoration: underline;
     text-decoration-color: var(--color-border-strong);
     text-underline-offset: 2px;
-    transition: color var(--dur-fast), text-decoration-color var(--dur-fast);
+    transition:
+      color var(--dur-fast),
+      text-decoration-color var(--dur-fast);
   }
   .proof__source a:hover {
     color: var(--color-text-brand);
     text-decoration-color: var(--color-brand-500);
   }
 </style>
-</content>
-</invoke>

@@ -44,22 +44,25 @@ import { CATEGORIES } from '../config/site';
 
 <!-- 4. Estilos scoped por defecto -->
 <style>
-  .my-section { padding: 2rem; }
+  .my-section {
+    padding: 2rem;
+  }
 </style>
 ```
 
 ## Client directives — cuándo usar cada uno
 
-| Directive          | Cuándo                                                        |
-|--------------------|---------------------------------------------------------------|
-| **(ninguno)**      | Componente estático (HTML/CSS solo). Default y preferido.     |
-| `client:load`      | Hidrata al cargar la página. **Evitar** — bloquea LCP.        |
-| `client:idle`      | Hidrata cuando el browser está idle. Para nice-to-have.       |
-| `client:visible`   | Hidrata cuando entra al viewport. **Default para islands**.   |
-| `client:media`     | Hidrata cuando matchea media query (e.g., `(min-width: 768px)`). |
-| `client:only`      | Renderea SOLO client-side (no SSR). Para componentes que tocan `window` al render. |
+| Directive        | Cuándo                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| **(ninguno)**    | Componente estático (HTML/CSS solo). Default y preferido.                          |
+| `client:load`    | Hidrata al cargar la página. **Evitar** — bloquea LCP.                             |
+| `client:idle`    | Hidrata cuando el browser está idle. Para nice-to-have.                            |
+| `client:visible` | Hidrata cuando entra al viewport. **Default para islands**.                        |
+| `client:media`   | Hidrata cuando matchea media query (e.g., `(min-width: 768px)`).                   |
+| `client:only`    | Renderea SOLO client-side (no SSR). Para componentes que tocan `window` al render. |
 
 Ejemplo del proyecto:
+
 ```astro
 <SmoothScroll client:idle />
 ```
@@ -73,9 +76,12 @@ Cada `<style>` dentro de un `.astro` está scoped automáticamente. Astro agrega
 Para estilos globales: usar `<style is:global>` o ponerlos en `src/styles/global.css`.
 
 Para descendant selectors al final del componente:
+
 ```astro
 <style>
-  .card :global(svg) { width: 1.5rem; }
+  .card :global(svg) {
+    width: 1.5rem;
+  }
 </style>
 ```
 
@@ -106,6 +112,7 @@ import heroImg from '../assets/hero.jpg';
 ```
 
 Reglas:
+
 - **Importar la imagen** (no usar `src="/foo.jpg"` salvo si está en `public/`).
 - Siempre `widths` + `sizes` para que el browser elija la versión correcta.
 - `loading="eager"` SOLO para hero. Resto = lazy (default).
@@ -143,6 +150,7 @@ Permite transiciones cinematográficas entre páginas. Hoy NO usado porque la la
 ---
 import { ClientRouter } from 'astro:transitions';
 ---
+
 <head>
   <ClientRouter />
 </head>
@@ -161,12 +169,14 @@ Con `transition:name="hero"` en elementos persistentes (logo, header), Astro hac
 ## Cuándo usar React vs Astro vanilla
 
 **React island** si necesitás:
+
 - State complejo (useState, useReducer)
 - Side effects (useEffect)
 - Form con validación rica
 - Componente de librería React (chart, datepicker)
 
 **Astro + vanilla `<script>`** si necesitás:
+
 - Scroll spy (IntersectionObserver)
 - Toggle de menu
 - Smooth scroll

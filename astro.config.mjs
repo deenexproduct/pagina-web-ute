@@ -18,9 +18,26 @@ export default defineConfig({
     prefetchAll: true,
     defaultStrategy: 'viewport',
   },
+  /* Bilingüe ES/EN — regla transversal del spec Fase 1.
+     `es` es default y no lleva prefijo; `en` vive bajo /en/. */
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/draft/') && !page.includes('/_'),
+      /* /corner-quem está despublicada en Fase 1 (es una subweb, y el
+         spec pide scroll único). Va con noindex, así que tampoco entra
+         al sitemap. Revertir cuando Fase 2 habilite subwebs. */
+      filter: (page) =>
+        !page.includes('/draft/') && !page.includes('/_') && !page.includes('/corner-quem'),
+      i18n: {
+        defaultLocale: 'es',
+        locales: { es: 'es-AR', en: 'en' },
+      },
     }),
   ],
   vite: {

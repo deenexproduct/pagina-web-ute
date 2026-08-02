@@ -1,0 +1,444 @@
+---
+/**
+ * DescargarApp — spec punto 4. Bloque full-width con fondo de marca.
+ *
+ * DECISIÓN DE PRODUCTO: la app es la de QUEM TIENDAS (consumidor final),
+ * no la del grupo ni el catálogo B2B. El spec pide aclararlo explícito
+ * dentro del bloque, así que la aclaración es copy de primera línea, no
+ * una nota al pie.
+ *
+ * DEGRADACIÓN: hoy `STORE_LINKS` está vacío. Mientras lo esté:
+ *   - el bloque NO promete una descarga que no existe (copy "en camino"),
+ *   - cada badge dice "Próximamente en …" y deriva a `contactLink()`
+ *     para que la persona pida el aviso, en vez de apuntar a un 404.
+ * Cuando el cliente pegue un link, ese badge pasa solo a modo descarga.
+ * El estado es por badge: si sale primero Android, el otro sigue en
+ * "próximamente" sin romper nada.
+ *
+ * BADGES: los badges oficiales de Apple y Google son imágenes de marca
+ * registrada que no tenemos licencia de reproducir (y falsificarlos es
+ * peor que no ponerlos). Se construyen badges propios: glifo geométrico
+ * monocromo + "Descargar en" + nombre de la store.
+ */
+import { BRAND, STORE_LINKS, hasStoreLinks, contactLink, UNIDADES, link } from '../config/site';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+
+const COPY = {
+  es: {
+    eyebrow: 'Para el consumidor final',
+    tituloLive: 'Llevá QUEM Tiendas en el celular.',
+    tituloPending: 'La app de QUEM Tiendas está en camino.',
+    ledeLive: 'Descargala y comprá en la red de tiendas QUEM.',
+    ledePending:
+      'Todavía no está publicada en las tiendas de apps. Escribinos y te avisamos apenas se pueda descargar.',
+    aclaracion:
+      'Es la app de QUEM Tiendas, la unidad del grupo que le vende al consumidor final. No es el canal mayorista ni un catálogo B2B.',
+    b2bPregunta: '¿Buscás abastecimiento, franquicias, córners o Smart Market?',
+    b2bLink: 'Escribinos',
+    badgePrefixLive: 'Descargar en',
+    badgePrefixPending: 'Próximamente en',
+    badgePendingSr: 'Te llevamos al formulario de contacto para avisarte cuando esté.',
+    pendingHint: 'Los dos botones abren el formulario de contacto para que te avisemos.',
+    storesAria: 'Descargar la app de QUEM Tiendas',
+  },
+  en: {
+    eyebrow: 'For shoppers',
+    tituloLive: 'Carry QUEM Tiendas in your pocket.',
+    tituloPending: 'The QUEM Tiendas app is on its way.',
+    ledeLive: 'Download it and shop across the QUEM Tiendas network.',
+    ledePending:
+      "It isn't live on the app stores yet. Get in touch and we'll let you know the moment it is.",
+    aclaracion:
+      'This is the QUEM Tiendas app — the group unit that sells to end consumers. It is not our wholesale channel, and it is not a B2B catalogue.',
+    b2bPregunta: 'Looking for wholesale supply, franchises, corners or Smart Market?',
+    b2bLink: 'Talk to us',
+    badgePrefixLive: 'Download from',
+    badgePrefixPending: 'Coming soon to',
+    badgePendingSr: 'Takes you to the contact form so we can notify you at launch.',
+    pendingHint: 'Both buttons open the contact form so we can notify you.',
+    storesAria: 'Download the QUEM Tiendas app',
+  },
+} as const;
+
+const c = COPY[lang];
+
+/* Nombres propios de las stores: no se traducen ni se inventan. */
+const STORE_NAMES = {
+  googlePlay: 'Google Play',
+  appStore: 'App Store',
+} as const;
+
+type StoreKey = keyof typeof STORE_NAMES;
+
+const contactHref = contactLink(undefined, lang);
+
+const stores = (Object.keys(STORE_NAMES) as StoreKey[]).map((key) => {
+  const url: string = STORE_LINKS[key];
+  const available = url.length > 0;
+  return {
+    key,
+    name: STORE_NAMES[key],
+    available,
+    href: available ? url : contactHref,
+  };
+});
+
+const alguno = hasStoreLinks();
+
+/* El nombre de la unidad sale de UNIDADES: una sola fuente de verdad. */
+const unidadTiendas = UNIDADES.find((u) => u.slug === 'tiendas');
+const tiendasNombre = unidadTiendas?.nombre ?? BRAND.group;
+---
+
+<section class="app-dl" id="descargar-app" aria-labelledby="app-dl-title">
+  <div class="container-content app-dl__inner">
+    <div class="app-dl__copy">
+      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">{c.eyebrow}</p>
+
+      <h2 id="app-dl-title" class="app-dl__title" data-reveal style="--reveal-delay: 80ms;">
+        {alguno ? c.tituloLive : c.tituloPending}
+      </h2>
+
+      <p class="app-dl__lede" data-reveal style="--reveal-delay: 160ms;">
+        {alguno ? c.ledeLive : c.ledePending}
+      </p>
+
+      <p class="app-dl__note" data-reveal style="--reveal-delay: 220ms;">
+        {c.aclaracion}
+      </p>
+
+      <ul
+        class="app-dl__stores"
+        role="list"
+        aria-label={c.storesAria}
+        data-reveal
+        style="--reveal-delay: 300ms;"
+      >
+        {
+          stores.map((store) => (
+            <li>
+              <a
+                class:list={['store-badge', !store.available && 'store-badge--pending']}
+                href={store.href}
+                {...(store.available ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                <span class="store-badge__icon" aria-hidden="true">
+                  {store.key === 'googlePlay' ? (
+                    <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                      <path
+                        d="M8.5 4.8 18 12l-9.5 7.2V4.8Z"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                      <rect
+                        x="6.25"
+                        y="2.75"
+                        width="11.5"
+                        height="18.5"
+                        rx="2.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      />
+                      <path
+                        d="M12 7.5v6m0 0 2.1-2.1M12 13.5l-2.1-2.1"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  )}
+                </span>
+
+                <span class="store-badge__text">
+                  <span class="store-badge__prefix">
+                    {store.available ? c.badgePrefixLive : c.badgePrefixPending}
+                  </span>
+                  <span class="store-badge__store">{store.name}</span>
+                </span>
+
+                {!store.available && <span class="sr-only">{c.badgePendingSr}</span>}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        !alguno && (
+          <p class="app-dl__hint" data-reveal style="--reveal-delay: 360ms;">
+            {c.pendingHint}
+          </p>
+        )
+      }
+
+      <p class="app-dl__b2b" data-reveal style="--reveal-delay: 420ms;">
+        {c.b2bPregunta}{' '}
+        <a class="app-dl__b2b-link" href={contactHref}>{c.b2bLink}</a>
+      </p>
+    </div>
+
+    {
+      /* Placeholder deliberado del ícono de la app: lockup tipográfico
+        mientras no exista el logo definitivo. Decorativo — la unidad ya
+        está nombrada en el copy. */
+    }
+    <div
+      class="app-dl__visual"
+      aria-hidden="true"
+      data-reveal="scale"
+      style="--reveal-delay: 240ms;"
+    >
+      <div class="app-dl__tile">
+        {
+          BRAND.logoSvg ? (
+            <img
+              class="app-dl__tile-logo"
+              src={link(BRAND.logoSvg)}
+              alt=""
+              width="120"
+              height="120"
+            />
+          ) : (
+            <span class="app-dl__tile-word">{BRAND.wordmark}</span>
+          )
+        }
+      </div>
+      <p class="app-dl__tile-caption">{tiendasNombre}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .app-dl {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: var(--space-8);
+    background:
+      radial-gradient(
+        90% 130% at 12% 0%,
+        oklch(from var(--color-brand-700) l c h / 0.55) 0%,
+        transparent 62%
+      ),
+      linear-gradient(160deg, var(--color-brand-900) 0%, var(--color-brand-800) 100%);
+    color: var(--color-text-inverted);
+  }
+
+  /* Halo dorado inferior derecho — mismo lenguaje que el resto del sitio. */
+  .app-dl::after {
+    content: '';
+    position: absolute;
+    inset: auto -18% -35% auto;
+    width: 26rem;
+    height: 26rem;
+    border-radius: var(--radius-circle);
+    background: radial-gradient(
+      circle,
+      oklch(from var(--color-accent-500) l c h / 0.2) 0%,
+      transparent 70%
+    );
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .app-dl__inner {
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 900px) {
+    .app-dl__inner {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+      align-items: center;
+      gap: var(--space-8);
+    }
+  }
+
+  .app-dl__copy {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 58ch;
+  }
+
+  /* .eyebrow global usa oliva: sobre fondo de marca oscuro no contrasta. */
+  .app-dl .eyebrow {
+    color: var(--color-accent-300);
+  }
+
+  .app-dl__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-tight);
+    color: var(--color-text-inverted);
+    max-width: 20ch;
+  }
+
+  .app-dl__lede {
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+    color: oklch(from var(--color-text-inverted) l c h / 0.86);
+  }
+
+  .app-dl__note {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid oklch(from var(--color-accent-500) l c h / 0.65);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+    color: oklch(from var(--color-text-inverted) l c h / 0.74);
+  }
+
+  /* ----- Badges de store ------------------------------------------ */
+  .app-dl__stores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-start: var(--space-2);
+  }
+
+  .store-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 56px;
+    min-width: 44px;
+    padding: var(--space-3) var(--space-5);
+    border: 1px solid oklch(from var(--color-neutral-0) l c h / 0.3);
+    border-radius: var(--radius-lg);
+    background-color: oklch(from var(--color-neutral-0) l c h / 0.08);
+    color: var(--color-text-inverted);
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-standard);
+  }
+  .store-badge:hover {
+    background-color: oklch(from var(--color-neutral-0) l c h / 0.16);
+    border-color: oklch(from var(--color-neutral-0) l c h / 0.55);
+    transform: translateY(-1px);
+  }
+  .store-badge:active {
+    transform: translateY(0);
+  }
+
+  /* Estado pendiente: borde punteado = "todavía no". No es solo el copy. */
+  .store-badge--pending {
+    border-style: dashed;
+    border-color: oklch(from var(--color-neutral-0) l c h / 0.34);
+    background-color: oklch(from var(--color-neutral-0) l c h / 0.04);
+  }
+
+  .store-badge__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: var(--color-accent-300);
+  }
+  .store-badge--pending .store-badge__icon {
+    color: oklch(from var(--color-text-inverted) l c h / 0.62);
+  }
+
+  .store-badge__text {
+    display: grid;
+    gap: 0.15rem;
+    text-align: start;
+  }
+  .store-badge__prefix {
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--tracking-wide);
+    color: oklch(from var(--color-text-inverted) l c h / 0.7);
+    line-height: 1.1;
+  }
+  .store-badge__store {
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.15;
+  }
+
+  .app-dl__hint {
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-snug);
+    color: oklch(from var(--color-text-inverted) l c h / 0.62);
+  }
+
+  .app-dl__b2b {
+    margin-block-start: var(--space-2);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid oklch(from var(--color-neutral-0) l c h / 0.16);
+    font-size: var(--font-size-sm);
+    color: oklch(from var(--color-text-inverted) l c h / 0.74);
+  }
+  .app-dl__b2b-link {
+    display: inline-block;
+    min-height: 44px;
+    padding-block: 0.75rem;
+    font-weight: var(--weight-semibold);
+    color: var(--color-accent-300);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: oklch(from var(--color-accent-500) l c h / 0.5);
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      text-decoration-color var(--dur-fast) var(--ease-standard);
+  }
+  .app-dl__b2b-link:hover {
+    color: var(--color-accent-500);
+    text-decoration-color: var(--color-accent-500);
+  }
+
+  /* ----- Placeholder del ícono de la app --------------------------- */
+  .app-dl__visual {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+  }
+
+  .app-dl__tile {
+    display: grid;
+    place-items: center;
+    width: min(11rem, 45vw);
+    aspect-ratio: 1;
+    border-radius: var(--radius-2xl);
+    background: var(--gradient-brand);
+    box-shadow: var(--shadow-xl);
+  }
+  @media (min-width: 900px) {
+    .app-dl__tile {
+      width: min(13rem, 100%);
+    }
+  }
+
+  .app-dl__tile-logo {
+    width: 60%;
+    height: auto;
+  }
+
+  .app-dl__tile-word {
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    color: var(--color-text-on-accent);
+  }
+
+  .app-dl__tile-caption {
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: oklch(from var(--color-text-inverted) l c h / 0.72);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .store-badge:hover {
+      transform: none;
+    }
+  }
+</style>

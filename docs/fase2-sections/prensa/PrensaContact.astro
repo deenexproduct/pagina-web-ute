@@ -10,8 +10,8 @@ import { EMAILS } from '../../config/site';
         ¿Periodista o redacción? <em>Escribinos directo.</em>
       </h2>
       <p class="pr-contact__lede">
-        Para entrevistas con el equipo directivo, datos de la compañía, fotos de operación
-        o agenda de prensa, contactá a nuestro equipo comercial.
+        Para entrevistas con el equipo directivo, datos de la compañía, fotos de operación o agenda
+        de prensa, contactá a nuestro equipo comercial.
       </p>
     </div>
 
@@ -39,9 +39,14 @@ import { EMAILS } from '../../config/site';
     align-items: center;
   }
   @media (min-width: 768px) {
-    .pr-contact__inner { grid-template-columns: 1.3fr 1fr; }
+    .pr-contact__inner {
+      grid-template-columns: 1.3fr 1fr;
+    }
   }
-  .pr-contact__copy { display: grid; gap: var(--space-3); }
+  .pr-contact__copy {
+    display: grid;
+    gap: var(--space-3);
+  }
   .pr-contact__title {
     font-size: var(--font-size-2xl);
     font-weight: var(--weight-bold);
@@ -76,7 +81,9 @@ import { EMAILS } from '../../config/site';
     padding-block: var(--space-2);
     border-bottom: 1px solid var(--color-border-subtle);
   }
-  .pr-contact__card-row:last-child { border-bottom: 0; }
+  .pr-contact__card-row:last-child {
+    border-bottom: 0;
+  }
   .pr-contact__card-label {
     font-size: var(--font-size-2xs);
     text-transform: uppercase;
@@ -95,5 +102,7 @@ import { EMAILS } from '../../config/site';
     text-decoration-color: oklch(from var(--color-brand-500) l c h / 0.3);
     text-underline-offset: 3px;
   }
-  a.pr-contact__card-value:hover { text-decoration-color: var(--color-brand-500); }
+  a.pr-contact__card-value:hover {
+    text-decoration-color: var(--color-brand-500);
+  }
 </style>

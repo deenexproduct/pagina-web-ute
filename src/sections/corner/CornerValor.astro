@@ -6,12 +6,7 @@ import { contactLink } from '../../config/site';
  * Quote final = brief, columnas split mantenidas, items comprimidos.
  * + CTA final que cierra la página /corner-quem (evita callejón sin salida).
  */
-const noNeed = [
-  'Cocina',
-  'Desarrollar productos',
-  'Estructura compleja',
-  'Conocimiento técnico',
-];
+const noNeed = ['Cocina', 'Desarrollar productos', 'Estructura compleja', 'Conocimiento técnico'];
 
 const quemAporta = [
   { label: 'Producto', detail: 'mix curado alta rotación' },
@@ -33,40 +28,67 @@ const quemAporta = [
     </header>
 
     <div class="cn-value__split">
-      <article class="cn-value__col cn-value__col--no" data-reveal="left" style="--reveal-delay: 100ms;">
+      <article
+        class="cn-value__col cn-value__col--no"
+        data-reveal="left"
+        style="--reveal-delay: 100ms;"
+      >
         <header>
           <span class="cn-value__col-tag" data-tone="no">No necesitás</span>
           <h3>Cero fricción operativa</h3>
         </header>
         <ul>
-          {noNeed.map((n) => (
-            <li>
-              <span class="cn-value__cross" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              </span>
-              <span>{n}</span>
-            </li>
-          ))}
+          {
+            noNeed.map((n) => (
+              <li>
+                <span class="cn-value__cross" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M4 4l6 6M10 4l-6 6"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+                <span>{n}</span>
+              </li>
+            ))
+          }
         </ul>
       </article>
 
-      <article class="cn-value__col cn-value__col--si" data-reveal="right" style="--reveal-delay: 200ms;">
+      <article
+        class="cn-value__col cn-value__col--si"
+        data-reveal="right"
+        style="--reveal-delay: 200ms;"
+      >
         <header>
           <span class="cn-value__col-tag" data-tone="si">Qüem aporta</span>
           <h3>Solución llave en mano</h3>
         </header>
         <ul class="cn-value__si-grid">
-          {quemAporta.map((q) => (
-            <li>
-              <span class="cn-value__check" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m3 7 3 3 6-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
-              <div>
-                <span class="cn-value__si-label">{q.label}</span>
-                <span class="cn-value__si-detail">{q.detail}</span>
-              </div>
-            </li>
-          ))}
+          {
+            quemAporta.map((q) => (
+              <li>
+                <span class="cn-value__check" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="m3 7 3 3 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div>
+                  <span class="cn-value__si-label">{q.label}</span>
+                  <span class="cn-value__si-detail">{q.detail}</span>
+                </div>
+              </li>
+            ))
+          }
         </ul>
       </article>
     </div>
@@ -74,12 +96,19 @@ const quemAporta = [
     <div class="cn-value__final" data-reveal style="--reveal-delay: 300ms;">
       <div class="cn-value__final-inner">
         <p class="cn-value__final-eyebrow">¿Sumás un Corner Qüem?</p>
-        <h3 class="cn-value__final-title">Coordinamos una visita y armamos la propuesta para tu espacio.</h3>
+        <h3 class="cn-value__final-title">
+          Coordinamos una visita y armamos la propuesta para tu espacio.
+        </h3>
         <div class="cn-value__final-actions">
-          <a class="btn btn-primary" href={contactLink('Corner Qüem')}>
+          <a class="btn btn-primary" href={contactLink('corner')}>
             Hablar con comercial
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M3 7h8M7 3l4 4-4 4"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
             </svg>
           </a>
         </div>
@@ -96,7 +125,7 @@ const quemAporta = [
   .cn-value__final-inner {
     padding: var(--space-6);
     background: linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-bg-elevated) 70%);
-    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.20);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.2);
     border-radius: var(--radius-2xl);
     display: grid;
     gap: var(--space-3);
@@ -131,8 +160,12 @@ const quemAporta = [
     transform: translateX(3px);
   }
 
-
-  .cn-value__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
+  .cn-value__head {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+    max-width: 56ch;
+  }
   .cn-value__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
@@ -152,7 +185,9 @@ const quemAporta = [
     gap: var(--space-5);
   }
   @media (min-width: 768px) {
-    .cn-value__split { grid-template-columns: 1fr 1.4fr; }
+    .cn-value__split {
+      grid-template-columns: 1fr 1.4fr;
+    }
   }
 
   .cn-value__col {
@@ -166,7 +201,11 @@ const quemAporta = [
     border: 1px solid var(--color-border-subtle);
   }
   .cn-value__col--si {
-    background: linear-gradient(180deg, oklch(from var(--color-brand-500) l c h / 0.06) 0%, var(--color-bg-elevated) 60%);
+    background: linear-gradient(
+      180deg,
+      oklch(from var(--color-brand-500) l c h / 0.06) 0%,
+      var(--color-bg-elevated) 60%
+    );
     border: 1px solid oklch(from var(--color-brand-500) l c h / 0.25);
     color: var(--color-text-primary);
     position: relative;
@@ -176,13 +215,16 @@ const quemAporta = [
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.05) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(42% 0.19 252 / 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
     mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
     -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 90%);
     pointer-events: none;
   }
-  .cn-value__col > * { position: relative; z-index: 1; }
+  .cn-value__col > * {
+    position: relative;
+    z-index: 1;
+  }
 
   .cn-value__col-tag {
     display: inline-block;
@@ -194,15 +236,15 @@ const quemAporta = [
     font-weight: var(--weight-bold);
     margin-block-end: var(--space-3);
   }
-  .cn-value__col-tag[data-tone="no"] {
+  .cn-value__col-tag[data-tone='no'] {
     background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     border: 1px solid var(--color-border-subtle);
   }
-  .cn-value__col-tag[data-tone="si"] {
+  .cn-value__col-tag[data-tone='si'] {
     background: var(--color-accent-50);
     color: var(--color-accent-700);
-    border: 1px solid oklch(from var(--color-accent-500) l c h / 0.30);
+    border: 1px solid oklch(from var(--color-accent-500) l c h / 0.3);
   }
   .cn-value__col h3 {
     font-size: var(--font-size-xl);
@@ -210,9 +252,14 @@ const quemAporta = [
     letter-spacing: -0.02em;
     line-height: 1.1;
   }
-  .cn-value__col--si h3 { color: var(--color-text-primary); }
+  .cn-value__col--si h3 {
+    color: var(--color-text-primary);
+  }
 
-  .cn-value__col ul { display: grid; gap: var(--space-3); }
+  .cn-value__col ul {
+    display: grid;
+    gap: var(--space-3);
+  }
   .cn-value__col li {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -221,8 +268,12 @@ const quemAporta = [
     font-size: var(--font-size-base);
     line-height: 1.4;
   }
-  .cn-value__col--no li { color: var(--color-text-secondary); }
-  .cn-value__col--si li { color: var(--color-text-primary); }
+  .cn-value__col--no li {
+    color: var(--color-text-secondary);
+  }
+  .cn-value__col--si li {
+    color: var(--color-text-primary);
+  }
 
   .cn-value__cross {
     width: 1.5rem;
@@ -245,9 +296,14 @@ const quemAporta = [
     margin-block-start: 0.1rem;
   }
 
-  .cn-value__si-grid { display: grid; gap: var(--space-3); }
+  .cn-value__si-grid {
+    display: grid;
+    gap: var(--space-3);
+  }
   @media (min-width: 640px) {
-    .cn-value__si-grid { grid-template-columns: 1fr 1fr; }
+    .cn-value__si-grid {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   .cn-value__si-label {
     display: block;
@@ -262,5 +318,4 @@ const quemAporta = [
     font-size: var(--font-size-sm);
     margin-block-start: 0.15rem;
   }
-
 </style>

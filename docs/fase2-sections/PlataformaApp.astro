@@ -22,35 +22,57 @@ const mensajes = [
         Del pedido a la entrega, <em>sin fricción.</em>
       </h2>
       <p data-reveal style="--reveal-delay: 200ms;">
-        Precio listado, stock visible, confirmación al instante. Sin negociar, sin llamar, sin esperar.
+        Precio listado, stock visible, confirmación al instante. Sin negociar, sin llamar, sin
+        esperar.
       </p>
 
       <ul class="plat__list" data-reveal-stagger>
-        {mensajes.map((m) => (
-          <li data-reveal style="--reveal-y: 12px;">
-            <span class="plat__check" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m3 7 3 3 5-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span>{m}</span>
-          </li>
-        ))}
+        {
+          mensajes.map((m) => (
+            <li data-reveal style="--reveal-y: 12px;">
+              <span class="plat__check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="m3 7 3 3 5-6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span>{m}</span>
+            </li>
+          ))
+        }
       </ul>
 
       <a class="plat__next" href={link('/#productos')} data-reveal style="--reveal-delay: 400ms;">
         Ver el catálogo
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M3 7h8M7 3l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
         </svg>
       </a>
     </div>
 
-    <div class="plat__video-wrap" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 1000ms;">
+    <div
+      class="plat__video-wrap"
+      data-reveal="right"
+      style="--reveal-delay: 200ms; --reveal-duration: 1000ms;"
+    >
       <div class="plat__video-frame">
-        {/*
+        {
+          /*
           Video lazy-loaded: arranca con preload="none" + data-src,
           y el script abajo lo carga + reproduce cuando entra al viewport.
           Esto baja el TTFB inicial de la home de 15MB → 0.
-        */}
+        */
+        }
         <video
           class="plat__video"
           data-lazy-video
@@ -60,18 +82,19 @@ const mensajes = [
           loop
           playsinline
           preload="none"
-          aria-label="Demo del modelo operativo Qüem Central"
-        ></video>
+          aria-label="Demo del modelo operativo Qüem Central"></video>
         <div class="plat__video-overlay" aria-hidden="true"></div>
         <div class="plat__video-badge" aria-hidden="true">
           <span class="plat__video-badge-dot"></span>
           Demo
         </div>
-        {/*
+        {
+          /*
           Botón play visible si autoplay fue rechazado (iOS low-power mode,
           Safari, Chrome con autoplay block, etc.). El script lo muestra
           on-demand. Por default está hidden.
-        */}
+        */
+        }
         <button
           type="button"
           class="plat__video-play"
@@ -80,7 +103,7 @@ const mensajes = [
           hidden
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M8 5v14l11-7z" />
+            <path d="M8 5v14l11-7z"></path>
           </svg>
         </button>
       </div>
@@ -156,11 +179,19 @@ const mensajes = [
     align-items: center;
   }
   .plat__copy,
-  .plat__video-wrap { min-width: 0; }
-  @media (min-width: 960px) {
-    .plat__inner { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  .plat__video-wrap {
+    min-width: 0;
   }
-  .plat__copy { display: grid; gap: var(--space-4); max-width: 56ch; }
+  @media (min-width: 960px) {
+    .plat__inner {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    }
+  }
+  .plat__copy {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 56ch;
+  }
   .plat__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
@@ -181,7 +212,11 @@ const mensajes = [
     line-height: var(--leading-snug);
   }
 
-  .plat__list { display: grid; gap: var(--space-2); margin-block-start: var(--space-3); }
+  .plat__list {
+    display: grid;
+    gap: var(--space-2);
+    margin-block-start: var(--space-3);
+  }
   .plat__list li {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -212,14 +247,20 @@ const mensajes = [
     font-weight: var(--weight-semibold);
     border-bottom: 1.5px solid transparent;
     width: max-content;
-    transition: color var(--dur-fast), border-color var(--dur-fast);
+    transition:
+      color var(--dur-fast),
+      border-color var(--dur-fast);
   }
-  .plat__next svg { transition: transform var(--dur-fast); }
+  .plat__next svg {
+    transition: transform var(--dur-fast);
+  }
   .plat__next:hover {
     color: var(--color-text-primary);
     border-color: var(--color-brand-500);
   }
-  .plat__next:hover svg { transform: translateX(3px); }
+  .plat__next:hover svg {
+    transform: translateX(3px);
+  }
 
   /* ===== Video showcase ===================================== */
   .plat__video-wrap {
@@ -228,6 +269,7 @@ const mensajes = [
     place-items: center;
     padding-block: var(--space-5);
     isolation: isolate;
+    overflow: hidden; /* prevents plat__video-glow (-8% inset) from scrolling body on mobile */
   }
 
   .plat__video-frame {
@@ -291,11 +333,20 @@ const mensajes = [
     animation: plat-badge-pulse 2s ease-in-out infinite;
   }
   @keyframes plat-badge-pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 oklch(88% 0.115 105 / 0.7); }
-    50%      { opacity: 0.7; box-shadow: 0 0 0 6px oklch(88% 0.115 105 / 0); }
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 oklch(88% 0.115 105 / 0.7);
+    }
+    50% {
+      opacity: 0.7;
+      box-shadow: 0 0 0 6px oklch(88% 0.115 105 / 0);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .plat__video-badge-dot { animation: none; }
+    .plat__video-badge-dot {
+      animation: none;
+    }
   }
 
   /* Botón play fallback — visible si autoplay rechazado */
@@ -314,9 +365,11 @@ const mensajes = [
     display: grid;
     place-items: center;
     box-shadow:
-      0 8px 24px oklch(15% 0.018 95 / 0.30),
+      0 8px 24px oklch(15% 0.018 95 / 0.3),
       0 0 0 4px oklch(100% 0 0 / 0.15);
-    transition: transform var(--dur-fast), background var(--dur-fast);
+    transition:
+      transform var(--dur-fast),
+      background var(--dur-fast);
     z-index: 2;
   }
   .plat__video-play:hover {
@@ -334,6 +387,6 @@ const mensajes = [
     border-radius: 2.5rem;
     background: var(--gradient-mixed);
     filter: blur(50px);
-    opacity: 0.30;
+    opacity: 0.3;
   }
 </style>

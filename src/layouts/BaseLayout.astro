@@ -3,10 +3,31 @@ import '../styles/global.css';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import SmoothScrollLenis from '../components/SmoothScrollLenis.astro';
-// @ts-ignore — woff2 importado como URL hashed por Vite para preload dinámico
 import interFontUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import ScrollToTop from '../components/ui/ScrollToTop.astro';
-import { SEO, SITE_URL, ADDRESS, ANALYTICS, link } from '../config/site';
+import SocialDock from '../components/ui/SocialDock.astro';
+import {
+  SEO,
+  SITE_URL,
+  BRAND,
+  ADDRESS,
+  EMAILS,
+  WHATSAPP,
+  ANALYTICS,
+  activeSocials,
+  hasAddress,
+  hasWhatsapp,
+  whatsappLink,
+  link,
+} from '../config/site';
+import { LOCALE } from '../i18n/ui';
+import {
+  getLangFromUrl,
+  useTranslations,
+  alternatePath,
+  ALL_LANGS,
+  DEFAULT_LANG,
+} from '../i18n/utils';
 
 interface Props {
   title?: string;
@@ -16,82 +37,202 @@ interface Props {
   canonicalPath?: string;
 }
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 const {
   title,
-  description = SEO.defaultDescription,
+  description = t('seo.description'),
   image = SEO.defaultOgImage,
   noindex = false,
   canonicalPath,
 } = Astro.props;
 
-const fullTitle = title
-  ? SEO.titleTemplate.replace('%s', title)
-  : SEO.defaultTitle;
+/* Copy propio del layout (no lo comparte ninguna sección). */
+const COPY = {
+  es: { ogImageAlt: 'QUEM — grupo de alimentos congelados' },
+  en: { ogImageAlt: 'QUEM — frozen food group' },
+} as const;
+const c = COPY[lang];
+
+/**
+ * Plantilla de título para páginas con `title` propio.
+ * La home no la usa: manda `t('seo.title')` entero.
+ */
+const pageTitle = (name: string): string => `${name} | ${SEO.siteName}`;
+const fullTitle = title ? pageTitle(title) : t('seo.title');
+
+/* -------------------------------------------------------------------------- */
+/*  URLs ABSOLUTAS — canonical, hreflang, OG                                  */
+/* -------------------------------------------------------------------------- */
+
+const site = Astro.site ?? new URL(SITE_URL);
+
+/**
+ * `astro.config.mjs` declara `trailingSlash: 'never'`, y el sitemap emite
+ * las URLs sin barra final. El canonical tiene que decir lo mismo o Google
+ * ve dos variantes de cada página. La raíz conserva su única barra porque
+ * un origen sin path no existe.
+ */
+const stripTrailingSlash = (path: string): string =>
+  path.length > 1 ? path.replace(/\/+$/, '') || '/' : path;
+
+const absolute = (path: string): string => new URL(stripTrailingSlash(path), site).toString();
+
+/**
+ * Canonical:
+ *   - `canonicalPath` (prop) es RELATIVO al site root (ej: '/corner-quem'),
+ *     así que pasa por link() para prefijar el base path.
+ *   - Sin prop, `Astro.url.pathname` YA incluye el base path: usarlo tal
+ *     cual, sin link() (sino se duplicaría el base). Se toma el pathname y
+ *     no la URL entera para que el querystring no genere canonicals duplicados
+ *     (ej: `/?interes=corner`).
+ */
+const canonical = absolute(canonicalPath ? link(canonicalPath) : Astro.url.pathname);
+
+/** Raíz del sitio ya resuelta (respeta base path). Ancla los @id del JSON-LD. */
+const siteRoot = absolute(link('/'));
+
+/* La OG image siempre es relativa al site root → pasa por link(). */
+const ogImage = image.startsWith('http') ? image : absolute(link(image));
+/* La OG por default es un raster de 1200×630 (medida fija del asset). Si una
+   página pasa la suya, no podemos afirmar sus dimensiones. */
+const OG_DEFAULT_SIZE = { width: 1200, height: 630 } as const;
+const usingDefaultOg = image === SEO.defaultOgImage;
+const defaultOgUrl = absolute(link(SEO.defaultOgImage));
+
+/**
+ * hreflang: una entrada por idioma + x-default.
+ *
+ * Se declara el idioma base (`es` / `en`) y no el locale completo: el sitio
+ * opera en AR pero el contenido en español sirve a cualquier hispanohablante,
+ * y `es-AR` lo restringiría a Argentina. `<html lang>` sí lleva el locale
+ * completo, que es donde importa para lectores de pantalla.
+ *
+ * Las páginas noindex no publican alternates: no hay nada que agrupar.
+ */
+const alternates: ReadonlyArray<{ hreflang: string; href: string }> = noindex
+  ? []
+  : ALL_LANGS.map((l) => ({ hreflang: l, href: absolute(alternatePath(Astro.url, l)) }));
+const xDefaultHref = noindex ? '' : absolute(alternatePath(Astro.url, DEFAULT_LANG));
+
+/* -------------------------------------------------------------------------- */
+/*  SCHEMA.ORG                                                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Un solo `@graph` con nodos referenciables por `@id`, en vez de dos bloques
+ * sueltos que se contradecían.
+ *
+ * Se ELIMINÓ el nodo `LocalBusiness`: se declaraba sin dirección (señal
+ * negativa para Google) y, aunque la tuviéramos, la casa central es una
+ * oficina, no un local con horarios ni rango de precios. Los locales reales
+ * son las tiendas del mapa (spec punto 7) y les corresponde emitir sus
+ * propios `Place`/`Store` desde esa sección, no desde el layout.
+ * La dirección, cuando el cliente la confirme, cuelga de `Organization`.
+ */
+type JsonLdNode = Record<string, unknown>;
+
+const ORG_ID = `${siteRoot}#organization`;
+const SITE_ID = `${siteRoot}#website`;
+
+const socialUrls = activeSocials().map((s) => s.url);
+
+/* Solo canales que existen de verdad: un contactPoint vacío no ayuda a nadie. */
+const contactPoints: JsonLdNode[] = [
+  ...(hasWhatsapp()
+    ? [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'customer service',
+          telephone: `+${WHATSAPP}`,
+          url: whatsappLink(),
+          availableLanguage: ALL_LANGS,
+        },
+      ]
+    : []),
+  ...(EMAILS.comercial
+    ? [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'sales',
+          email: EMAILS.comercial,
+          availableLanguage: ALL_LANGS,
+        },
+      ]
+    : []),
+];
+
+const organizationNode: JsonLdNode = {
+  '@type': 'Organization',
+  '@id': ORG_ID,
+  /* QUEM es la marca madre; "Qüem Central" es una de sus 4 unidades. */
+  name: BRAND.group,
+  legalName: BRAND.legal,
+  url: siteRoot,
+  description,
+  /* `favicon.svg` son 404 bytes y no llega al mínimo de 112px que pide Google
+     para `logo`. Hasta que llegue el logo definitivo usamos la OG, que es
+     raster y declara medidas. TODO swap por el logo real. */
+  logo: {
+    '@type': 'ImageObject',
+    url: defaultOgUrl,
+    width: OG_DEFAULT_SIZE.width,
+    height: OG_DEFAULT_SIZE.height,
+  },
+  image: defaultOgUrl,
+  ...(socialUrls.length > 0 ? { sameAs: socialUrls } : {}),
+  ...(contactPoints.length > 0 ? { contactPoint: contactPoints } : {}),
+  ...(ADDRESS.country ? { areaServed: { '@type': 'Country', name: ADDRESS.country } } : {}),
+  ...(hasAddress()
+    ? {
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: ADDRESS.streetAddress,
+          ...(ADDRESS.city ? { addressLocality: ADDRESS.city } : {}),
+          ...(ADDRESS.region ? { addressRegion: ADDRESS.region } : {}),
+          ...(ADDRESS.postalCode ? { postalCode: ADDRESS.postalCode } : {}),
+          ...(ADDRESS.country ? { addressCountry: ADDRESS.country } : {}),
+        },
+      }
+    : {}),
+};
+
+const websiteNode: JsonLdNode = {
+  '@type': 'WebSite',
+  '@id': SITE_ID,
+  url: siteRoot,
+  name: BRAND.group,
+  inLanguage: ALL_LANGS,
+  publisher: { '@id': ORG_ID },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [organizationNode, websiteNode],
+};
+
+/* -------------------------------------------------------------------------- */
+/*  TEMA                                                                      */
+/* -------------------------------------------------------------------------- */
 
 /*
- * Canonical y OG URL — composición:
- *   - canonicalPath (prop) es RELATIVO al site root (ej: '/corner-quem').
- *     Pasa por link() para prefijar el base path.
- *   - Si no se pasa canonicalPath, Astro.url ya es la URL completa de
- *     la página actual (incluye base path). Usar directo, SIN link()
- *     (sino se duplicaría el base, bug: ".../quem-central-preview/quem-central-preview").
+ * `data-theme="light"` NO rompe el dark mode de tokens.css: ahí el dark es
+ * explícitamente opt-in (`[data-theme='dark']`), sin media query de
+ * `prefers-color-scheme` ni toggle en la UI. El sitio es light-only por
+ * diseño y fijarlo acá solo lo hace explícito.
  *
- * OG image siempre es RELATIVO al site root (ej: '/og-default.jpg'),
- * así que pasa por link() para componer con base correctamente.
+ * Lo que SÍ estaba roto era el par de `theme-color` (light + dark)
+ * prometiendo un chrome oscuro que la página nunca pinta, y la ausencia de
+ * `color-scheme`: con el SO en dark mode el UA renderizaba los inputs, el
+ * select y las scrollbars en oscuro sobre fondo claro. Justo el formulario
+ * de contacto, que es el mecanismo de conversión de Fase 1.
+ * Fix: un solo theme-color + `<meta name="color-scheme" content="light">`.
  */
-const canonical = canonicalPath
-  ? new URL(link(canonicalPath), Astro.site ?? SITE_URL).toString()
-  : Astro.url.toString();
-const ogImage = image.startsWith('http')
-  ? image
-  : new URL(link(image), Astro.site ?? SITE_URL).toString();
-
-const orgJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: SEO.siteName,
-  url: SITE_URL,
-  logo: new URL('/favicon.svg', SITE_URL).toString(),
-  description: SEO.defaultDescription,
-  ...(ADDRESS.country
-    ? {
-        address: {
-          '@type': 'PostalAddress',
-          ...(ADDRESS.streetAddress ? { streetAddress: ADDRESS.streetAddress } : {}),
-          ...(ADDRESS.city ? { addressLocality: ADDRESS.city } : {}),
-          ...(ADDRESS.region ? { addressRegion: ADDRESS.region } : {}),
-          ...(ADDRESS.postalCode ? { postalCode: ADDRESS.postalCode } : {}),
-          addressCountry: ADDRESS.country,
-        },
-      }
-    : {}),
-};
-
-const localBusinessJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: SEO.siteName,
-  url: SITE_URL,
-  image: ogImage,
-  description: SEO.defaultDescription,
-  priceRange: '$$',
-  ...(ADDRESS.country
-    ? {
-        address: {
-          '@type': 'PostalAddress',
-          ...(ADDRESS.streetAddress ? { streetAddress: ADDRESS.streetAddress } : {}),
-          ...(ADDRESS.city ? { addressLocality: ADDRESS.city } : {}),
-          ...(ADDRESS.region ? { addressRegion: ADDRESS.region } : {}),
-          ...(ADDRESS.postalCode ? { postalCode: ADDRESS.postalCode } : {}),
-          addressCountry: ADDRESS.country,
-        },
-      }
-    : {}),
-};
 ---
 
 <!doctype html>
-<html lang="es-AR" data-theme="light">
+<html lang={LOCALE[lang].html} data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -99,12 +240,30 @@ const localBusinessJsonLd = {
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={SEO.keywords.join(', ')} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex,nofollow" />}
 
-    <meta name="theme-color" content="#f8f9fb" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)" />
+    {/* hreflang — un link por idioma + x-default (spec: bilingüe ES/EN). */}
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
+
+    {
+      noindex ? (
+        <meta name="robots" content="noindex,nofollow" />
+      ) : (
+        <meta
+          name="robots"
+          content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+        />
+      )
+    }
+
+    {
+      /* El sitio es light-only (ver comentario del <html>). Declararlo evita
+        que el UA pinte inputs, selects y scrollbars en modo oscuro.
+        El valor de theme-color espeja --color-bg de tokens.css. */
+    }
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f8f9fb" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -113,13 +272,22 @@ const localBusinessJsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:locale" content={SEO.locale} />
+    <meta property="og:image:alt" content={c.ogImageAlt} />
+    {usingDefaultOg && <meta property="og:image:width" content={String(OG_DEFAULT_SIZE.width)} />}
+    {usingDefaultOg && <meta property="og:image:height" content={String(OG_DEFAULT_SIZE.height)} />}
+    <meta property="og:locale" content={LOCALE[lang].og} />
+    {
+      ALL_LANGS.filter((l) => l !== lang).map((l) => (
+        <meta property="og:locale:alternate" content={LOCALE[l].og} />
+      ))
+    }
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={c.ogImageAlt} />
     {SEO.twitterHandle && <meta name="twitter:site" content={SEO.twitterHandle} />}
 
     <!-- Favicons (placeholders — reemplazar cuando llegue logo final).
@@ -133,26 +301,29 @@ const localBusinessJsonLd = {
     <!--
       Preload Inter Variable latin para que arranque a descargar antes de que
       el CSS procese el @font-face. Elimina el FOIT en above-the-fold.
+      Las fuentes son self-hosted (fontsource): no hay preconnect a Google.
     -->
     <link rel="preload" href={interFontUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(localBusinessJsonLd)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    {/* Analytics — solo si ANALYTICS.plausibleDomain está seteado en site.ts.
-        Plausible: sin cookies, GDPR-friendly, ~1KB script, no requiere banner. */}
-    {ANALYTICS.plausibleDomain && (
-      <script
-        is:inline
-        defer
-        data-domain={ANALYTICS.plausibleDomain}
-        src={`${ANALYTICS.plausibleHost}/js/script.outbound-links.js`}
-      ></script>
-    )}
+    {
+      /* Analytics — solo si ANALYTICS.plausibleDomain está seteado en site.ts.
+        Plausible: sin cookies, GDPR-friendly, ~1KB script, no requiere banner. */
+    }
+    {
+      ANALYTICS.plausibleDomain && (
+        <script
+          is:inline
+          defer
+          data-domain={ANALYTICS.plausibleDomain}
+          src={`${ANALYTICS.plausibleHost}/js/script.outbound-links.js`}
+        />
+      )
+    }
   </head>
   <body>
-    <a href="#main" class="skip-link">Saltar al contenido</a>
+    <a href="#main" class="skip-link">{t('a11y.skip')}</a>
 
     <!-- Scroll progress bar (top of viewport) -->
     <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
@@ -163,6 +334,7 @@ const localBusinessJsonLd = {
       <slot />
     </main>
     <Footer />
+    <SocialDock />
     <ScrollToTop />
 
     <script>
@@ -217,7 +389,9 @@ const localBusinessJsonLd = {
                    * (evita el blank de 800-1200ms en navegación por anchor). */
                   (el as HTMLElement).style.transition = 'none';
                   el.dataset.revealed = '';
-                  requestAnimationFrame(() => { (el as HTMLElement).style.transition = ''; });
+                  requestAnimationFrame(() => {
+                    (el as HTMLElement).style.transition = '';
+                  });
                 } else {
                   el.dataset.revealed = '';
                 }
@@ -268,7 +442,9 @@ const localBusinessJsonLd = {
         );
         counters.forEach((el) => obs.observe(el));
       } else {
-        counters.forEach((el) => { el.textContent = el.dataset.counter ?? ''; });
+        counters.forEach((el) => {
+          el.textContent = el.dataset.counter ?? '';
+        });
       }
 
       /* 3) Scroll progress bar */
@@ -286,7 +462,11 @@ const localBusinessJsonLd = {
 
       /* 4) Parallax sutil — elementos con data-parallax="0.3" */
       const parallaxEls = document.querySelectorAll<HTMLElement>('[data-parallax]');
-      if (parallaxEls.length > 0 && !reduceMotion && window.matchMedia('(min-width: 768px)').matches) {
+      if (
+        parallaxEls.length > 0 &&
+        !reduceMotion &&
+        window.matchMedia('(min-width: 768px)').matches
+      ) {
         const apply = (): void => {
           const y = window.scrollY;
           parallaxEls.forEach((el) => {
@@ -306,7 +486,8 @@ const localBusinessJsonLd = {
         left: 0;
         right: 0;
         height: 3px;
-        z-index: 500;
+        /* Por encima de todo el chrome (header sticky, dock de redes, skip-link). */
+        z-index: calc(var(--z-toast) + 100);
         pointer-events: none;
         background: transparent;
       }
@@ -320,7 +501,9 @@ const localBusinessJsonLd = {
         transition: transform 80ms linear;
       }
       @media (prefers-reduced-motion: reduce) {
-        .scroll-progress { display: none; }
+        .scroll-progress {
+          display: none;
+        }
       }
     </style>
   </body>

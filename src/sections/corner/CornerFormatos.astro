@@ -41,7 +41,12 @@ const formats = [
   <div class="container-content">
     <header class="cn-formats__head">
       <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Formatos</p>
-      <h2 id="cn-formats-title" class="cn-formats__title" data-reveal style="--reveal-delay: 100ms;">
+      <h2
+        id="cn-formats-title"
+        class="cn-formats__title"
+        data-reveal
+        style="--reveal-delay: 100ms;"
+      >
         5 formatos. <em>Un solo modelo.</em>
       </h2>
       <p class="cn-formats__lede" data-reveal style="--reveal-delay: 200ms;">
@@ -50,40 +55,136 @@ const formats = [
     </header>
 
     <ul class="cn-formats__grid" role="list" data-reveal-stagger>
-      {formats.map((f) => (
-        <li class="cn-format-card" data-reveal>
-          <div class="cn-format-card__icon" aria-hidden="true">
-            {f.icon === 'vertical' && (
-              <svg viewBox="0 0 48 60" fill="none"><rect x="9" y="4" width="30" height="52" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M9 20h30M9 36h30" stroke="currentColor" stroke-width="1.4"/><circle cx="33" cy="10" r="1.1" fill="currentColor"/><path d="M13 11h7M13 27h12M13 43h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
-            )}
-            {f.icon === 'horizontal' && (
-              <svg viewBox="0 0 64 48" fill="none"><rect x="4" y="12" width="56" height="32" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M16 12V4h32v8M4 28h56" stroke="currentColor" stroke-width="1.4"/><path d="M10 22h6M22 22h8M36 22h6M48 22h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
-            )}
-            {f.icon === 'island' && (
-              <svg viewBox="0 0 64 48" fill="none"><rect x="6" y="14" width="52" height="28" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M6 28h52M22 14V6h20v8" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="38" r="1.2" fill="currentColor"/><circle cx="50" cy="38" r="1.2" fill="currentColor"/><path d="M11 22h12M28 22h8M41 22h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/></svg>
-            )}
-            {f.icon === 'ministore' && (
-              <svg viewBox="0 0 64 48" fill="none"><path d="M8 16h48l-3-8H11l-3 8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 16v28h44V16" stroke="currentColor" stroke-width="1.6"/><path d="M18 44V30h10v14M36 30h12v8H36z" stroke="currentColor" stroke-width="1.4"/><circle cx="48" cy="42" r="0.8" fill="currentColor"/></svg>
-            )}
-            {f.icon === 'grab' && (
-              <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="34" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M6 20h36" stroke="currentColor" stroke-width="1.4"/><path d="M15 28h10M15 33h18M15 38h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="35" cy="14" r="1.2" fill="currentColor"/></svg>
-            )}
-          </div>
-          <div class="cn-format-card__body">
-            <div class="cn-format-card__head">
-              <h3>{f.name}</h3>
-              <span class="cn-format-card__badge">{f.badge}</span>
+      {
+        formats.map((f) => (
+          <li class="cn-format-card" data-reveal>
+            <div class="cn-format-card__icon" aria-hidden="true">
+              {f.icon === 'vertical' && (
+                <svg viewBox="0 0 48 60" fill="none">
+                  <rect
+                    x="9"
+                    y="4"
+                    width="30"
+                    height="52"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                  <path d="M9 20h30M9 36h30" stroke="currentColor" stroke-width="1.4" />
+                  <circle cx="33" cy="10" r="1.1" fill="currentColor" />
+                  <path
+                    d="M13 11h7M13 27h12M13 43h10"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    opacity="0.5"
+                  />
+                </svg>
+              )}
+              {f.icon === 'horizontal' && (
+                <svg viewBox="0 0 64 48" fill="none">
+                  <rect
+                    x="4"
+                    y="12"
+                    width="56"
+                    height="32"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                  <path d="M16 12V4h32v8M4 28h56" stroke="currentColor" stroke-width="1.4" />
+                  <path
+                    d="M10 22h6M22 22h8M36 22h6M48 22h6"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    opacity="0.5"
+                  />
+                </svg>
+              )}
+              {f.icon === 'island' && (
+                <svg viewBox="0 0 64 48" fill="none">
+                  <rect
+                    x="6"
+                    y="14"
+                    width="52"
+                    height="28"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                  <path d="M6 28h52M22 14V6h20v8" stroke="currentColor" stroke-width="1.4" />
+                  <circle cx="14" cy="38" r="1.2" fill="currentColor" />
+                  <circle cx="50" cy="38" r="1.2" fill="currentColor" />
+                  <path
+                    d="M11 22h12M28 22h8M41 22h12"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    opacity="0.5"
+                  />
+                </svg>
+              )}
+              {f.icon === 'ministore' && (
+                <svg viewBox="0 0 64 48" fill="none">
+                  <path
+                    d="M8 16h48l-3-8H11l-3 8Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                  <path d="M10 16v28h44V16" stroke="currentColor" stroke-width="1.6" />
+                  <path
+                    d="M18 44V30h10v14M36 30h12v8H36z"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                  />
+                  <circle cx="48" cy="42" r="0.8" fill="currentColor" />
+                </svg>
+              )}
+              {f.icon === 'grab' && (
+                <svg viewBox="0 0 48 48" fill="none">
+                  <rect
+                    x="6"
+                    y="8"
+                    width="36"
+                    height="34"
+                    rx="3"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                  <path d="M6 20h36" stroke="currentColor" stroke-width="1.4" />
+                  <path
+                    d="M15 28h10M15 33h18M15 38h12"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                  />
+                  <circle cx="35" cy="14" r="1.2" fill="currentColor" />
+                </svg>
+              )}
             </div>
-            <p>{f.desc}</p>
-          </div>
-        </li>
-      ))}
+            <div class="cn-format-card__body">
+              <div class="cn-format-card__head">
+                <h3>{f.name}</h3>
+                <span class="cn-format-card__badge">{f.badge}</span>
+              </div>
+              <p>{f.desc}</p>
+            </div>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </section>
 
 <style>
-  .cn-formats__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
+  .cn-formats__head {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+    max-width: 56ch;
+  }
   .cn-formats__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
@@ -109,10 +210,14 @@ const formats = [
     grid-template-columns: 1fr;
   }
   @media (min-width: 540px) {
-    .cn-formats__grid { grid-template-columns: repeat(2, 1fr); }
+    .cn-formats__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
   @media (min-width: 960px) {
-    .cn-formats__grid { grid-template-columns: repeat(5, 1fr); }
+    .cn-formats__grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
   }
   .cn-format-card {
     position: relative;
@@ -123,7 +228,10 @@ const formats = [
     background: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
-    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
+    transition:
+      transform var(--dur-fast),
+      border-color var(--dur-fast),
+      box-shadow var(--dur-normal);
   }
   @media (min-width: 960px) {
     /* Vertical layout for 5-col row */
@@ -157,9 +265,21 @@ const formats = [
     color: var(--color-brand-600);
     flex-shrink: 0;
   }
-  .cn-format-card__icon svg { width: 2.4rem; height: 2.4rem; }
-  .cn-format-card__body { display: grid; gap: var(--space-2); align-content: start; }
-  .cn-format-card__head { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+  .cn-format-card__icon svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  .cn-format-card__body {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+  .cn-format-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
   .cn-format-card__head h3 {
     font-size: var(--font-size-md);
     font-weight: var(--weight-bold);

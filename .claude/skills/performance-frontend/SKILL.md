@@ -12,15 +12,24 @@ Target: **Lighthouse 95+ en las 4 categorías** (Performance, Accessibility, Bes
 ### LCP (Largest Contentful Paint) — objetivo <2.5s
 
 El "elemento más grande visible above-the-fold". En QUEM Central suele ser:
+
 - El `<h1>` del Hero ("QUEM Central")
 - O el panel mockup lateral
 
 **Optimizaciones**:
 
 - **Fonts: preload el woff2 del display** (Inter Variable) que renderea el `<h1>`:
+
   ```html
-  <link rel="preload" as="font" type="font/woff2" href="/_astro/inter-variable-XXX.woff2" crossorigin>
+  <link
+    rel="preload"
+    as="font"
+    type="font/woff2"
+    href="/_astro/inter-variable-XXX.woff2"
+    crossorigin
+  />
   ```
+
   Astro hashea el filename, así que es difícil de hardcodear. Alternativa: usar `<link rel="preconnect">` para fonts.gstatic.com (ya en `BaseLayout.astro`).
 
 - **Inline CSS crítico**: `astro.config.mjs` ya tiene `inlineStylesheets: 'auto'` que decide automáticamente.
@@ -71,16 +80,17 @@ First Contentful Paint. Hoy el sitio es estático → FCP muy rápido (~500ms de
 
 ## Budgets
 
-| Tipo                  | Budget                  |
-|-----------------------|-------------------------|
-| HTML por página       | < 50 KB gzipped         |
-| CSS total inline      | < 14 KB (1 RTT)         |
-| JS total above-fold   | < 90 KB gzipped         |
-| Imagen Hero (LCP)     | < 200 KB                |
-| Fuentes (todas)       | < 200 KB combinado      |
-| Total page weight     | < 1 MB                  |
+| Tipo                | Budget             |
+| ------------------- | ------------------ |
+| HTML por página     | < 50 KB gzipped    |
+| CSS total inline    | < 14 KB (1 RTT)    |
+| JS total above-fold | < 90 KB gzipped    |
+| Imagen Hero (LCP)   | < 200 KB           |
+| Fuentes (todas)     | < 200 KB combinado |
+| Total page weight   | < 1 MB             |
 
 Verificar:
+
 ```bash
 pnpm build && du -sh dist/* | sort -h
 ```
@@ -105,6 +115,7 @@ import heroImg from '../assets/hero-logistica.jpg';
 ```
 
 Reglas:
+
 - **Importar** la imagen (no usar path string a `public/`) → Astro la optimiza.
 - **`widths`** array → genera srcset multi-resolución.
 - **`sizes`** → indica al browser qué tamaño cargar.
@@ -121,18 +132,27 @@ QUEM Central usa Inter + Fraunces variables, self-hosted via npm:
 ```
 
 Beneficios:
+
 - Un solo archivo woff2 por familia (~80 KB) cubre todos los pesos 100-900.
 - `font-display: swap` por default → texto visible inmediato.
 - Sin requests a fonts.googleapis.com (privacy + speed).
 
 Para preload el archivo crítico, identificar el hash post-build:
+
 ```bash
 find dist/_astro -name "inter-variable*"
 ```
 
 Y agregar al `<head>`:
+
 ```html
-<link rel="preload" as="font" type="font/woff2" href="/_astro/inter-variable-XXX.woff2" crossorigin>
+<link
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  href="/_astro/inter-variable-XXX.woff2"
+  crossorigin
+/>
 ```
 
 ## CSS — optimizaciones
@@ -157,6 +177,7 @@ Y agregar al `<head>`:
 ## Prefetch
 
 `astro.config.mjs` ya tiene:
+
 ```js
 prefetch: { prefetchAll: true, defaultStrategy: 'viewport' }
 ```
@@ -174,6 +195,7 @@ npx lighthouse http://localhost:4321 --view --emulated-form-factor=mobile
 Apuntar a: **Performance ≥ 95**, **Accessibility 100**, **Best Practices ≥ 95**, **SEO 100**.
 
 Si baja una métrica:
+
 - **Performance** → revisar Treemap del LH para ver qué bundle pesa más.
 - **A11y** → resolver issues listados.
 - **Best Practices** → suele ser cookies / HTTPS / inseguro.

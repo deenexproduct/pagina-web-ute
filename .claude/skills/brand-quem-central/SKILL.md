@@ -32,10 +32,10 @@ Transmite: **solidez · escala · claridad · tecnología · confianza · cercan
 
 ### Qué SÍ es
 
-- *"Plataforma integral para el abastecimiento y desarrollo comercial de alimentos congelados."*
-- *"Integramos distribución B2B, logística especializada, franquicias, corners comerciales y tecnología."*
-- *"Un ecosistema diseñado para escalar alimentos congelados."*
-- *"Hablemos de cómo trabajar con QUEM Central."*
+- _"Plataforma integral para el abastecimiento y desarrollo comercial de alimentos congelados."_
+- _"Integramos distribución B2B, logística especializada, franquicias, corners comerciales y tecnología."_
+- _"Un ecosistema diseñado para escalar alimentos congelados."_
+- _"Hablemos de cómo trabajar con QUEM Central."_
 
 ### Qué NO es
 
@@ -80,16 +80,17 @@ Mood: empresa con ecosistema, sólida, tech-friendly, sin parecer una tienda onl
 
 ## Paleta — vigente en `src/styles/tokens.css`
 
-| Rol            | Hex      | OKLCH                  | Uso                                          |
-|----------------|----------|------------------------|----------------------------------------------|
-| **Crema base** | `#F8F9FB` | `oklch(98% 0.003 240)` | bg light, papel cremoso muy sutil            |
-| **Tinta**      | `#111623` | `oklch(15% 0.018 240)` | text-primary, headings                       |
-| **Brand 500**  | `#2854C5` | `oklch(50% 0.180 250)` | azul corporativo — links, eyebrows, isotipo  |
-| **Brand 600**  | `~#1F46AE` | `oklch(43% 0.170 250)` | hover                                        |
-| **Accent 500** | `#1FB874` | `oklch(62% 0.150 155)` | verde acento — CTA Comprar online            |
-| **Accent 600** | `~#1AA065` | `oklch(54% 0.135 155)` | hover del CTA Comprar online                 |
+| Rol            | Hex        | OKLCH                  | Uso                                         |
+| -------------- | ---------- | ---------------------- | ------------------------------------------- |
+| **Crema base** | `#F8F9FB`  | `oklch(98% 0.003 240)` | bg light, papel cremoso muy sutil           |
+| **Tinta**      | `#111623`  | `oklch(15% 0.018 240)` | text-primary, headings                      |
+| **Brand 500**  | `#2854C5`  | `oklch(50% 0.180 250)` | azul corporativo — links, eyebrows, isotipo |
+| **Brand 600**  | `~#1F46AE` | `oklch(43% 0.170 250)` | hover                                       |
+| **Accent 500** | `#1FB874`  | `oklch(62% 0.150 155)` | verde acento — CTA Comprar online           |
+| **Accent 600** | `~#1AA065` | `oklch(54% 0.135 155)` | hover del CTA Comprar online                |
 
 Roles semánticos:
+
 - `--color-bg` = crema base.
 - `--color-bg-inverted` = tinta (footer).
 - `--color-text-primary` = tinta sobre crema.
@@ -125,6 +126,7 @@ Gestos que aparecen en toda la web:
 **Pendiente.** El logo definitivo está en Drive del cliente con acceso por login — debe descargarlo manualmente quien tiene la cuenta. Hasta entonces, el "logo" en header/footer/favicon es el isotipo "Q" tipográfico azul corporativo (`brand-mark` en CSS scoped del Header).
 
 Cuando llegue:
+
 - `src/assets/brand/logo-quem-central.svg` (full color primary)
 - `src/assets/brand/logo-quem-central-mono.svg`
 - `src/assets/brand/logo-quem-central-dark.svg` (para footer)

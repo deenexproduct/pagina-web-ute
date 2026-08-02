@@ -21,9 +21,12 @@ Hard rule. Tres formas de respetarlo según el caso:
 ### CSS
 
 `global.css` ya neutraliza durations + animations:
+
 ```css
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
@@ -32,15 +35,19 @@ Hard rule. Tres formas de respetarlo según el caso:
 ```
 
 Si agregás keyframes custom, envolvelos:
+
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  .my-fancy { animation: float 4s ease-in-out infinite; }
+  .my-fancy {
+    animation: float 4s ease-in-out infinite;
+  }
 }
 ```
 
 ### JS / Motion
 
 Usá `prefersReducedMotion()` de `src/lib/motion.ts`:
+
 ```tsx
 import { prefersReducedMotion, reveal } from '@/lib/motion';
 
@@ -85,13 +92,20 @@ Los mismos están duplicados en `src/lib/motion.ts` como JS objects (`ease`, `du
 ### Hover en CTAs
 
 CSS-only:
+
 ```css
 .cta {
-  transition: transform var(--dur-fast) var(--ease-standard),
-              background-color var(--dur-fast) var(--ease-standard);
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
 }
-.cta:hover { transform: translateY(-1px); background-color: var(--color-brand-600); }
-.cta:active { transform: translateY(0); }
+.cta:hover {
+  transform: translateY(-1px);
+  background-color: var(--color-brand-600);
+}
+.cta:active {
+  transform: translateY(0);
+}
 ```
 
 No usar Motion para esto. CSS es más liviano y respeta `prefers-reduced-motion` automáticamente.
@@ -102,7 +116,7 @@ No usar Motion para esto. CSS es más liviano y respeta `prefers-reduced-motion`
 import { motion } from 'motion/react';
 import { reveal } from '@/lib/motion';
 
-<motion.h2 {...reveal}>Título que aparece</motion.h2>
+<motion.h2 {...reveal}>Título que aparece</motion.h2>;
 ```
 
 `reveal` preset: opacity 0→1, y 24→0, duration 0.64s, ease outExpo, viewport once. **Stagger** entre items secuenciales con `transition.delay`.
@@ -122,15 +136,18 @@ gsap.registerPlugin(ScrollTrigger);
 useEffect(() => {
   if (prefersReducedMotion()) return;
   const ctx = gsap.context(() => {
-    gsap.timeline({
-      scrollTrigger: { trigger: '.scene', start: 'top top', end: '+=200%', pin: true, scrub: 1 },
-    }).to(/* ... */);
+    gsap
+      .timeline({
+        scrollTrigger: { trigger: '.scene', start: 'top top', end: '+=200%', pin: true, scrub: 1 },
+      })
+      .to(/* ... */);
   }, scope);
   return () => ctx.revert();
 }, []);
 ```
 
 Notas:
+
 - `gsap.context()` con `ctx.revert()` en cleanup es **no negociable** (memory leaks si no).
 - `scrub: 1` (no `true`) — atado al scroll con un poco de inercia, mejor sensación.
 - En React island, montar como `client:visible` (no `client:load`) para no bloquear LCP.
@@ -146,6 +163,7 @@ Astro tiene `<ClientRouter />` (View Transitions API nativo). Para institucional
 ## Lenis — smooth scroll
 
 Configurado en `src/components/SmoothScroll.tsx`:
+
 - `lerp: 0.1` — suave pero responsivo.
 - `smoothWheel: true`, `syncTouch: false` — touch nativo (interferir con touch es UX horrible mobile).
 - Se monta `client:idle` para no bloquear LCP.

@@ -1,0 +1,202 @@
+---
+/**
+ * LogoStrip — franja de logos genérica y reutilizable.
+ *
+ * La usan Aliados (spec punto 10) y cualquier otra franja futura
+ * (prensa, clientes, certificaciones).
+ *
+ * REGLA DE DEGRADACIÓN (patrón del repo): un item sin `logo` NO se
+ * renderiza, y si después de filtrar no queda ninguno el componente no
+ * monta nada. Mejor nada que una franja con huecos punteados: eso lee
+ * como "sitio en construcción".
+ *
+ * i18n: este componente no tiene copy propio a propósito. Todo lo
+ * visible viene del `titulo` que le pasa el padre (ya localizado) o del
+ * `name` de cada item (nombre propio). Así sigue siendo reutilizable
+ * sin arrastrar un diccionario.
+ *
+ * El `titulo` se renderiza como caption (`<p>`), NO como heading: la
+ * jerarquía de headings la maneja la `<section>` que lo contiene.
+ */
+import { link, type LogoItem } from '../../config/site';
+
+interface Props {
+  /** Items a renderizar. Los que no tengan `logo` se descartan. */
+  items: ReadonlyArray<LogoItem>;
+  /** Caption opcional, ya traducido por el padre. */
+  titulo?: string;
+  /** `plain` = franja al aire · `card` = cada logo en su tarjeta. */
+  variant?: 'plain' | 'card';
+  /** Prefijo de id, necesario para enlazar el caption con la lista. */
+  id?: string;
+}
+
+const { items, titulo, variant = 'plain', id } = Astro.props;
+
+/* Solo items con asset real. Ver regla de degradación arriba. */
+const visibles = items.filter((item) => item.logo.length > 0);
+
+const tituloId = titulo && id ? `${id}-caption` : undefined;
+
+const isExternal = (url: string): boolean =>
+  url.startsWith('http://') || url.startsWith('https://');
+---
+
+{
+  visibles.length > 0 && (
+    <div class:list={['logo-strip', `logo-strip--${variant}`]} id={id}>
+      {titulo && (
+        <p class="logo-strip__caption" id={tituloId} data-reveal style="--reveal-y: 10px;">
+          {titulo}
+        </p>
+      )}
+
+      <ul class="logo-strip__list" role="list" aria-labelledby={tituloId} data-reveal-stagger>
+        {visibles.map((item, idx) => (
+          <li class="logo-strip__item" data-reveal style={`--reveal-delay: ${idx * 60}ms;`}>
+            {item.url ? (
+              <a
+                class="logo-strip__link"
+                href={link(item.url)}
+                {...(isExternal(item.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                <img
+                  class="logo-strip__img"
+                  src={link(item.logo)}
+                  alt={item.name}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="logo-strip__name">{item.name}</span>
+              </a>
+            ) : (
+              <span class="logo-strip__link logo-strip__link--static">
+                <img
+                  class="logo-strip__img"
+                  src={link(item.logo)}
+                  alt={item.name}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="logo-strip__name">{item.name}</span>
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+<style>
+  .logo-strip {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .logo-strip__caption {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .logo-strip__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+  @media (min-width: 720px) {
+    .logo-strip__list {
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+      gap: var(--space-4);
+    }
+  }
+
+  .logo-strip__item {
+    display: grid;
+  }
+
+  /* Contenedor común a link y no-link: misma caja, mismo alto. */
+  .logo-strip__link {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--space-2);
+    min-height: 5.5rem;
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-standard);
+  }
+
+  .logo-strip__img {
+    max-width: 100%;
+    max-height: 2.75rem;
+    width: auto;
+    object-fit: contain;
+    /* Escala de grises por default para que la franja lea pareja.
+       El hover NO es la única señal: el nombre siempre está visible. */
+    filter: grayscale(1);
+    opacity: 0.72;
+    transition:
+      filter var(--dur-normal) var(--ease-out-cubic),
+      opacity var(--dur-normal) var(--ease-out-cubic);
+  }
+
+  .logo-strip__name {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-wide);
+    line-height: var(--leading-snug);
+    color: var(--color-text-muted);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+
+  /* ----- Variante card -------------------------------------------- */
+  .logo-strip--card .logo-strip__link {
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* ----- Estados: hover, foco y touch ------------------------------
+   * `:focus-within` replica el hover para teclado. En dispositivos sin
+   * hover los logos van siempre a color: si no, el 100% de los usuarios
+   * mobile nunca vería la versión buena.
+   * ---------------------------------------------------------------- */
+  a.logo-strip__link:hover .logo-strip__img,
+  a.logo-strip__link:focus-within .logo-strip__img {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+  a.logo-strip__link:hover .logo-strip__name,
+  a.logo-strip__link:focus-within .logo-strip__name {
+    color: var(--color-text-primary);
+  }
+  .logo-strip--card a.logo-strip__link:hover,
+  .logo-strip--card a.logo-strip__link:focus-within {
+    background-color: var(--color-bg-brand-soft);
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+  }
+
+  @media (hover: none) {
+    .logo-strip__img {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-strip--card a.logo-strip__link:hover,
+    .logo-strip--card a.logo-strip__link:focus-within {
+      transform: none;
+    }
+  }
+</style>

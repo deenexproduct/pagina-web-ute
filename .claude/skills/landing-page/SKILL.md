@@ -26,6 +26,7 @@ A futuro pueden sumarse: **Galería** (después de Propuesta), **Espacio** (entr
 - **Cierre**: mailto a `hola@ute.example.com` (cambiar cuando haya dominio real) + WhatsApp.
 
 Reglas:
+
 - **Un CTA primario por viewport** en mobile. En desktop, máximo 2 visibles a la vez.
 - Touch target ≥44×44px.
 - El CTA primario va en el hero **y** se repite en el cierre. No 6 veces en el medio.
@@ -42,9 +43,10 @@ Voz de marca de UTE = editorial, sensorial, sin marketing barato. Reglas:
 - **Tutear** ("vos") — UTE es argentino, no neutro. Pero formal: "querés ser de los primeros en sentarte, escribinos."
 
 Ejemplos que funcionan en el scaffold actual:
-- Hero: *"Una mesa que se queda con vos."* → promesa sensorial, no funcional.
-- Propuesta: *"Producto, paciencia y lugar."* → ritmo de tres, palabras concretas.
-- Contacto: *"Querés ser de los primeros en sentarse, escribinos."* → invitación directa, sin friction.
+
+- Hero: _"Una mesa que se queda con vos."_ → promesa sensorial, no funcional.
+- Propuesta: _"Producto, paciencia y lugar."_ → ritmo de tres, palabras concretas.
+- Contacto: _"Querés ser de los primeros en sentarse, escribinos."_ → invitación directa, sin friction.
 
 ## Patrones de conversión que **sí** aplican acá
 

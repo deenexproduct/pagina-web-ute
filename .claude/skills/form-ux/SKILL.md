@@ -24,6 +24,7 @@ form.addEventListener('submit', (e) => {
 
 Pros: cero backend, funciona offline.
 Cons:
+
 - Depende del cliente de email del usuario.
 - No hay confirmación visual de envío.
 - Sin tracking de conversiones.
@@ -52,8 +53,10 @@ Setup: agregar `data-netlify="true"` al `<form>`. Cero código backend.
 
 ```html
 <form name="contacto" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-  <input type="hidden" name="form-name" value="contacto">
-  <p hidden><label>No completar: <input name="bot-field"></label></p>
+  <input type="hidden" name="form-name" value="contacto" />
+  <p hidden>
+    <label>No completar: <input name="bot-field" /></label>
+  </p>
   <!-- inputs -->
 </form>
 ```
@@ -99,8 +102,13 @@ form.querySelectorAll('input, select, textarea').forEach((field) => {
 .field[data-invalid='true'] input {
   border-color: var(--color-danger);
 }
-.field[data-invalid='true'] .field-error { display: block; }
-.field-error { display: none; color: var(--color-danger); }
+.field[data-invalid='true'] .field-error {
+  display: block;
+}
+.field-error {
+  display: none;
+  color: var(--color-danger);
+}
 ```
 
 ### 2. Required indicator visible
@@ -109,7 +117,7 @@ En el label, no solo en el `required` attribute:
 
 ```html
 <label for="nombre">Nombre y apellido <span aria-label="obligatorio">*</span></label>
-<input id="nombre" name="nombre" required>
+<input id="nombre" name="nombre" required />
 ```
 
 Asterisco rojo o muted ayuda a escanear.
@@ -120,11 +128,11 @@ Nunca usar `placeholder` como label. Cuando el user empieza a escribir, pierde e
 
 ```html
 <!-- MAL -->
-<input placeholder="Tu email">
+<input placeholder="Tu email" />
 
 <!-- BIEN -->
 <label for="email">Email</label>
-<input id="email" placeholder="ejemplo@empresa.com">
+<input id="email" placeholder="ejemplo@empresa.com" />
 ```
 
 Placeholder = ejemplo / formato hint. Label = qué pide el input.
@@ -134,10 +142,10 @@ Placeholder = ejemplo / formato hint. Label = qué pide el input.
 Sumar `autocomplete` para que el browser auto-rellene:
 
 ```html
-<input name="nombre" autocomplete="name">
-<input name="empresa" autocomplete="organization">
-<input name="telefono" autocomplete="tel">
-<input name="email" autocomplete="email">
+<input name="nombre" autocomplete="name" />
+<input name="empresa" autocomplete="organization" />
+<input name="telefono" autocomplete="tel" />
+<input name="email" autocomplete="email" />
 ```
 
 Acelera completar el form 3-5x en mobile.
@@ -145,7 +153,7 @@ Acelera completar el form 3-5x en mobile.
 ### 5. `inputmode` para tipos numéricos
 
 ```html
-<input type="tel" inputmode="tel">
+<input type="tel" inputmode="tel" />
 ```
 
 En mobile, abre teclado numérico, no QWERTY completo.
@@ -159,7 +167,9 @@ En vez de redirigir a `/thank-you`, reemplazar el form con un panel de éxito en
   <form data-form>...</form>
   <div data-form-success hidden>
     <div class="success-icon">
-      <svg viewBox="0 0 24 24" fill="none"><path d="m4 12 6 6 10-14" stroke="var(--color-success)" stroke-width="3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="m4 12 6 6 10-14" stroke="var(--color-success)" stroke-width="3" />
+      </svg>
     </div>
     <h3>Recibimos tu consulta</h3>
     <p>Te responde el equipo comercial en menos de 48hs.</p>
@@ -176,8 +186,9 @@ Field hidden que los bots completan pero humanos no:
 
 ```html
 <div class="visually-hidden" aria-hidden="true">
-  <label>No completar este campo si sos humano:
-    <input name="website" tabindex="-1" autocomplete="off">
+  <label
+    >No completar este campo si sos humano:
+    <input name="website" tabindex="-1" autocomplete="off" />
   </label>
 </div>
 ```
@@ -225,6 +236,7 @@ const tipos = [
 ```
 
 Cuando se conecte a un CRM, **mapear cada tipo a una cola/persona distinta**:
+
 - Compra B2B → ventas@
 - Corner QUEM → Joaquín (Director Expansión)
 - Franquicias → Joaquín

@@ -1,255 +1,212 @@
-# CLAUDE.md — QUEM Central web institucional
+# CLAUDE.md — QUEM · landing institucional
 
 Memoria de proyecto para futuras sesiones. Si algo de acá choca con la realidad del repo, **manda la realidad** — y después actualizá este archivo.
 
-> **Rebrand**: el proyecto originalmente era "UTE / Meet & Quem". Pasó a llamarse **QUEM Central** (decisión del cliente, 2026-05-23). Toda referencia anterior a UTE / Palta / Emplatame / Meet & Quem / Marcos Aldazabal está eliminada del producto. El nombre del repo local (`pagina-web-ute`) y el repo remoto (`deenexproduct/pagina-web-ute`) quedan por compatibilidad; el package.json y la marca visible son **QUEM Central**.
+> **Historia de marca**: el proyecto nació como "UTE / Meet & Quem", pasó a **QUEM Central** (2026-05-23) y en **Fase 1 (2026-07-27)** se reposicionó otra vez: ahora **QUEM es el grupo** y "Qüem Central" es **una de sus 4 unidades**. Toda referencia a UTE / Palta / Emplatame / Meet & Quem / Marcos Aldazabal está prohibida en el producto. El repo se sigue llamando `pagina-web-ute` (local y en `deenexproduct/pagina-web-ute`) por compatibilidad.
+
+---
+
+## ⚠️ Fase 1 — leer antes de tocar nada
+
+El sitio se **reconstruyó según** `QUEM_Landing_Fase1_Spec.md` (spec del cliente, jul 2026). Esto **derogó** las reglas anteriores del proyecto. Si venís con contexto viejo, esto es lo que cambió:
+
+| Antes                                       | Ahora (Fase 1)                                           |
+| ------------------------------------------- | -------------------------------------------------------- |
+| Qüem Central = marca madre                  | **QUEM = grupo**; Central es una unidad                  |
+| CTA "Comprar online" siempre visible        | **No existe.** Toda CTA va a contacto o WhatsApp         |
+| Catálogo de 11 categorías con deep-link app | Fuera de Fase 1                                          |
+| Solo español                                | **Bilingüe ES/EN** (`/` y `/en`)                         |
+| `/corner-quem` enlazada desde el nav        | **Despublicada**: `noindex`, fuera del nav y del sitemap |
+| Form con `mailto:`                          | `fetch` a un form-backend, con estados reales            |
+
+**Regla dura de Fase 1**: ninguna CTA deriva a subwebs ni a `app.quem-central.com`. Todo va al formulario (con el interés preseleccionado) o a WhatsApp.
 
 ---
 
 ## Objetivo
 
-Web institucional de **QUEM Central** — plataforma integral de abastecimiento, distribución y desarrollo comercial de alimentos congelados (cliente de Deenex). **No es una landing comercial**: construye percepción de escala, solidez, operación y ecosistema. La conversión sucede en la app.
+Landing institucional de **QUEM**, grupo de alimentos congelados (cliente de Deenex). Construye percepción de escala, solidez y operación de grupo. **La conversión de la fase es el formulario de contacto.**
 
-- Tipo: site institucional + derivación a la app vía CTA "Comprar online".
-- Audiencias (en orden de prioridad): B2B gastronómicos → franquiciados/corners → inversores → proveedores/marcas.
-- Métricas: percepción de marca, intención de compra (clicks a `Comprar online` → app), conversión por canal alternativo (WhatsApp / form contacto).
-- Fuente de verdad del contenido: `docs/brief-quem-central.md` (transcripto del brief del cliente).
+- Audiencias: mayoristas gastronómicos → franquiciados/córners → inversores → proveedores.
+- Métrica: leads calificados por el form, segmentados por interés.
+- Fuente de verdad del contenido: `docs/brief-quem-central.md` + el spec de Fase 1.
 
 ---
 
 ## Stack
 
-- **Astro 6** + TypeScript strictest.
+- **Astro 6** + TypeScript strictest. Sitio **estático** (sin backend propio).
 - **Tailwind CSS v4** vía `@tailwindcss/vite` (CSS-first).
-- **React 19 islands** (`@astrojs/react`) solo para piezas interactivas.
-- **Motion 12** + **GSAP 3** (ScrollTrigger) para animaciones — usar con criterio, motion corporativo no editorial.
-- **Lenis 1.3** smooth scroll (condicionado a `prefers-reduced-motion`).
-- **@fontsource-variable/inter** + **@fontsource-variable/fraunces** self-hosted (Fraunces reservada, default Inter).
+- **Leaflet 1.9** self-hosted para el mapa de ubicaciones (tiles CARTO/OSM). Sin Google Maps: pide API key con billing.
+- **Motion 12** + **GSAP 3** disponibles; **Lenis 1.3** smooth scroll (condicionado a `prefers-reduced-motion`).
+- **@fontsource-variable/inter** + **fraunces** self-hosted (Fraunces reservada, default Inter).
 - **@astrojs/sitemap**, imágenes con **Sharp**.
 - **ESLint 10** + **Prettier 3** + `astro check`.
 - Deploy target: **Vercel** (no deployear sin OK del owner).
 
-Node mínimo: 22.12 (`.nvmrc` apunta a `22`). Package manager: **pnpm 10** (no mezclar con npm).
+Node mínimo 22.12. Package manager **pnpm 10** (no mezclar con npm).
+
+> `@astrojs/react` está en `package.json` pero **no** en `integrations` de `astro.config.mjs`. No hay islands React. Si vas a agregar uno, primero sumá la integración.
+
+---
+
+## i18n — cómo se escribe copy en este proyecto
+
+**Regla dura: cero strings visibles hardcodeados en el markup.** Incluye `aria-label`, `alt`, `placeholder` y `title`.
+
+Routing: `es` es default sin prefijo (`/`), `en` vive en `/en`. Configurado en `astro.config.mjs`. `trailingSlash: 'never'`.
+
+- **Strings compartidos** (nav, CTAs recurrentes, footer, a11y, SEO) → `src/i18n/ui.ts`, se leen con `t('clave')`.
+- **Copy propio de una sección** → un `const COPY = { es: {...}, en: {...} } as const` **co-locado arriba del `.astro`**. Así ninguna sección pisa a otra y el archivo se lee solo.
+
+```astro
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const COPY = { es: { titulo: 'Algo' }, en: { titulo: 'Something' } } as const;
+const c = COPY[lang];
+---
+
+<h2>{c.titulo}</h2>
+```
+
+Para links internos: `localizedPath(path, lang)`. Para el form: `contactLink(interes?, lang)`.
+**Siempre pasá `lang`** — sin él, un CTA en `/en` devuelve al visitante a la home en español.
 
 ---
 
 ## Config central — `src/config/site.ts`
 
-**Fuente única de verdad para todo lo variable o pendiente.** Importá desde `src/config/site` en los componentes; no hardcodees nada en markup.
+Fuente única de verdad de todo lo variable o pendiente. No hardcodees nada en markup.
 
-Lo que vive en `site.ts`:
+- `BRAND` — grupo, razón social, wordmark, `logoSvg` (vacío → lockup tipográfico de fallback).
+- `UNIDADES` — las 4 del spec: Tiendas · Central · Smart · Origen. **3 tienen `draft: true`**.
+- `INTERESES` — **diccionario canónico**, las 6 opciones del form. Lo consumen el form, las 4 tarjetas y el ruteo. `OPCIONES_DESTACADAS` es el subconjunto de 4. **Nunca duplicar esta lista.**
+- `contactLink(interes?, lang)` / `whatsappLink(msg?, lang)` — helpers de CTA.
+- `FORM_ENDPOINT` + `FORM_ACCESS_KEY` → `hasFormBackend()`. Vacíos → el form degrada a `mailto:` y lo avisa en la UI.
+- `HERO_VIDEO` → `hasHeroVideo()`. Vacío → el hero renderiza su fondo tratado sin video.
+- `STORE_LINKS`, `SOCIAL` + `activeSocials()`, `WHATSAPP` + `hasWhatsapp()`, `ALIADOS`, `METRICS`, `NAV_PRIMARY`, `ADDRESS`, `SEO`, `ANALYTICS`.
 
-- `SITE_DOMAIN` / `SITE_URL` — dominio web institucional. *TODO confirmar compra.*
-- `APP_BASE_URL` — base de la app/catálogo (`app.quem-central.com`).
-- `EMAILS` — comercial / ventas / contacto. *TODO confirmar.*
-- `WHATSAPP` — número final. Mientras esté vacío, todos los CTAs "Contactar por WhatsApp" caen a `/contacto`. *TODO confirmar.*
-- `JOAQUIN_TITLE` — default `Director de Expansión Comercial`. *GATE del cliente.*
-- `TEAM` — Walter, Matías, Joaquín (en ese orden).
-- `SHOW_METRICS` — `false` por default. Cuando el cliente habilite datos reales, poner en `true` y completar `METRICS`. **No inventar números.**
-- `CATEGORIES` — 11 categorías iniciales del brief, con slug + nombre + foto + appUrl opcionales.
-- `NAV_PRIMARY` — 7 items: Plataforma, Productos, Corner Qüem, Garantías, Prensa, Partners, Contacto. Corner Qüem es la única ruta real (sin sectionId). El resto son anchors a secciones de la home.
-- `SEO` — title, description, keywords, og default.
-- `ADDRESS` — dirección física si corresponde. *TODO si aplica.*
-- `SOCIAL` — instagram, linkedin (vacíos por default; si vacío no se renderiza en footer).
+**Patrón de degradación elegante**: si un dato está vacío, el componente lo oculta o muestra un placeholder deliberado. Nunca un link muerto ni un hueco roto. Replicalo en todo lo nuevo.
 
-Cualquier dato nuevo que el cliente deba confirmar va con `// TODO confirmar con cliente`.
+Dato nuevo que el cliente deba confirmar → `// TODO confirmar con cliente`.
 
 ---
 
-## Estructura
+## Arquitectura de la home
 
-```
-pagina-web-ute/                   # nombre histórico del repo
-├── .claude/skills/               # skills propias (versionadas)
-├── docs/
-│   ├── brief-quem-central.md     # transcripción del brief del cliente
-│   └── brief-quem-central.pdf
-├── public/                       # static assets (favicon, robots, og, video)
-├── src/
-│   ├── assets/
-│   │   └── brand/                # TODO logo definitivo desde Drive
-│   ├── components/
-│   │   ├── layout/               # Header.astro, Footer.astro
-│   │   ├── ui/                   # primitives (ScrollToTop, etc.)
-│   │   └── SmoothScrollLenis.astro
-│   ├── config/
-│   │   └── site.ts               # FUENTE ÚNICA DE VERDAD config variable
-│   ├── layouts/
-│   │   └── BaseLayout.astro      # SEO + JSON-LD + Header + Footer + scripts
-│   ├── lib/                      # utils
-│   ├── sections/                 # secciones de la home
-│   │   ├── HeroCorporativo.astro
-│   │   ├── ProofStrip.astro      # banda trust signal (fuente: La Nación oct 2023)
-│   │   ├── QueEsQuemCentral.astro
-│   │   ├── PlataformaApp.astro
-│   │   ├── CategoriasProducto.astro
-│   │   ├── Garantias.astro
-│   │   ├── QuemEnNumeros.astro   # logos clientes — oculto hasta tener assets reales
-│   │   ├── Ecosistema.astro
-│   │   ├── FranquiciasExpansion.astro
-│   │   ├── EquipoDirectivo.astro
-│   │   ├── Contacto.astro
-│   │   ├── UnidadesDeNegocio.astro  # DEAD CODE — no importado en index.astro
-│   │   ├── corner/               # secciones de /corner-quem
-│   │   │   ├── CornerHero.astro
-│   │   │   ├── CornerFormatos.astro
-│   │   │   ├── CornerIncluye.astro
-│   │   │   ├── CornerDonde.astro
-│   │   │   ├── CornerValor.astro
-│   │   │   └── CornerTeaser.astro  # teaser en home, importado desde index.astro
-│   │   └── prensa/               # secciones de prensa
-│   │       ├── PrensaList.astro  # importado en home
-│   │       ├── PrensaHero.astro
-│   │       └── PrensaContact.astro
-│   ├── styles/
-│   │   ├── tokens.css            # design tokens — FUENTE ÚNICA DE VERDAD visual
-│   │   └── global.css            # reset + @theme + bases + .btn presets
-│   └── pages/
-│       ├── index.astro           # home
-│       ├── corner-quem.astro     # /corner-quem
-│       └── 404.astro             # /404
-├── astro.config.mjs
-├── tsconfig.json
-├── eslint.config.js
-├── .prettierrc.json
-├── vercel.json
-├── package.json                  # name: "quem-central-website"
-└── README.md
-```
+El orden vive en `src/layouts/Home.astro`, compartido por `/` y `/en`. Es el de los 12 puntos del spec:
 
-Cualquier nueva sección de la home → `src/sections/`. Cualquier componente reutilizable → `src/components/`.
+1. Header (sticky, nav de 5 anclas, selector ES/EN, CTA Contacto)
+2. `HeroCorporativo` — `#hero`
+3. `Opciones` — `#opciones`, las 4 tarjetas (hub navegacional)
+4. `DescargarApp` — `#descargar-app` (app de QUEM **Tiendas**, consumidor final)
+5. `QuienesSomos` — `#nosotros` (absorbe las métricas de prensa)
+6. `UnidadesDeNegocio` — `#unidades`
+7. `Ubicaciones` — `#ubicaciones` (mapa Leaflet lazy + lista server-side)
+8. `CTABand` ×3, intercaladas (mayorista / franquicia / inversión)
+9. `PrensaList` — `#prensa`
+10. `Aliados` (se auto-oculta: `ALIADOS` está vacío)
+11. `Contacto` — `#contacto`
+12. Footer + `SocialDock` flotante (se auto-oculta: no hay redes cargadas)
+
+Rutas: `/`, `/en`, `/corner-quem` (**despublicada**, `noindex`), `/404`.
+
+**IDs canónicos**: los ancla `NAV_PRIMARY` y los ilumina el scroll-spy del header. No renombrar de un solo lado.
+
+**Secciones fuera de Fase 1**: viven en `docs/fase2-sections/` con su propio README. No están rotas — salieron de scope. Están fuera de `src/` para que `astro check` no las tipe contra el `site.ts` nuevo.
 
 ---
 
-## Arquitectura del sitio (orden REAL en index.astro — 2026-05-27)
+## Dirección de arte
 
-Home (`/`):
-1. Header (sticky, CTA Comprar online siempre visible)
-2. HeroCorporativo
-3. ProofStrip (trust signal desde prensa pública — siempre visible)
-4. QueEsQuemCentral
-5. PlataformaApp
-6. CategoriasProducto
-7. Garantias
-8. QuemEnNumeros (logos clientes — **oculto** hasta tener assets reales; `hideSection=true`)
-9. PrensaList
-10. [divider partners]
-11. Ecosistema
-12. CornerTeaser (teaser → enlace a `/corner-quem`)
-13. FranquiciasExpansion
-14. EquipoDirectivo
-15. Contacto
-16. Footer
+Mood: grupo sólido, institucional, con escala. No parece tienda online.
 
-Página `/corner-quem`: CornerHero → CornerFormatos → CornerIncluye → CornerDonde → CornerValor.
+Paleta en `src/styles/tokens.css` — **oliva/dorado**:
 
-Rutas activas: `/` (home), `/corner-quem`, `/404`. No existen rutas separadas para ecosistema, unidades, productos, franquicias ni contacto.
+| Rol        | Hex       | Uso                                |
+| ---------- | --------- | ---------------------------------- |
+| Crema base | `#F8F9FB` | bg light                           |
+| Tinta      | `#111623` | text-primary                       |
+| Brand 500  | `#93936E` | oliva (links, isotipo, eyebrows)   |
+| Accent 500 | `#E1DF84` | dorado (énfasis, CTA sobre oscuro) |
 
-> **Dead code**: `UnidadesDeNegocio.astro` existe en `src/sections/` pero NO se importa en `index.astro`. Mantener hasta decisión del cliente sobre si re-integrar o eliminar.
+> Si alguna vez ves `oklch()` con hue **azul (~254) o verde (~155)**, es residuo de una paleta abandonada: tokenizalo al oliva/dorado.
+
+Tipografía: Inter variable. Display = 600-700 con `--tracking-tightest`. Fraunces disponible pero **reservada**.
+
+Botones: `.btn-primary` (oliva) · `.btn-secondary` (dorado) · `.btn-outline` · `.btn-ghost`. Touch targets ≥44×44 obligatorio.
+
+**Cero estilos hardcodeados**: color, tipografía, spacing, radii, sombras, easings y duraciones salen de `tokens.css`.
 
 ---
 
-## Convenciones de código
+## Reglas de contenido no negociables
 
-- TS estricto, sin `any`.
-- Imports tipo: `import type { Foo } from '...'` o inline `import { type Foo }`.
-- Astro components → `PascalCase.astro`. React → `PascalCase.tsx`. Utils → `camelCase.ts`.
-- CSS class names: BEM-ish dentro de `<style>` scoped (`.hero__title`, `.eco-card__icon`). Tailwind para layout en wrappers.
-- **Cero estilos hardcodeados.** Color, tipografía, spacing, radii, sombras, easings y duraciones salen de `src/styles/tokens.css`.
-- React islands solo cuando hay interactividad real (SmoothScroll, eventualmente animaciones complejas). Default: Astro estático.
-
----
-
-## Dirección de arte — corporativo moderno
-
-**Estado vigente** (definido en el rebrand 2026-05-23).
-
-Mood: empresa con ecosistema, sólida, tech-friendly, no parece tienda online. Inspiración: institucional B2B moderno. Evitá tono Aman/restaurante editorial.
-
-### Paleta (en `tokens.css`)
-
-> **Estado real (2026-05-25)**: tokens.css usa paleta editorial oliva/dorado, heredada del sitio UTE original. El brief inicial (2026-05-23) especificaba azul/verde — ese cambio fue revertido deliberadamente. Si se vuelve al azul/verde, actualizar este archivo Y tokens.css.
-
-| Rol            | Hex (aprox) | OKLCH                       | Uso                                        |
-|----------------|-------------|-----------------------------|--------------------------------------------|
-| Crema base     | `#F8F9FB`   | `oklch(98% 0.003 240)`      | bg light                                   |
-| Tinta          | `#111623`   | `oklch(15% 0.018 240)`      | text-primary                               |
-| Brand 500      | `#93936E`   | `oklch(60% 0.030 100)`      | oliva/caqui (links, isotipo, eyebrows)     |
-| Accent 500     | `#E1DF84`   | `oklch(88% 0.115 105)`      | dorado/amarillo (CTA Comprar online)       |
-
-Roles semánticos: `--color-bg`, `--color-text-primary`, `--color-text-brand` (oliva), `--color-text-accent` (dorado).
-
-### Tipografía
-
-- **Display + Sans**: Inter variable. Display = pesos 600-700 con `--tracking-tightest` (-0.03em).
-- **Serif**: Fraunces variable disponible pero **reservada** — no se usa por default. Solo si llegara a aparecer un detalle expresivo puntual.
-
-### CTAs
-
-- **Primario** `.btn .btn-primary` = dorado/accent. Para "Comprar online".
-- **Secundario** `.btn .btn-secondary` = oliva/brand. Para CTAs de conversión secundaria.
-- **Outline / Ghost** para tertiary.
-
-Touch targets ≥44×44 obligatorio.
-
----
-
-## Reglas de contenido no-negociables
-
-1. La marca visible es **QUEM Central**. Cero menciones a UTE / Palta / Emplatame / Marcos Aldazabal / Meet & Quem.
-2. CTA principal **Comprar online** visible siempre (header sticky + hero + contacto + footer).
-3. Categorías de producto **redirigen a la app** vía `categoryUrl()` de `site.ts`. No es catálogo.
-4. **No inventar métricas**. `QuemEnNumeros.astro` renderea la versión institucional suave hasta `SHOW_METRICS=true` con datos reales.
-5. Equipo: Walter (Presidente QUEM S.A.), Matías (CEO QUEM Central), Joaquín (`JOAQUIN_TITLE`). Nadie más.
-6. Footer dice "Creado por Deenex".
+1. La marca visible es **QUEM** (grupo). Cero menciones a UTE / Palta / Emplatame / Meet & Quem / Marcos Aldazabal — **esto incluye el contenido de videos e imágenes**, no solo el texto.
+2. **Ninguna CTA a subwebs ni a la app B2B.** Todo va al form (con interés preseleccionado) o a WhatsApp.
+3. **No inventar métricas.** `METRICS` son datos reales sourceados de prensa (La Nación, oct. 2023) y la atribución se renderiza. Si un número no tiene fuente, no se publica.
+4. Copy marcado `draft: true` es borrador pendiente de aprobación del cliente. Es greppable a propósito.
+5. Footer dice "Creado por Deenex".
 
 ---
 
 ## Comandos
 
 ```bash
-pnpm dev           # dev server (puerto default 4321)
-pnpm build         # build producción → dist/
-pnpm preview       # servir el build local
-pnpm check         # astro check (TS + Astro)
-pnpm lint          # ESLint sin warnings tolerados
-pnpm format        # Prettier write
+pnpm dev      # dev server (4321)
+pnpm build    # build producción → dist/
+pnpm check    # astro check (TS + Astro)
+pnpm lint     # ESLint, cero warnings tolerados
+pnpm format   # Prettier write
 ```
+
+Los tres gates (`check`, `lint`, `build`) tienen que pasar antes de cualquier PR.
 
 ---
 
 ## Gates (preguntar antes de hacer)
 
-- Confirmar/cambiar el cargo de Joaquín o habilitar métricas reales.
+- Revertir cualquiera de las decisiones de producto de Fase 1 (ver la tabla de arriba).
+- Definir qué son **"QUEM Smart"** y **"QUEM Origen"** — hoy el copy es inferido.
 - Mergear PR, deploy a producción, comprar/conectar dominio.
-- Cualquier cosa que toque credenciales, pagos, accesos a archivos con login (logo en Drive).
+- Cualquier cosa que toque credenciales o archivos con login (logo en el Drive).
 
 ---
 
-## TODOs abiertos
+## TODOs abiertos — bloquean la publicación
 
-- [ ] Confirmar dominio `quem-central.com` → reemplazar en `astro.config.mjs`, `public/robots.txt`, `vercel.json` (ya están preparados).
-- [ ] Logo definitivo desde Drive (acceso solo del cliente). Va en `src/assets/brand/`.
-- [ ] og-default.jpg (1200×630) con logo real.
-- [ ] Favicon system completo (16/32/180/192/512) cuando llegue logo.
-- [ ] Mails institucionales reales (vienen en `EMAILS` de `site.ts`).
-- [ ] WhatsApp final (variable `WHATSAPP` en `site.ts`). Cuando esté, los CTAs "Contactar por WhatsApp" lo usan auto.
-- [ ] Cargo de Joaquín Sepúlveda (variable `JOAQUIN_TITLE`).
-- [ ] Decisión sobre métricas (`SHOW_METRICS`).
-- [ ] Fotos definitivas: productos por categoría, corners, tiendas, logística, equipo.
-- [ ] Endpoint real del form de contacto (hoy es mailto cliente). Opciones: Formspree, Netlify Forms, propio backend.
-- [ ] CI GitHub Actions: lint + check + build.
-- [ ] Redirects desde la web anterior `ute.deenex.tech` cuando se haga el switch DNS.
+**Bloquean desarrollo**
+
+- [ ] Confirmar qué son "Smart" y "Origen", y si "Smart" (unidad) y "Smart Market" (interés) son lo mismo.
+- [ ] Los 6 mails de ruteo de `INTERESES` (o al menos si son 6 buzones o uno con etiquetas).
+- [ ] Alta del form-backend → `FORM_ENDPOINT` + `FORM_ACCESS_KEY`. **Hoy el form degrada a `mailto:`.**
+
+**Bloquean solo el swap de placeholder**
+
+- [ ] Logo definitivo (SVG + variantes) → `BRAND.logoSvg`.
+- [ ] **Video del hero**: nativo 16:9 o 21:9, ≥1920×1080, 8-12 s, sin audio, sin subtítulos quemados, sin marcas de terceros. El anterior se retiró (ver abajo).
+- [ ] Fotos: planta, depósito, cámara de frío, flota, tiendas, córners, y una por unidad. **Hoy no hay ni un asset institucional en el repo.**
+- [ ] Logos de aliados/proveedores (`ALIADOS`) y de medios de prensa (`PressItem.logo`).
+- [ ] Relevamiento real de ubicaciones → reemplazar `src/config/locations.ts` (hoy `LOCATIONS_ARE_DUMMY = true`).
+- [ ] `WHATSAPP`, `STORE_LINKS`, `SOCIAL`, `ADDRESS`, `ANALYTICS.plausibleDomain`.
+- [ ] Compra del dominio → canonical, sitemap, robots.
+- [ ] og-default.jpg con el logo real (1200×630).
+
+---
+
+## Trampas conocidas
+
+- **`docs/legacy-assets/`** tiene el `hero.mp4` original y su poster. **No republicarlos**: llevan marca _Emplatame_ y watermark _@MEETYQUEM_ quemadas, prohibidas por la regla #1. Era además un video vertical de celular con subtítulos quemados.
+- **Lenis intercepta el scroll programático.** `window.scrollTo` y `scrollIntoView` no siempre funcionan al testear con un navegador headless; el lazy-load del mapa depende de un scroll real.
+- **`trailingSlash: 'never'`**: `/en/` da 404, `/en` funciona. `localizedPath` ya normaliza esto — no lo rompas.
+- El linter de a11y solo inspecciona 2 niveles de anidado en `<label>`; las cards de radio del form están a 3, por eso `eslint.config.js` sube `depth` en vez de apagar la regla.
 
 ---
 
 ## Skills del proyecto
 
-Versionadas en `.claude/skills/`:
+Versionadas en `.claude/skills/`: `landing-page`, `ux-ui-design`, `motion-interactions`, `seo-performance`, `responsive-mobile-first`, `brand-quem-central`, `a11y-deep`, `astro-patterns`, `form-ux`, `icon-system`, `micro-interactions`, `performance-frontend`, `scroll-storytelling`, `tailwind-v4`, `ux-writing-es-ar`.
 
-- `landing-page` — arquitectura de secciones y copy framework.
-- `ux-ui-design` — sistema de diseño, tokens, accesibilidad.
-- `motion-interactions` — Motion/GSAP, reduced-motion.
-- `seo-performance` — meta/OG/schema, Lighthouse 95+.
-- `responsive-mobile-first` — breakpoints, clamp(), touch targets.
-- `brand-quem-central` — voz, paleta, tipografía, reglas visuales actuales.
+> Varias de estas skills traen contexto **anterior** a Fase 1 (mencionan "Comprar online", paleta azul/verde, o Qüem Central como marca madre). Cuando choquen con este archivo, **manda este archivo**.

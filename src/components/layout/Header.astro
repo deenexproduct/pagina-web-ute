@@ -1,75 +1,173 @@
 ---
-import { NAV_PRIMARY, APP_IS_LIVE, buyOnlineLink, link } from '../../config/site';
+import Logo from '../ui/Logo.astro';
+import { NAV_PRIMARY, contactLink } from '../../config/site';
+import type { NavKey } from '../../config/site';
+import {
+  ALL_LANGS,
+  alternatePath,
+  getLangFromUrl,
+  localizedPath,
+  useTranslations,
+} from '../../i18n/utils';
+import { LANGS } from '../../i18n/ui';
+import type { Lang, UIKey } from '../../i18n/ui';
 
-const buyHref = buyOnlineLink();
-/* Si la app NO está live, el CTA cae al form interno → no target=_blank */
-const buyTargetProps = APP_IS_LIVE
-  ? { target: '_blank', rel: 'noopener' }
-  : {};
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const COPY = {
+  es: { navMobile: 'Navegación principal, versión móvil' },
+  en: { navMobile: 'Main navigation, mobile' },
+} as const;
+const c = COPY[lang];
+
+/*
+ * Contrato entre `NavKey` (site.ts) y las claves `nav.*` (ui.ts). Está
+ * escrito a mano a propósito: si una de las dos listas cambia sin la
+ * otra, esto deja de compilar en vez de renderizar una clave muerta.
+ */
+const NAV_LABEL: Record<NavKey, UIKey> = {
+  nosotros: 'nav.nosotros',
+  unidades: 'nav.unidades',
+  ubicaciones: 'nav.ubicaciones',
+  prensa: 'nav.prensa',
+  contacto: 'nav.contacto',
+};
+
+const LANG_LABEL: Record<Lang, UIKey> = {
+  es: 'lang.es',
+  en: 'lang.en',
+};
+
+/* Los `sectionId` viajan al DOM como `data-section`: son la entrada del
+   scroll-spy, que los matchea contra el `id` de cada <section>. */
+const navItems = NAV_PRIMARY.map((item) => ({
+  href: localizedPath(item.href, lang),
+  label: t(NAV_LABEL[item.key]),
+  sectionId: item.sectionId,
+}));
+
+const contactHref = contactLink(undefined, lang);
+
+const homeHref = localizedPath('/', lang);
+
+/* Selector de idioma — se renderiza dos veces (desktop + menú mobile),
+   pero los datos se calculan una sola vez. */
+const langItems = ALL_LANGS.map((l) => ({
+  code: l,
+  short: LANGS[l],
+  href: alternatePath(Astro.url, l),
+  name: t(LANG_LABEL[l]),
+  active: l === lang,
+}));
 ---
 
 <header class="site-header" data-header>
   <div class="site-header__inner container-content">
-    <a class="site-header__brand" href={link('/')} aria-label="Qüem Central · inicio">
-      <span class="brand-mark" aria-hidden="true">Q</span>
-      <span class="brand-name">Qüem <em>Central</em></span>
+    <a class="site-header__brand" href={homeHref} aria-label={t('nav.inicio')}>
+      <Logo variant="header" />
     </a>
 
-    <nav class="site-header__nav" aria-label="Navegación principal">
+    <nav class="site-header__nav" aria-label={t('nav.aria')}>
       <ul>
-        {NAV_PRIMARY.filter((i) => i.href !== '/').map((item) => (
-          <li>
-            <a
-              href={link(item.href)}
-              class="nav-link"
-              data-section={item.sectionId}
-              data-nav-link
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={item.href} class="nav-link" data-section={item.sectionId} data-nav-link>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </nav>
 
     <div class="site-header__actions">
-      <a class="btn btn-primary site-header__cta" href={buyHref} {...buyTargetProps}>
-        Comprar online
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+      <div class="lang-switch site-header__lang" role="group" aria-label={t('lang.aria')}>
+        {
+          langItems.map((l) => (
+            <a
+              class="lang-switch__item"
+              href={l.href}
+              hreflang={l.code}
+              lang={l.code}
+              aria-current={l.active ? 'true' : undefined}
+            >
+              <span class="sr-only">{l.name}</span>
+              <span aria-hidden="true">{l.short}</span>
+            </a>
+          ))
+        }
+      </div>
+
+      <a class="btn btn-primary site-header__cta" href={contactHref}>
+        {t('cta.contacto')}
       </a>
-      <button class="site-header__menu-toggle" type="button" aria-controls="mobile-nav" aria-expanded="false" data-menu-toggle>
-        <span class="sr-only">Abrir menú</span>
+
+      <button
+        class="site-header__menu-toggle"
+        type="button"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        data-menu-toggle
+        data-label-open={t('nav.abrir')}
+        data-label-close={t('nav.cerrar')}
+      >
+        <span class="sr-only" data-menu-label>{t('nav.abrir')}</span>
         <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-          <path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+          <path
+            d="M3 6h16M3 11h16M3 16h16"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"></path>
         </svg>
       </button>
     </div>
   </div>
 
   <div id="mobile-nav" class="mobile-nav" hidden data-mobile-nav>
-    <nav aria-label="Navegación mobile">
+    <nav aria-label={c.navMobile}>
       <ul>
-        {NAV_PRIMARY.map((item) => (
-          <li>
-            <a
-              href={link(item.href)}
-              class="mobile-nav__link"
-              data-menu-link
-              data-section={item.sectionId}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {
+          navItems.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="mobile-nav__link"
+                data-menu-link
+                data-section={item.sectionId}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
         <li>
-          <a class="btn btn-primary mobile-nav__cta" href={buyHref} {...buyTargetProps}>
-            Comprar online
+          <a class="btn btn-primary mobile-nav__cta" href={contactHref} data-menu-link>
+            {t('cta.contacto')}
           </a>
         </li>
       </ul>
     </nav>
+
+    <div class="mobile-nav__lang">
+      <div class="lang-switch" role="group" aria-label={t('lang.aria')}>
+        {
+          langItems.map((l) => (
+            <a
+              class="lang-switch__item"
+              href={l.href}
+              hreflang={l.code}
+              lang={l.code}
+              aria-current={l.active ? 'true' : undefined}
+            >
+              <span class="sr-only">{l.name}</span>
+              <span aria-hidden="true">{l.short}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
   </div>
 </header>
 
@@ -82,7 +180,19 @@ const buyTargetProps = APP_IS_LIVE
   const toggle = document.querySelector('[data-menu-toggle]') as HTMLButtonElement | null;
   const menu = document.querySelector('[data-mobile-nav]') as HTMLElement | null;
   const menuLinks = document.querySelectorAll<HTMLAnchorElement>('[data-menu-link]');
-  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link], [data-menu-link]');
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>(
+    '[data-nav-link], [data-menu-link]',
+  );
+
+  /* Label del toggle: "Abrir menú" / "Cerrar menú", ya traducido y
+     servido en data-attributes desde el frontmatter. */
+  const menuLabel = toggle?.querySelector<HTMLElement>('[data-menu-label]') ?? null;
+  const syncLabel = (open: boolean): void => {
+    if (!toggle || !menuLabel) return;
+    menuLabel.textContent = open
+      ? (toggle.dataset.labelClose ?? '')
+      : (toggle.dataset.labelOpen ?? '');
+  };
 
   /* mobile toggle */
   const closeMenu = (): void => {
@@ -90,6 +200,7 @@ const buyTargetProps = APP_IS_LIVE
     toggle.setAttribute('aria-expanded', 'false');
     menu.hidden = true;
     document.body.classList.remove('has-mobile-nav-open');
+    syncLabel(false);
   };
 
   if (toggle && menu) {
@@ -99,6 +210,7 @@ const buyTargetProps = APP_IS_LIVE
       toggle.setAttribute('aria-expanded', String(!open));
       menu.hidden = open;
       document.body.classList.toggle('has-mobile-nav-open', !open);
+      syncLabel(!open);
     });
     menuLinks.forEach((l) => l.addEventListener('click', closeMenu));
 
@@ -118,6 +230,14 @@ const buyTargetProps = APP_IS_LIVE
         toggle.focus();
       }
     });
+
+    /* Si el viewport cruza al breakpoint desktop con el menú abierto, el
+       toggle desaparece y el body queda con scroll bloqueado. Cerramos.
+       (El 1024px espeja el media query del nav desktop de más abajo.) */
+    const desktopQuery = window.matchMedia('(min-width: 1024px)');
+    desktopQuery.addEventListener('change', (e) => {
+      if (e.matches && !menu.hidden) closeMenu();
+    });
   }
 
   /* Helper: scroll suave que respeta Lenis si está activo */
@@ -131,8 +251,8 @@ const buyTargetProps = APP_IS_LIVE
   };
 
   /* Click en el logo: si ya estamos en la home, scroll suave al tope
-     en lugar de un reload completo. Si estamos en /corner-quem u otra
-     ruta, dejamos que el navegador navegue normalmente. */
+     en lugar de un reload completo. Si estamos en otra ruta, dejamos
+     que el navegador navegue normalmente. */
   const brandLink = document.querySelector<HTMLAnchorElement>('.site-header__brand');
   if (brandLink) {
     brandLink.addEventListener('click', (e) => {
@@ -183,8 +303,8 @@ const buyTargetProps = APP_IS_LIVE
     };
 
     /* Observamos cada sección. Cuando una entra al "carril" central del
-     * viewport (rootMargin -25% top, -55% bottom = ~20% del viewport), la
-     * marcamos como activa. Esto evita saltos al cambiar de sección. */
+     * viewport, la marcamos como activa. Esto evita saltos al cambiar
+     * de sección. */
     const observer = new IntersectionObserver(
       (entries) => {
         /* Quedamos con la entrada más cercana al top del carril visible. */
@@ -229,9 +349,10 @@ const buyTargetProps = APP_IS_LIVE
     backdrop-filter: blur(var(--header-blur));
     -webkit-backdrop-filter: blur(var(--header-blur));
     border-bottom: 1px solid transparent;
-    transition: background-color var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-fast) var(--ease-standard);
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard);
   }
   .site-header--scrolled {
     background-color: oklch(from var(--color-bg) l c h / 0.92);
@@ -242,60 +363,17 @@ const buyTargetProps = APP_IS_LIVE
   .site-header__inner {
     display: flex;
     align-items: center;
-    /* Gap dinámico — angosto en laptops chicas (1100-1280px) donde el nav
-       compite por píxeles con brand + CTA, más generoso en pantallas grandes. */
+    /* Gap dinámico — angosto en mobile, donde brand + CTA + toggle
+       compiten por píxeles; más generoso en pantallas grandes. */
     gap: clamp(0.75rem, 1.4vw, var(--space-5));
     height: var(--header-height);
   }
 
+  /* Wrapper del lockup: sólo layout. El dibujo del logo vive en Logo.astro. */
   .site-header__brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
     flex-shrink: 0;
-    min-block-size: 44px;
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold);
-    letter-spacing: var(--tracking-tight);
-    color: var(--color-text-primary);
-  }
-  .brand-name {
-    font-size: var(--font-size-md);
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-  }
-  .brand-name em {
-    font-style: normal;
-    color: var(--color-text-brand);
-    font-weight: var(--weight-medium);
-  }
-  .brand-mark {
-    position: relative;
-    display: inline-grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.6rem;
-    background: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-700) 100%);
-    color: var(--color-text-on-brand);
-    font-family: var(--font-display);
-    font-weight: var(--weight-extrabold);
-    font-size: 1.05rem;
-    letter-spacing: -0.06em;
-    box-shadow:
-      inset 0 1px 0 oklch(100% 0 0 / 0.18),
-      0 4px 12px oklch(from var(--color-brand-500) l c h / 0.32);
-  }
-  .brand-mark::after {
-    content: '';
-    position: absolute;
-    inset: 4px 4px auto auto;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-accent-500);
-    box-shadow: 0 0 0 2px var(--color-bg);
   }
 
   .site-header__nav {
@@ -305,16 +383,17 @@ const buyTargetProps = APP_IS_LIVE
        expandir el container y empujar el CTA fuera del header. */
     min-width: 0;
   }
-  /* Subimos el breakpoint a 1200px — con 8 items + brand + CTA en 1024-1199
-     todo quedaba demasiado apretado y los labels se superponían con el brand.
-     Por debajo seguimos con el hamburger menu (que ya tiene todos los items). */
-  @media (min-width: 1200px) {
-    .site-header__nav { display: block; }
+  /* Fase 1 dejó el nav en 5 items (antes eran 8), así que entra cómodo
+     desde 1024px. Antes colapsaba recién en 1200 y dejaba un hueco raro
+     en tablet. Debajo, el hamburger (que tiene los mismos items). */
+  @media (min-width: 1024px) {
+    .site-header__nav {
+      display: block;
+    }
   }
   .site-header__nav ul {
     display: flex;
     align-items: center;
-    /* Gap entre items: angosto en 1100-1280, más holgado en >1440. */
     gap: clamp(0.5rem, 0.6vw, 1rem);
     justify-content: center;
     flex-wrap: nowrap;
@@ -324,9 +403,6 @@ const buyTargetProps = APP_IS_LIVE
     display: inline-flex;
     align-items: center;
     min-block-size: 44px;
-    /* Tipografía un punto más chica en el nav desktop — los items son muchos
-       y van a tener que convivir con el resto del header. El font-size-sm
-       de fluid type sigue siendo legible. */
     font-size: clamp(0.83rem, 0.78rem + 0.18vw, 0.95rem);
     font-weight: var(--weight-medium);
     color: var(--color-text-secondary);
@@ -349,10 +425,18 @@ const buyTargetProps = APP_IS_LIVE
     transform-origin: center;
     transition: transform var(--dur-normal) var(--ease-out-expo);
   }
-  .nav-link:hover { color: var(--color-text-primary); }
-  .nav-link:hover::after { transform: translateX(-50%) scaleX(0.8); }
-  .nav-link--active { color: var(--color-text-primary); }
-  .nav-link--active::after { transform: translateX(-50%) scaleX(1); }
+  .nav-link:hover {
+    color: var(--color-text-primary);
+  }
+  .nav-link:hover::after {
+    transform: translateX(-50%) scaleX(0.8);
+  }
+  .nav-link--active {
+    color: var(--color-text-primary);
+  }
+  .nav-link--active::after {
+    transform: translateX(-50%) scaleX(1);
+  }
 
   /* Focus-visible más limpio en nav — no outline cuadrado del global */
   .nav-link:focus-visible {
@@ -370,21 +454,65 @@ const buyTargetProps = APP_IS_LIVE
     margin-inline-start: auto;
     flex-shrink: 0;
   }
-  /* Hide CTA from header on small screens — the mobile nav dropdown already has it */
-  @media (max-width: 639px) {
-    .site-header__cta { display: none; }
+
+  /* ===== Selector de idioma ==============================================
+   * Sobrio: dos letras separadas por una hairline. Sin banderas (una
+   * bandera nunca representa bien un idioma) y sin dropdown (con dos
+   * idiomas un dropdown es un click de más).
+   * ===================================================================== */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
   }
+  .lang-switch__item {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    padding-inline: var(--space-1);
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-text-muted);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .lang-switch__item + .lang-switch__item {
+    border-inline-start: 1px solid var(--color-border-subtle);
+  }
+  .lang-switch__item:hover {
+    color: var(--color-text-primary);
+  }
+  .lang-switch__item[aria-current] {
+    color: var(--color-text-primary);
+    font-weight: var(--weight-bold);
+  }
+
+  /* En el header sólo desde desktop: abajo vive dentro del menú mobile,
+     así el CTA de conversión se queda con el ancho que necesita. */
+  .site-header__lang {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .site-header__lang {
+      display: inline-flex;
+    }
+  }
+
+  /* ===== CTA ============================================================
+   * Sin `display:none` en mobile: el contacto ES el mecanismo de
+   * conversión de la Fase 1, no puede desaparecer justo donde entra la
+   * mayoría del tráfico.
+   * ===================================================================== */
   .site-header__cta {
-    /* Padding más compacto en desktop para liberar espacio al nav. En pantallas
-       grandes (>1440px) recuperamos el padding original via clamp. */
     padding: 0.6rem clamp(0.8rem, 0.6rem + 0.4vw, 1.1rem);
     font-size: clamp(0.83rem, 0.78rem + 0.18vw, 0.95rem);
-    box-shadow: 0 4px 12px oklch(from var(--color-brand-500) l c h / 0.28);
+    box-shadow: var(--shadow-sm);
     white-space: nowrap;
   }
   .site-header__cta:hover {
-    box-shadow: 0 6px 18px oklch(from var(--color-brand-500) l c h / 0.38);
+    box-shadow: var(--shadow-md);
   }
+
   .site-header__menu-toggle {
     display: inline-grid;
     place-items: center;
@@ -393,16 +521,28 @@ const buyTargetProps = APP_IS_LIVE
     border-radius: var(--radius-md);
     color: var(--color-text-primary);
   }
-  .site-header__menu-toggle:hover { background-color: var(--color-surface-subtle); }
-  /* Coincide con el breakpoint del nav: hamburger se esconde sólo cuando aparece el nav full. */
-  @media (min-width: 1200px) {
-    .site-header__menu-toggle { display: none; }
+  .site-header__menu-toggle:hover {
+    background-color: var(--color-surface-subtle);
+  }
+  /* Coincide con el breakpoint del nav: el hamburger se esconde sólo
+     cuando aparece el nav full. */
+  @media (min-width: 1024px) {
+    .site-header__menu-toggle {
+      display: none;
+    }
   }
 
+  /* ===== Menú mobile ===================================================== */
   .mobile-nav {
     border-top: 1px solid var(--color-border-subtle);
     background-color: var(--color-bg-elevated);
     padding-block: var(--space-4);
+  }
+  /* Red de seguridad: en desktop no existe, aunque haya quedado abierto. */
+  @media (min-width: 1024px) {
+    .mobile-nav {
+      display: none;
+    }
   }
   .mobile-nav ul {
     display: grid;
@@ -417,7 +557,9 @@ const buyTargetProps = APP_IS_LIVE
     font-weight: var(--weight-medium);
     border-radius: var(--radius-md);
   }
-  .mobile-nav__link:hover { background-color: var(--color-surface-subtle); }
+  .mobile-nav__link:hover {
+    background-color: var(--color-surface-subtle);
+  }
   .mobile-nav__link--active {
     background-color: var(--color-surface-subtle);
     color: var(--color-text-brand);
@@ -428,5 +570,18 @@ const buyTargetProps = APP_IS_LIVE
     width: 100%;
   }
 
-  :global(body.has-mobile-nav-open) { overflow: hidden; }
+  .mobile-nav__lang {
+    margin-block-start: var(--space-4);
+    padding-block-start: var(--space-4);
+    padding-inline: var(--space-gutter);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+  .mobile-nav__lang .lang-switch__item {
+    min-inline-size: 56px;
+    font-size: var(--font-size-sm);
+  }
+
+  :global(body.has-mobile-nav-open) {
+    overflow: hidden;
+  }
 </style>

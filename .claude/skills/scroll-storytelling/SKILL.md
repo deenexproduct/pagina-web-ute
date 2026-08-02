@@ -40,17 +40,18 @@ Lenis intercepta el scroll del browser y lo interpola. Setup ya está:
 ```ts
 // src/components/SmoothScroll.tsx
 const lenis = new Lenis({
-  lerp: 0.1,             // 0.1 = suave, 0.05 = ultra-suave, 0.2 = rápido
+  lerp: 0.1, // 0.1 = suave, 0.05 = ultra-suave, 0.2 = rápido
   smoothWheel: true,
   wheelMultiplier: 1,
   touchMultiplier: 1.2,
-  syncTouch: false,      // touch nativo en mobile (interferir es UX horrible)
+  syncTouch: false, // touch nativo en mobile (interferir es UX horrible)
 });
 ```
 
 `lerp` es el lag perceptual. Sweet spot 0.08–0.12.
 
 **No usar Lenis si**:
+
 - El usuario tiene `prefers-reduced-motion: reduce` (ya está respetado).
 - Browser no soporta requestAnimationFrame (raro).
 
@@ -69,7 +70,9 @@ Cuando el browser navega a `#corner-quem`, deja `4.5rem + 1rem = 88px` de margen
 Para offsets distintos por sección, usar `scroll-margin-top` en el target:
 
 ```css
-#corner-quem { scroll-margin-top: 6rem; }
+#corner-quem {
+  scroll-margin-top: 6rem;
+}
 ```
 
 ## Reveal por viewport con Motion (presets del proyecto)
@@ -91,7 +94,7 @@ Uso en componente React:
 import { motion } from 'motion/react';
 import { reveal } from '@/lib/motion';
 
-<motion.h2 {...reveal}>Título que aparece</motion.h2>
+<motion.h2 {...reveal}>Título que aparece</motion.h2>;
 ```
 
 **Hoy NO está usado** en QUEM Central — la web es 99% estática. Si querés agregar reveal por scroll a las secciones, convertir el wrapper en React island con `client:visible`:
@@ -112,14 +115,19 @@ Mejor performance para 5+ elementos. CSS + vanilla JS:
 [data-reveal] {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+  transition:
+    opacity 0.6s var(--ease-out-expo),
+    transform 0.6s var(--ease-out-expo);
 }
 [data-reveal][data-revealed] {
   opacity: 1;
   transform: translateY(0);
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] { opacity: 1; transform: none; }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }
 ```
 
@@ -146,6 +154,7 @@ Plug-and-play: marcar elementos con `data-reveal` y se animan al entrar.
 GSAP + ScrollTrigger está instalado. Útil para:
 
 - **Scrub animations** (animación atada al progreso del scroll, no a viewport entry):
+
   ```js
   gsap.to('.hero__title', {
     y: 200,
@@ -158,13 +167,16 @@ GSAP + ScrollTrigger está instalado. Útil para:
     },
   });
   ```
+
   Texto que se va arriba mientras hacés scroll, atado al scroll position.
 
 - **Pin sections** (sección que se "fija" mientras el contenido interno scrollea):
+
   ```js
-  gsap.timeline({
-    scrollTrigger: { trigger: '.scene', start: 'top top', end: '+=200%', pin: true, scrub: 1 },
-  })
+  gsap
+    .timeline({
+      scrollTrigger: { trigger: '.scene', start: 'top top', end: '+=200%', pin: true, scrub: 1 },
+    })
     .to('.layer-1', { x: 200 })
     .to('.layer-2', { x: -200 }, '<');
   ```
@@ -172,6 +184,7 @@ GSAP + ScrollTrigger está instalado. Útil para:
 - **Horizontal scroll sections**.
 
 Para QUEM Central institucional, **probablemente NO necesario**. Sumar solo si:
+
 - Hay sección storytelling (e.g., "Cómo funciona Corner QÜEM" con scroll horizontal step-by-step).
 - Cliente pide algo cinematográfico para el hero.
 
@@ -183,8 +196,14 @@ Chrome/Edge 115+, Safari/Firefox detrás. Sin JS, animaciones atadas al scroll:
 
 ```css
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .section {
@@ -209,9 +228,15 @@ Para el hero, mover el background a velocidad distinta al contenido. Patrón lig
 ```
 
 ```js
-window.addEventListener('scroll', () => {
-  document.querySelector('.hero__bg')?.style.setProperty('--parallax', `${window.scrollY * 0.3}px`);
-}, { passive: true });
+window.addEventListener(
+  'scroll',
+  () => {
+    document
+      .querySelector('.hero__bg')
+      ?.style.setProperty('--parallax', `${window.scrollY * 0.3}px`);
+  },
+  { passive: true },
+);
 ```
 
 `0.3` = el bg se mueve al 30% del scroll. Cortar con `prefers-reduced-motion`.
@@ -236,8 +261,17 @@ Para sección "Qué incluye el modelo" (Corner Incluye), patrón sticky:
 ```
 
 ```css
-.sticky-section { display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; }
-.sticky-section__sticky { position: sticky; top: 6rem; align-self: start; height: max-content; }
+.sticky-section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+}
+.sticky-section__sticky {
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+  height: max-content;
+}
 ```
 
 El título se queda fijo mientras las cards scrollean. Storytelling sutil.

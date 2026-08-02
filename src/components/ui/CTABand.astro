@@ -1,0 +1,275 @@
+---
+/**
+ * CTABand — spec punto 8: bandas de conversión intercaladas en el scroll.
+ *
+ * Full-width, con aire, sin marco: separa dos secciones sin competir con
+ * ninguna. Ej. del spec: "¿Querés un córner en tu comunidad?" → contacto.
+ *
+ * El copy visible (`titulo`, `texto`) lo pasa quien la monta, YA TRADUCIDO.
+ * Lo único que resuelve el componente en i18n es el label del botón, que
+ * deriva del `interes` (que también define el destino).
+ *
+ * Fase 1: destino = formulario de contacto con el interés preseleccionado.
+ * Nunca a subwebs. El link a WhatsApp aparece solo si hay número cargado.
+ */
+import { contactLink, whatsappLink, hasWhatsapp, type InteresValue } from '../../config/site';
+import { getLangFromUrl, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props {
+  /** Titular de la banda. Ya traducido por quien la monta. */
+  titulo: string;
+  /** Bajada opcional. Si no viene, no se renderiza el párrafo. */
+  texto?: string;
+  /** Define el destino del botón Y su label. Sin interés → contacto general. */
+  interes?: InteresValue;
+  /** `brand` = banda oscura de marca. `subtle` = respiro entre secciones. */
+  variant?: 'brand' | 'subtle';
+  /** Escape hatch para anclar la banda (`#…`). Deriva el id del heading. */
+  id?: string;
+}
+
+const { titulo, texto, interes, variant = 'brand', id } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+/* ---------------------------------------------------------------- copy --- */
+
+/**
+ * Labels de CTA en primera persona: convierten mejor que "Consultar" y
+ * sirven igual como mensaje pre-cargado de WhatsApp.
+ */
+interface BandCopy {
+  ctaDefault: string;
+  cta: Record<InteresValue, string>;
+}
+
+const COPY: Record<Lang, BandCopy> = {
+  es: {
+    ctaDefault: 'Hablemos',
+    cta: {
+      mayorista: 'Quiero abastecerme',
+      franquicia: 'Quiero una franquicia',
+      corner: 'Quiero un córner',
+      'smart-market': 'Quiero un Smart Market',
+      inversion: 'Quiero invertir',
+      otro: 'Quiero hablar con QUEM',
+    },
+  },
+  en: {
+    ctaDefault: "Let's talk",
+    cta: {
+      mayorista: 'I need wholesale supply',
+      franquicia: 'I want a franchise',
+      corner: 'I want a corner',
+      'smart-market': 'I want a Smart Market',
+      inversion: 'I want to invest',
+      otro: 'I want to talk to QUEM',
+    },
+  },
+};
+
+const c = COPY[lang];
+const ctaLabel = interes ? c.cta[interes] : c.ctaDefault;
+
+/* --------------------------------------------------------------- links --- */
+
+const contactHref = contactLink(interes, lang);
+
+/* Sin número cargado, whatsappLink() cae al form: en ese caso duplicaría el
+   botón principal, así que directamente no renderizamos el link. */
+const showWhatsapp = hasWhatsapp();
+const waHref = whatsappLink(ctaLabel, lang);
+
+/* Id determinístico: la banda se repite en el scroll y cada una necesita el
+   suyo para el aria-labelledby. */
+const slug = (value: string): string =>
+  value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48);
+
+const headingId = id ? `${id}-title` : `ctaband-${slug(`${interes ?? ''} ${titulo}`)}-title`;
+---
+
+<aside class:list={['ctaband', `ctaband--${variant}`]} id={id} aria-labelledby={headingId}>
+  <div class="container-content ctaband__inner">
+    <div class="ctaband__copy">
+      <h2 id={headingId} class="ctaband__title" data-reveal style="--reveal-y: 14px;">
+        {titulo}
+      </h2>
+      {
+        texto && (
+          <p class="ctaband__text" data-reveal style="--reveal-delay: 90ms;">
+            {texto}
+          </p>
+        )
+      }
+    </div>
+
+    <div class="ctaband__actions" data-reveal style="--reveal-delay: 160ms;">
+      <a
+        class:list={['btn', variant === 'brand' ? 'btn-secondary' : 'btn-primary']}
+        href={contactHref}
+      >
+        {ctaLabel}
+        <svg
+          class="ctaband__arrow"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 10h11M10.5 5.5 15 10l-4.5 4.5"></path>
+        </svg>
+      </a>
+
+      {
+        showWhatsapp && (
+          <a class="ctaband__wa" href={waHref} target="_blank" rel="noopener noreferrer">
+            {t('cta.whatsapp')}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* Full-width, sin marco ni card: es una franja del documento. */
+  .ctaband {
+    position: relative;
+    width: 100%;
+    padding-block: clamp(var(--space-6), 7vw, var(--space-9));
+    isolation: isolate;
+  }
+
+  .ctaband__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  @media (min-width: 900px) {
+    .ctaband__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-7);
+    }
+  }
+
+  .ctaband__copy {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 40ch;
+  }
+
+  .ctaband__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-snug);
+  }
+
+  .ctaband__text {
+    font-size: var(--font-size-base);
+    line-height: var(--leading-normal);
+  }
+
+  .ctaband__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    flex-shrink: 0;
+  }
+
+  .ctaband__arrow {
+    width: 1.05em;
+    height: 1.05em;
+    transition: transform var(--dur-normal) var(--ease-out-expo);
+  }
+  .btn:hover .ctaband__arrow {
+    transform: translateX(3px);
+  }
+
+  .ctaband__wa {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      text-decoration-color var(--dur-fast) var(--ease-standard);
+  }
+
+  /* ---------- Variante brand: franja oscura de marca ---------------------- */
+  .ctaband--brand {
+    background:
+      radial-gradient(
+        90% 140% at 12% 0%,
+        oklch(from var(--color-brand-500) l c h / 0.3) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        70% 120% at 100% 100%,
+        oklch(from var(--color-accent-500) l c h / 0.14) 0%,
+        transparent 60%
+      ),
+      linear-gradient(135deg, var(--color-brand-900) 0%, var(--color-brand-800) 100%);
+    color: var(--color-text-inverted);
+  }
+  .ctaband--brand .ctaband__title {
+    color: var(--color-text-inverted);
+  }
+  .ctaband--brand .ctaband__text {
+    color: var(--color-brand-100);
+  }
+  .ctaband--brand .ctaband__wa {
+    color: var(--color-brand-100);
+    text-decoration-color: oklch(from var(--color-brand-100) l c h / 0.4);
+  }
+  .ctaband--brand .ctaband__wa:hover {
+    color: var(--color-text-inverted);
+    text-decoration-color: currentColor;
+  }
+  /* El foco por defecto usa el ring oliva: sobre fondo oscuro no se ve. */
+  .ctaband--brand .btn:focus-visible,
+  .ctaband--brand .ctaband__wa:focus-visible {
+    outline-color: var(--color-accent-500);
+  }
+
+  /* ---------- Variante subtle: respiro entre secciones -------------------- */
+  .ctaband--subtle {
+    background-color: var(--color-surface-subtle);
+    border-block: 1px solid var(--color-border-subtle);
+    color: var(--color-text-primary);
+  }
+  .ctaband--subtle .ctaband__text {
+    color: var(--color-text-secondary);
+  }
+  .ctaband--subtle .ctaband__wa {
+    color: var(--color-text-brand);
+    text-decoration-color: oklch(from var(--color-brand-500) l c h / 0.35);
+  }
+  .ctaband--subtle .ctaband__wa:hover {
+    color: var(--color-brand-700);
+    text-decoration-color: var(--color-brand-500);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn:hover .ctaband__arrow {
+      transform: none;
+    }
+  }
+</style>

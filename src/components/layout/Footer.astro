@@ -1,132 +1,356 @@
 ---
-import { link } from '../../config/site';
-
-const year = new Date().getFullYear();
-
 /**
- * Footer minimalista v4 — solo brand centrado + credit centrado.
+ * Footer.astro — Pie institucional (spec punto 12: "datos
+ * institucionales, links y redes").
  *
- * Diseño:
- *   1) Top row: brand logo + name, centrado
- *   2) Bottom bar: credit "Creado por Deenex" centrado
+ * Antes de Fase 1 el footer era sólo logo + copyright + credit, y un
+ * comentario documentaba que el nav, el CTA, el email y las redes se
+ * habían eliminado a propósito (la tesis era que el header sticky con
+ * "Comprar online" cubría la conversión). Fase 1 deroga esa tesis: no
+ * hay e-commerce y el mecanismo de conversión es el formulario, así que
+ * el footer vuelve a ser una salida de contacto.
  *
- * Nav, CTA, copyright legal, email y socials eliminados — el header sticky
- * con "Comprar online" siempre visible cubre la conversión.
+ * Todo lo variable sale de site.ts y se renderiza SOLO si tiene valor:
+ * hoy `ADDRESS` y `SOCIAL` están vacíos, así que esas piezas no existen
+ * en el DOM — nada de rótulos huérfanos ni links muertos.
+ *
+ * El lockup ya no vive acá: lo dibuja Logo.astro (antes estaba
+ * duplicado y ya había divergido del header en el gradiente y en la
+ * sombra, que además tenía el oliva de marca hardcodeado).
  */
+import Logo from '../ui/Logo.astro';
+import SocialDock from '../ui/SocialDock.astro';
+import {
+  ADDRESS,
+  BRAND,
+  EMAILS,
+  NAV_PRIMARY,
+  activeSocials,
+  hasAddress,
+  hasWhatsapp,
+} from '../../config/site';
+import type { NavKey } from '../../config/site';
+import { getLangFromUrl, localizedPath, useTranslations } from '../../i18n/utils';
+import type { UIKey } from '../../i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const COPY = {
+  es: {
+    tagline:
+      'Grupo de alimentos congelados: tiendas, abastecimiento mayorista, franquicias y desarrollo de producto.',
+    direccion: 'Dirección',
+    emailComercial: 'Comercial',
+    emailGeneral: 'Consultas generales',
+    creditAria: 'Deenex, estudio que desarrolló este sitio',
+  },
+  en: {
+    tagline:
+      'Frozen food group: retail stores, wholesale supply, franchises and product development.',
+    direccion: 'Address',
+    emailComercial: 'Sales',
+    emailGeneral: 'General enquiries',
+    creditAria: 'Deenex, the studio that built this site',
+  },
+} as const;
+const c = COPY[lang];
+
+/* Mismo contrato manual que el header: si NavKey y las claves `nav.*`
+   se desincronizan, esto deja de compilar en vez de renderizar vacío. */
+const NAV_LABEL: Record<NavKey, UIKey> = {
+  nosotros: 'nav.nosotros',
+  unidades: 'nav.unidades',
+  ubicaciones: 'nav.ubicaciones',
+  prensa: 'nav.prensa',
+  contacto: 'nav.contacto',
+};
+
+const navItems = NAV_PRIMARY.map((item) => ({
+  href: localizedPath(item.href, lang),
+  label: t(NAV_LABEL[item.key]),
+}));
+
+const homeHref = localizedPath('/', lang);
+
+/* Degradación: si el cliente no confirmó la dirección, no hay bloque. */
+const addressLines: ReadonlyArray<string> = hasAddress()
+  ? [
+      ADDRESS.streetAddress,
+      [ADDRESS.postalCode, ADDRESS.city].filter((p) => p.length > 0).join(' '),
+      ADDRESS.region,
+    ].filter((linea) => linea.length > 0)
+  : [];
+
+/* Los mails son placeholders confirmables, no vacíos — pero el filtro
+   queda igual para que borrar uno en site.ts no deje un `mailto:` mudo. */
+const emailItems = [
+  { label: c.emailComercial, value: EMAILS.comercial },
+  { label: c.emailGeneral, value: EMAILS.contacto },
+].filter((e) => e.value.length > 0);
+
+const hasSocials = activeSocials().length > 0 || hasWhatsapp();
+
+const legalName = BRAND.legal || BRAND.group;
+const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
   <div class="container-content site-footer__inner">
-    <a href={link('/')} class="site-footer__brand" aria-label="Qüem Central · inicio">
-      <span class="brand-mark" aria-hidden="true">Q</span>
-      <span class="site-footer__brand-name">Qüem <em>Central</em></span>
-    </a>
+    <!-- Datos institucionales -->
+    <div class="site-footer__col site-footer__col--brand" data-reveal>
+      <a class="site-footer__brand" href={homeHref} aria-label={t('nav.inicio')}>
+        <Logo variant="footer" />
+      </a>
+
+      <p class="site-footer__tagline">{c.tagline}</p>
+
+      <p class="site-footer__legal-name">{legalName}</p>
+
+      {
+        addressLines.length > 0 && (
+          <div class="site-footer__block">
+            <span class="site-footer__block-title">{c.direccion}</span>
+            <address class="site-footer__address">
+              {addressLines.map((linea) => (
+                <span class="site-footer__address-line">{linea}</span>
+              ))}
+            </address>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Links de las secciones -->
+    <nav
+      class="site-footer__col"
+      aria-labelledby="site-footer-nav-title"
+      data-reveal
+      style="--reveal-delay: 80ms"
+    >
+      <h2 class="site-footer__col-title" id="site-footer-nav-title">{t('footer.nav')}</h2>
+      <ul class="site-footer__links">
+        {
+          navItems.map((item) => (
+            <li>
+              <a class="site-footer__link" href={item.href}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Contacto + redes -->
+    <div class="site-footer__col" data-reveal style="--reveal-delay: 160ms">
+      <h2 class="site-footer__col-title">{t('footer.contacto')}</h2>
+
+      <ul class="site-footer__links">
+        {
+          emailItems.map((email) => (
+            <li class="site-footer__email">
+              <span class="site-footer__email-label">{email.label}</span>
+              <a class="site-footer__link" href={`mailto:${email.value}`}>
+                {email.value}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        /* Wrapper propio en vez de pasarle `class` al componente: el
+           scope de estos estilos vive en este archivo. */
+        hasSocials && (
+          <div class="site-footer__social">
+            <SocialDock variant="inline" />
+          </div>
+        )
+      }
+    </div>
   </div>
 
   <div class="container-content site-footer__bar">
-    <span class="site-footer__legal">© {year} Qüem Central. Todos los derechos reservados.</span>
+    <span class="site-footer__legal">© {year} {legalName}. {t('footer.rights')}</span>
     <span class="site-footer__credit">
-      Creado por <a href="https://deenex.com" target="_blank" rel="noopener">Deenex</a>
+      <a href="https://deenex.com" target="_blank" rel="noopener noreferrer" title={c.creditAria}>
+        {t('footer.by')}
+      </a>
     </span>
   </div>
 </footer>
 
 <style>
-  /* ===== Shell — fondo claro, separador sutil del contenido ============== */
   .site-footer {
+    /*
+     * Carril de los flotantes: SocialDock vive fijo abajo a la
+     * izquierda y ScrollToTop abajo a la derecha. Al llegar al final de
+     * la página los dos quedan sobre el footer, así que la barra
+     * inferior reserva su alto (offset + target + padding) para que ni
+     * el copyright ni el credit queden tapados.
+     */
+    --footer-float-rail: calc(var(--space-8) + var(--space-5));
+
     background-color: var(--color-surface-subtle);
     color: var(--color-text-secondary);
-    border-top: 1px solid var(--color-border-subtle);
-    margin-top: var(--space-9);
+    border-block-start: 1px solid var(--color-border-subtle);
+    margin-block-start: var(--space-9);
   }
 
-  /* ===== Top row — brand centrado ========================================= */
+  /* ===== Grilla de columnas =============================================== */
   .site-footer__inner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-block: var(--space-7) var(--space-6);
+    display: grid;
+    gap: var(--space-6);
+    padding-block: var(--space-8) var(--space-6);
   }
 
-  /* Brand */
+  @media (min-width: 640px) {
+    .site-footer__inner {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    /* Los datos institucionales mandan: ocupan la fila entera hasta que
+       hay ancho real para tres columnas. */
+    .site-footer__col--brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .site-footer__inner {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-7);
+    }
+    .site-footer__col--brand {
+      grid-column: auto;
+    }
+  }
+
+  .site-footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* ===== Columna de marca ================================================= */
   .site-footer__brand {
     display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    min-block-size: 44px;
-    font-family: var(--font-display);
-    color: var(--color-text-primary);
     width: max-content;
-  }
-  .site-footer__brand .brand-mark {
-    position: relative;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.6rem;
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    display: inline-grid;
-    place-items: center;
-    font-family: var(--font-display);
-    font-weight: var(--weight-extrabold);
-    font-size: 1.05rem;
-    letter-spacing: -0.06em;
-    box-shadow:
-      inset 0 1px 0 oklch(100% 0 0 / 0.18),
-      0 4px 12px oklch(60% 0.030 100 / 0.20);
-  }
-  .site-footer__brand .brand-mark::after {
-    content: '';
-    position: absolute;
-    inset: 4px 4px auto auto;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--color-accent-500);
-    box-shadow: 0 0 0 2px var(--color-surface-subtle);
-  }
-  .site-footer__brand-name {
-    font-size: var(--font-size-md);
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    white-space: nowrap;
-  }
-  .site-footer__brand-name em {
-    font-style: normal;
-    color: var(--color-text-brand);
-    font-weight: var(--weight-medium);
+    max-width: 100%;
   }
 
-  /* ===== Bottom bar — legal + credit centrados ============================ */
+  .site-footer__tagline {
+    max-width: 42ch;
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  .site-footer__legal-name {
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-primary);
+  }
+
+  .site-footer__block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .site-footer__block-title,
+  .site-footer__email-label {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .site-footer__address {
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+  }
+
+  /* ===== Columnas de links ================================================ */
+  .site-footer__col-title {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__email {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .site-footer__link {
+    /* Touch target ≥44px sin inflar la separación visual entre links. */
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    width: max-content;
+    max-width: 100%;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    transition: color var(--dur-fast) var(--ease-standard);
+    overflow-wrap: anywhere;
+  }
+  .site-footer__link:hover {
+    color: var(--color-text-brand);
+  }
+
+  .site-footer__social {
+    margin-block-start: var(--space-2);
+  }
+
+  /* ===== Barra inferior =================================================== */
   .site-footer__bar {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: var(--space-1);
-    padding-block: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--color-border-subtle);
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-block: var(--space-4) var(--footer-float-rail);
+    border-block-start: 1px solid var(--color-border-subtle);
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
     text-align: center;
   }
-  .site-footer__legal {
-    color: var(--color-text-muted);
+
+  @media (min-width: 640px) {
+    .site-footer__bar {
+      flex-direction: row;
+      text-align: start;
+    }
   }
-  .site-footer__credit {
-    color: var(--color-text-secondary);
-  }
+
   .site-footer__credit a {
     color: var(--color-text-secondary);
     text-decoration: underline;
     text-decoration-color: var(--color-border-strong);
     text-underline-offset: 3px;
-    transition: text-decoration-color var(--dur-fast), color var(--dur-fast);
+    transition:
+      text-decoration-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard);
   }
   .site-footer__credit a:hover {
     color: var(--color-text-primary);
     text-decoration-color: var(--color-brand-500);
   }
 </style>
-</content>
-</invoke>

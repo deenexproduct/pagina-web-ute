@@ -1,0 +1,1014 @@
+---
+/**
+ * Ubicaciones — spec punto 7: "Mapa interactivo con pines de tiendas y
+ * córners. Datos dummy hasta que llegue el Excel." Ancla `#ubicaciones`
+ * (la usa NAV_PRIMARY).
+ *
+ * ── DECISIONES ───────────────────────────────────────────────────────
+ *
+ * 1. EL LISTADO ES LA FUENTE, EL MAPA ES EL ADORNO. Las 12 ubicaciones se
+ *    renderizan server-side como HTML semántico. Sin JS, con JS roto o con
+ *    un crawler/LLM leyendo el HTML, la información sigue estando entera.
+ *    Es lo que pide la regla transversal "SEO + IA" del spec. El mapa no
+ *    es el portador del dato: es un enriquecimiento encima del listado.
+ *    Tan literal es esto que el script del mapa LEE EL DOM DEL LISTADO en
+ *    vez de recibir un JSON aparte — así no hay dos copias del dataset que
+ *    puedan divergir.
+ *
+ * 2. LEAFLET SELF-HOSTED Y DIFERIDO. Nada de Google Maps (pide API key con
+ *    billing). Leaflet entra por `import()` dinámico dentro de un
+ *    IntersectionObserver (rootMargin 200px, mismo patrón de lazy-load que
+ *    traía PlataformaApp): ~150 KB de JS + 15 KB de CSS que NO se
+ *    descargan si el visitante nunca llega a esta sección. El CSS también
+ *    es diferido —se resuelve como asset con `?url` y se inyecta como
+ *    <link> recién al iniciar— así que el costo inicial es literalmente
+ *    cero. Todo sale del paquete npm, cero CDN de terceros para el código.
+ *
+ * 3. GUARD DE REDUCED-MOTION. El patrón copiado de PlataformaApp no lo
+ *    tenía. Acá `prefers-reduced-motion` apaga las animaciones de zoom,
+ *    fade y pan de Leaflet y el scroll suave al enfocar una ubicación. El
+ *    mapa sigue funcionando: se reduce el movimiento, no la información.
+ *
+ * 4. LOS PINES NO SE DISTINGUEN SOLO POR COLOR. Tienda = círculo oliva,
+ *    córner = rombo dorado. Color + forma, porque el color solo no es
+ *    accesible. La leyenda usa exactamente los mismos swatches.
+ *
+ * 5. DATOS DUMMY, Y SE AVISA. Mientras `LOCATIONS_ARE_DUMMY` esté en
+ *    `true` la sección muestra un cartel visible. Ver el bloque de
+ *    advertencia en `src/config/locations.ts`.
+ */
+import {
+  LOCATIONS,
+  LOCATIONS_ARE_DUMMY,
+  countByTipo,
+  type LocationTipo,
+} from '../config/locations';
+import { MAP_CENTER, contactLink } from '../config/site';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+
+/* ---------------------------------------------------------------- copy --- */
+
+const COPY = {
+  es: {
+    eyebrow: 'Dónde estamos',
+    titulo: 'La red,',
+    tituloEm: 'punto por punto.',
+    lead: 'Tiendas con puerta a la calle y córners dentro de comercios que ya funcionan. Elegí una ubicación y la vemos en el mapa.',
+    tipo: { tienda: 'Tienda', corner: 'Córner' },
+    tipoPlural: { tienda: 'Tiendas', corner: 'Córners' },
+    leyenda: 'Referencias del mapa',
+    listaTitulo: 'Listado de ubicaciones',
+    verEnMapa: 'Ver en el mapa',
+    mapaAria: 'Mapa con las ubicaciones de QUEM',
+    mapaPlaceholder: 'Mapa',
+    /* Atribución legal de los tiles. Es obligatoria y va con links. */
+    osm: '© colaboradores de OpenStreetMap',
+    aviso:
+      'Ubicaciones de ejemplo. El listado definitivo se publica cuando QUEM entregue el relevamiento de tiendas y córners.',
+    ctaTitulo: '¿Querés un córner en tu comunidad?',
+    ctaTexto:
+      'Si tenés un local, un club o un espacio con tránsito, el córner se instala llave en mano y lo abastecemos nosotros.',
+    ctaBoton: 'Consultar por un córner',
+  },
+  en: {
+    eyebrow: 'Where we are',
+    titulo: 'The network,',
+    tituloEm: 'point by point.',
+    lead: 'Street-level stores and corners inside businesses that are already running. Pick a location and we will show it on the map.',
+    tipo: { tienda: 'Store', corner: 'Corner' },
+    tipoPlural: { tienda: 'Stores', corner: 'Corners' },
+    leyenda: 'Map key',
+    listaTitulo: 'List of locations',
+    verEnMapa: 'Show on the map',
+    mapaAria: 'Map of QUEM locations',
+    mapaPlaceholder: 'Map',
+    osm: '© OpenStreetMap contributors',
+    aviso:
+      'Sample locations. The final list goes live once QUEM delivers the store and corner survey.',
+    ctaTitulo: 'Want a QUEM corner in your community?',
+    ctaTexto:
+      'If you run a shop, a club or any space with footfall, the corner is installed turnkey and we keep it stocked.',
+    ctaBoton: 'Ask about a corner',
+  },
+} as const;
+
+const c = COPY[lang];
+
+/* --------------------------------------------------------------- links --- */
+
+const cornerHref = contactLink('corner', lang);
+
+/* ------------------------------------------------------------ leyenda ---- */
+
+interface LeyendaItem {
+  tipo: LocationTipo;
+  label: string;
+  count: number;
+}
+
+/* Solo se lista un tipo si efectivamente hay puntos de ese tipo: si mañana
+   el Excel viene sin córners, la leyenda no miente. */
+const leyenda: LeyendaItem[] = (['tienda', 'corner'] as const)
+  .map((tipo) => ({ tipo, label: c.tipoPlural[tipo], count: countByTipo(tipo) }))
+  .filter((l) => l.count > 0);
+
+/**
+ * Atribución de los tiles (CARTO Positron sobre datos de OpenStreetMap).
+ * Va como HTML porque OSM exige que el crédito sea un link navegable en
+ * mapas interactivos. No son CTAs: la regla de Fase 1 —"toda CTA deriva a
+ * contacto"— no aplica a un aviso legal.
+ */
+const ATTRIBUTION = `<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">${c.osm}</a> · <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>`;
+
+/* Zoom al que se acerca el mapa cuando se elige una ubicación del listado. */
+const FOCUS_ZOOM = 14;
+---
+
+<section id="ubicaciones" class="ubi section-y" aria-labelledby="ubi-title" data-ubi>
+  <div class="container-content ubi__inner">
+    {/* ---------- Encabezado ---------- */}
+    <header class="ubi__head">
+      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">{c.eyebrow}</p>
+
+      <h2 id="ubi-title" class="ubi__title" data-reveal style="--reveal-delay: 80ms;">
+        {c.titulo}
+        <em class="ubi__title-em">{c.tituloEm}</em>
+      </h2>
+
+      <p class="ubi__lead" data-reveal style="--reveal-delay: 140ms;">{c.lead}</p>
+
+      <ul
+        class="ubi__legend"
+        role="list"
+        aria-label={c.leyenda}
+        data-reveal
+        style="--reveal-delay: 200ms;"
+      >
+        {
+          leyenda.map((l) => (
+            <li class="ubi-leg">
+              <span class="ubi-leg__swatch" data-tipo={l.tipo} aria-hidden="true" />
+              <span class="ubi-leg__text">
+                <span class="ubi-leg__count">{l.count}</span> {l.label}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    {/* ---------- Mapa + listado ---------- */}
+    <div class="ubi__layout">
+      {
+        /*
+        El frame define la altura: el div del mapa va absolute inset-0, así
+        Leaflet siempre encuentra un contenedor con altura resuelta y no
+        colapsa en mobile. `isolation: isolate` encierra los z-index internos
+        de Leaflet (los popups van a 700) para que no tapen el header sticky.
+      */
+      }
+      <div class="ubi__map-frame" data-ubi-frame>
+        <div
+          class="ubi__map"
+          data-ubi-map
+          aria-hidden="true"
+          data-map-label={c.mapaAria}
+          data-attribution={ATTRIBUTION}
+          data-center-lat={MAP_CENTER.lat}
+          data-center-lng={MAP_CENTER.lng}
+          data-center-zoom={MAP_CENTER.zoom}
+          data-focus-zoom={FOCUS_ZOOM}
+        >
+        </div>
+
+        {
+          /* Placeholder deliberado: se ve mientras el mapa no cargó y queda
+            para siempre si el visitante no tiene JS. No promete nada que
+            no vaya a pasar — el dato real está en el listado de al lado. */
+        }
+        <div class="ubi-ph" aria-hidden="true">
+          <span class="ubi-ph__icon">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linejoin="round"></path>
+              <circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.6"></circle>
+            </svg>
+          </span>
+          <span class="ubi-ph__label">{c.mapaPlaceholder}</span>
+        </div>
+      </div>
+
+      <div class="ubi__list-col" data-reveal style="--reveal-delay: 120ms;">
+        <h3 id="ubi-list-title" class="sr-only">{c.listaTitulo}</h3>
+
+        <ul class="ubi__list" role="list" aria-labelledby="ubi-list-title" data-ubi-list>
+          {
+            LOCATIONS.map((loc) => (
+              <li
+                class="ubi-item"
+                id={`ubi-loc-${loc.id}`}
+                data-loc-id={loc.id}
+                data-loc-tipo={loc.tipo}
+                data-lat={loc.lat}
+                data-lng={loc.lng}
+              >
+                <span class="ubi-item__swatch" data-tipo={loc.tipo} aria-hidden="true" />
+
+                <span class="ubi-item__body">
+                  <span class="ubi-item__name" data-loc-name>
+                    {loc.nombre}
+                  </span>
+                  <span class="ubi-item__addr" data-loc-addr>
+                    {loc.direccion} · {loc.ciudad}
+                  </span>
+                </span>
+
+                <span class="ubi-item__badge" data-tipo={loc.tipo} data-loc-badge>
+                  {c.tipo[loc.tipo]}
+                </span>
+
+                <span class="ubi-item__cue" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M3 8h10M9 4l4 4-4 4"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+
+                {/*
+                  Control estirado sobre toda la tarjeta: un <button> real
+                  (teclado + lector de pantalla), oculto hasta que el mapa
+                  existe. Sin JS no hay control muerto, hay una ficha de
+                  texto — que es exactamente lo que tiene que quedar.
+                */}
+                <button class="ubi-item__hit" type="button" data-loc-focus hidden>
+                  <span class="sr-only">{`${c.verEnMapa}: ${loc.nombre}`}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    {LOCATIONS_ARE_DUMMY && <p class="ubi__flag">{c.aviso}</p>}
+
+    {/* ---------- CTA por sección (spec punto 8) ---------- */}
+    <div class="ubi__cta" data-reveal style="--reveal-y: 16px;">
+      <div class="ubi__cta-copy">
+        <h3 class="ubi__cta-title">{c.ctaTitulo}</h3>
+        <p class="ubi__cta-text">{c.ctaTexto}</p>
+      </div>
+      <a class="btn btn-primary ubi__cta-btn" href={cornerHref}>{c.ctaBoton}</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  /**
+   * Mapa de ubicaciones — carga diferida.
+   *
+   * Nada de esto corre hasta que la sección está por entrar al viewport.
+   * Recién ahí se pide el CSS de Leaflet (como <link>, desde el bundle
+   * propio) y el JS (import dinámico → chunk aparte).
+   *
+   * El dataset NO se duplica en el cliente: los puntos se leen del listado
+   * que ya está en el HTML. Si el listado cambia, el mapa cambia solo.
+   */
+  import cssUrl from 'leaflet/dist/leaflet.css?url';
+  import type { DivIcon, Map as LeafletMap, Marker } from 'leaflet';
+
+  interface Item {
+    el: HTMLElement;
+    id: string;
+    tipo: string;
+    lat: number;
+    lng: number;
+    marker: Marker | null;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-ubi]');
+  const mapEl = root?.querySelector<HTMLElement>('[data-ubi-map]') ?? null;
+  const frameEl = root?.querySelector<HTMLElement>('[data-ubi-frame]') ?? null;
+
+  /* Guard de accesibilidad: apaga movimiento, no funcionalidad. */
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const scrollBehavior: ScrollBehavior = prefersReduced ? 'auto' : 'smooth';
+
+  const toNumber = (value: string | undefined): number =>
+    value === undefined ? Number.NaN : Number(value);
+
+  /** Los puntos salen del DOM del listado, no de un JSON paralelo. */
+  const readItems = (scope: HTMLElement): Item[] =>
+    Array.from(scope.querySelectorAll<HTMLElement>('[data-loc-id]')).flatMap((el) => {
+      const id = el.dataset.locId;
+      const lat = toNumber(el.dataset.lat);
+      const lng = toNumber(el.dataset.lng);
+      if (!id || !Number.isFinite(lat) || !Number.isFinite(lng)) return [];
+      return [
+        {
+          el,
+          id,
+          tipo: el.dataset.locTipo === 'corner' ? 'corner' : 'tienda',
+          lat,
+          lng,
+          marker: null,
+        },
+      ];
+    });
+
+  /** El CSS de Leaflet vive en nuestro bundle; acá solo se engancha. */
+  const loadStylesheet = (href: string): Promise<void> =>
+    new Promise((resolve, reject) => {
+      if (document.querySelector('link[data-leaflet-css]')) {
+        resolve();
+        return;
+      }
+      const el = document.createElement('link');
+      el.rel = 'stylesheet';
+      el.href = href;
+      el.dataset.leafletCss = '';
+      el.addEventListener('load', () => resolve(), { once: true });
+      el.addEventListener('error', () => reject(new Error('leaflet-css')), { once: true });
+      document.head.appendChild(el);
+    });
+
+  const setActive = (items: Item[], active: Item | null): void => {
+    items.forEach((item) => {
+      const on = item === active;
+      item.el.toggleAttribute('data-active', on);
+      const pin = item.marker?.getElement();
+      if (pin) pin.toggleAttribute('data-active', on);
+    });
+  };
+
+  /**
+   * Trae la ficha activa a la vista DENTRO del listado.
+   *
+   * No usamos `scrollIntoView`: ese mueve también el scroll de la página
+   * (medido: ~40px de salto al clickear un pin) y el visitante está
+   * mirando el mapa, no queremos correrle el piso. Acá se mueve sólo el
+   * contenedor del listado, con matemática de rects. De paso esquiva a
+   * Lenis, que gobierna el scroll de la ventana pero no el de un
+   * contenedor con overflow propio.
+   *
+   * En mobile el listado no tiene scroll interno: ahí es un no-op a
+   * propósito, por la misma razón.
+   */
+  const revealInList = (item: Item): void => {
+    const list = item.el.closest<HTMLElement>('[data-ubi-list]');
+    if (!list || list.scrollHeight <= list.clientHeight) return;
+    const delta = item.el.getBoundingClientRect().top - list.getBoundingClientRect().top;
+    list.scrollTo({ top: list.scrollTop + delta, behavior: scrollBehavior });
+  };
+
+  /** El popup se arma copiando texto del listado — cero copy hardcodeado. */
+  const buildPopup = (item: Item): HTMLElement => {
+    const box = document.createElement('div');
+    box.className = 'ubi-pop';
+
+    const badgeSrc = item.el.querySelector<HTMLElement>('[data-loc-badge]');
+    if (badgeSrc) {
+      const badge = document.createElement('span');
+      badge.className = 'ubi-pop__badge';
+      badge.dataset.tipo = item.tipo;
+      badge.textContent = badgeSrc.textContent;
+      box.appendChild(badge);
+    }
+
+    const nameSrc = item.el.querySelector<HTMLElement>('[data-loc-name]');
+    if (nameSrc) {
+      const name = document.createElement('span');
+      name.className = 'ubi-pop__name';
+      name.textContent = nameSrc.textContent;
+      box.appendChild(name);
+    }
+
+    const addrSrc = item.el.querySelector<HTMLElement>('[data-loc-addr]');
+    if (addrSrc) {
+      const addr = document.createElement('span');
+      addr.className = 'ubi-pop__addr';
+      addr.textContent = addrSrc.textContent;
+      box.appendChild(addr);
+    }
+
+    return box;
+  };
+
+  const init = async (): Promise<void> => {
+    if (!root || !mapEl || !frameEl) return;
+
+    const items = readItems(root);
+    const first = items[0];
+    if (!first) return;
+
+    await loadStylesheet(cssUrl);
+    const L = (await import('leaflet')).default;
+
+    const centerLat = toNumber(mapEl.dataset.centerLat);
+    const centerLng = toNumber(mapEl.dataset.centerLng);
+    const centerZoom = toNumber(mapEl.dataset.centerZoom);
+    const focusZoom = toNumber(mapEl.dataset.focusZoom);
+
+    const map: LeafletMap = L.map(mapEl, {
+      center: [
+        Number.isFinite(centerLat) ? centerLat : first.lat,
+        Number.isFinite(centerLng) ? centerLng : first.lng,
+      ],
+      zoom: Number.isFinite(centerZoom) ? centerZoom : 10,
+      /* Sin scroll-wheel zoom: la rueda tiene que seguir scrolleando la
+         página. Se zoomea con los botones, el teclado o pinch. */
+      scrollWheelZoom: false,
+      /* En touch el arrastre de un dedo se activa recién cuando el usuario
+         demuestra intención de usar el mapa (pinch o elegir del listado).
+         Si no, un swipe que empieza sobre el mapa se come el scroll. */
+      dragging: !coarsePointer,
+      zoomAnimation: !prefersReduced,
+      fadeAnimation: !prefersReduced,
+      markerZoomAnimation: !prefersReduced,
+    });
+
+    /* Ya hay mapa: deja de ser decorativo y pasa a ser una región con nombre. */
+    mapEl.removeAttribute('aria-hidden');
+    mapEl.setAttribute('role', 'region');
+    const mapLabel = mapEl.dataset.mapLabel;
+    if (mapLabel) mapEl.setAttribute('aria-label', mapLabel);
+
+    map.attributionControl.setPrefix(false);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      minZoom: 6,
+      maxZoom: 18,
+      attribution: mapEl.dataset.attribution ?? '',
+    }).addTo(map);
+
+    const icon = (tipo: string): DivIcon =>
+      L.divIcon({
+        className: `ubi-pin ubi-pin--${tipo === 'corner' ? 'corner' : 'tienda'}`,
+        html: '<span class="ubi-pin__dot"></span>',
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -14],
+      });
+
+    const select = (item: Item, source: 'map' | 'list'): void => {
+      setActive(items, item);
+
+      if (source === 'list') {
+        map.setView([item.lat, item.lng], Math.max(map.getZoom(), focusZoom), {
+          animate: !prefersReduced,
+        });
+        item.marker?.openPopup();
+        if (coarsePointer) {
+          map.dragging.enable();
+          frameEl.scrollIntoView({ block: 'nearest', behavior: scrollBehavior });
+        }
+      } else {
+        revealInList(item);
+      }
+    };
+
+    const bounds = L.latLngBounds([]);
+
+    items.forEach((item) => {
+      const name = item.el.querySelector<HTMLElement>('[data-loc-name]')?.textContent?.trim() ?? '';
+
+      const marker = L.marker([item.lat, item.lng], {
+        icon: icon(item.tipo),
+        title: name,
+        alt: name,
+        riseOnHover: true,
+      }).addTo(map);
+
+      marker.bindPopup(buildPopup(item), {
+        closeButton: true,
+        maxWidth: 240,
+        autoPanPadding: [24, 24],
+      });
+      marker.on('click', () => select(item, 'map'));
+
+      const pin = marker.getElement();
+      if (pin && name) pin.setAttribute('aria-label', name);
+
+      item.marker = marker;
+      bounds.extend([item.lat, item.lng]);
+    });
+
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [36, 36], maxZoom: 13, animate: false });
+    }
+
+    map.on('popupclose', () => setActive(items, null));
+
+    /* Touch: en cuanto el usuario hace pinch para acercar, el arrastre deja
+       de ser un secuestro del scroll y pasa a ser lo que quiere hacer. */
+    if (coarsePointer) {
+      const baseZoom = map.getZoom();
+      map.on('zoomend', () => {
+        if (map.getZoom() > baseZoom) map.dragging.enable();
+      });
+    }
+
+    /* Recién ahora los controles del listado existen. */
+    items.forEach((item) => {
+      const button = item.el.querySelector<HTMLButtonElement>('[data-loc-focus]');
+      if (!button) return;
+      button.hidden = false;
+      button.addEventListener('click', () => select(item, 'list'));
+    });
+
+    root.setAttribute('data-ready', '');
+    window.requestAnimationFrame(() => map.invalidateSize());
+  };
+
+  const start = (): void => {
+    init().catch(() => {
+      /* Si el CSS, el chunk de Leaflet o los tiles no cargan, la sección se
+         queda con el listado server-side. Es el fallback que queremos. */
+    });
+  };
+
+  if (root && mapEl && frameEl) {
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            io.disconnect();
+            start();
+          });
+        },
+        { rootMargin: '200px 0px', threshold: 0.01 },
+      );
+      io.observe(frameEl);
+    } else {
+      start();
+    }
+  }
+</script>
+
+<style>
+  /* ===== Shell ==================================================== */
+  .ubi {
+    background: linear-gradient(180deg, var(--color-bg), var(--color-surface-subtle));
+  }
+  .ubi__inner {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  /* ===== Encabezado =============================================== */
+  .ubi__head {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    max-width: 58ch;
+  }
+  .ubi__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: var(--leading-tight);
+    margin-block-start: var(--space-2);
+  }
+  .ubi__title-em {
+    font-style: normal;
+    color: var(--color-text-brand);
+  }
+  .ubi__lead {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  /* ----- Leyenda ------------------------------------------------- */
+  .ubi__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    margin-block-start: var(--space-1);
+  }
+  .ubi-leg {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+  .ubi-leg__count {
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+  }
+
+  /* Swatch de la leyenda y del listado comparten forma con los pines:
+     tienda = círculo oliva, córner = rombo dorado. Forma + color. */
+  .ubi-leg__swatch,
+  .ubi-item__swatch {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    flex: none;
+    border: 1px solid oklch(from var(--color-neutral-900) l c h / 0.18);
+  }
+  .ubi-leg__swatch[data-tipo='tienda'],
+  .ubi-item__swatch[data-tipo='tienda'] {
+    background: var(--color-brand-500);
+    border-radius: var(--radius-pill);
+  }
+  .ubi-leg__swatch[data-tipo='corner'],
+  .ubi-item__swatch[data-tipo='corner'] {
+    background: var(--color-accent-500);
+    border-radius: var(--radius-xs);
+    transform: rotate(45deg);
+  }
+
+  /* ===== Layout mapa + listado ==================================== */
+  .ubi__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+  @media (min-width: 900px) {
+    .ubi__layout {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-6);
+      align-items: start;
+    }
+  }
+
+  /* ----- Frame del mapa ------------------------------------------ */
+  .ubi__map-frame {
+    position: relative;
+    /* Altura definida SIEMPRE: sin esto Leaflet colapsa a 0 en mobile. */
+    block-size: clamp(20rem, 62vw, 26rem);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border-subtle);
+    background: var(--color-surface-subtle);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    /* Encierra los z-index internos de Leaflet (popups van a 700) para que
+       no puedan pasar por encima del header sticky. */
+    isolation: isolate;
+    z-index: var(--z-base);
+  }
+  @media (min-width: 900px) {
+    .ubi__map-frame {
+      block-size: 34rem;
+    }
+  }
+  .ubi__map {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ----- Placeholder del mapa ------------------------------------ */
+  .ubi-ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--space-2);
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 calc(var(--space-6) - 1px),
+        oklch(from var(--color-brand-500) l c h / 0.12) calc(var(--space-6) - 1px) var(--space-6)
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 calc(var(--space-6) - 1px),
+        oklch(from var(--color-brand-500) l c h / 0.09) calc(var(--space-6) - 1px) var(--space-6)
+      );
+  }
+  /* Se apaga en cuanto el mapa está montado. */
+  .ubi[data-ready] .ubi-ph {
+    display: none;
+  }
+  .ubi-ph__icon {
+    display: grid;
+    place-items: center;
+    inline-size: var(--space-7);
+    block-size: var(--space-7);
+    border-radius: var(--radius-xl);
+    color: var(--color-brand-600);
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-bg-elevated));
+    border: 1px solid var(--color-brand-100);
+    box-shadow: var(--shadow-sm);
+  }
+  .ubi-ph__icon svg {
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+  }
+  .ubi-ph__label {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-text-brand);
+  }
+
+  /* ----- Listado -------------------------------------------------- */
+  .ubi__list {
+    display: grid;
+    gap: var(--space-2);
+  }
+  @media (min-width: 900px) {
+    .ubi__list {
+      max-block-size: 34rem;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-inline-end: var(--space-2);
+    }
+  }
+
+  .ubi-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-elevated);
+    transition:
+      border-color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .ubi[data-ready] .ubi-item {
+    cursor: pointer;
+  }
+  .ubi[data-ready] .ubi-item:hover,
+  .ubi-item:focus-within {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-sm);
+  }
+  .ubi-item[data-active] {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-50);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ubi-item__body {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .ubi-item__name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text-primary);
+  }
+  .ubi-item__addr {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  .ubi-item__badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+  .ubi-item__badge[data-tipo='tienda'] {
+    background: oklch(from var(--color-brand-500) l c h / 0.12);
+    color: var(--color-text-brand);
+  }
+  .ubi-item__badge[data-tipo='corner'] {
+    background: oklch(from var(--color-accent-500) l c h / 0.28);
+    color: var(--color-text-accent);
+  }
+
+  /* Pista visual de que la tarjeta es clickeable. Sin JS no aparece,
+     porque sin JS no hay nada que clickear. */
+  .ubi-item__cue {
+    display: grid;
+    place-items: center;
+    inline-size: 1rem;
+    block-size: 1rem;
+    opacity: 0;
+    color: var(--color-text-brand);
+    transition:
+      opacity var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-out-cubic);
+  }
+  .ubi-item__cue svg {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .ubi[data-ready] .ubi-item__cue {
+    opacity: 0.45;
+  }
+  .ubi[data-ready] .ubi-item:hover .ubi-item__cue,
+  .ubi-item[data-active] .ubi-item__cue {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ubi[data-ready] .ubi-item:hover .ubi-item__cue,
+    .ubi-item[data-active] .ubi-item__cue {
+      transform: none;
+    }
+  }
+
+  /* Control estirado sobre toda la tarjeta. Oculto hasta que hay mapa. */
+  .ubi-item__hit {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 44px;
+    border-radius: inherit;
+    background: none;
+  }
+  .ubi-item__hit[hidden] {
+    display: none;
+  }
+
+  /* ===== Aviso de datos dummy ===================================== */
+  .ubi__flag {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--color-border-strong);
+    background: var(--color-surface-subtle);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  /* ===== CTA ====================================================== */
+  .ubi__cta {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border-subtle);
+    background: var(--gradient-brand-soft);
+  }
+  @media (min-width: 760px) {
+    .ubi__cta {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-6);
+    }
+  }
+  .ubi__cta-copy {
+    display: grid;
+    gap: var(--space-2);
+    max-width: 56ch;
+  }
+  .ubi__cta-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+  }
+  .ubi__cta-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-snug);
+  }
+  .ubi__cta-btn {
+    justify-self: start;
+  }
+</style>
+
+<style is:global>
+  /* ========================================================================
+   * Estilos de lo que Leaflet crea en runtime (pines, popups, controles).
+   * Van globales porque el CSS scoped de Astro solo alcanza al markup del
+   * template. Todo cuelga de #ubicaciones para no filtrar al resto del sitio.
+   * ==================================================================== */
+
+  #ubicaciones .leaflet-container {
+    font-family: var(--font-sans);
+    background: var(--color-surface-subtle);
+  }
+
+  /* ----- Pines: color + FORMA (el color solo no es accesible) ------- */
+  #ubicaciones .ubi-pin {
+    display: grid;
+    place-items: center;
+  }
+  #ubicaciones .ubi-pin__dot {
+    --ubi-pin-rotate: 0deg;
+    --ubi-pin-scale: 1;
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+    border: 2px solid var(--color-neutral-0);
+    box-shadow: var(--shadow-sm);
+    transform: rotate(var(--ubi-pin-rotate)) scale(var(--ubi-pin-scale));
+    transition: transform var(--dur-fast) var(--ease-out-cubic);
+  }
+  #ubicaciones .ubi-pin--tienda .ubi-pin__dot {
+    background: var(--color-brand-500);
+    border-radius: var(--radius-pill);
+  }
+  #ubicaciones .ubi-pin--corner .ubi-pin__dot {
+    --ubi-pin-rotate: 45deg;
+    background: var(--color-accent-500);
+    border-radius: var(--radius-xs);
+  }
+  #ubicaciones .ubi-pin:hover .ubi-pin__dot,
+  #ubicaciones .ubi-pin:focus-visible .ubi-pin__dot,
+  #ubicaciones .ubi-pin[data-active] .ubi-pin__dot {
+    --ubi-pin-scale: 1.4;
+  }
+
+  /* ----- Popup ----------------------------------------------------- */
+  #ubicaciones .leaflet-popup-content-wrapper {
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-lg);
+  }
+  #ubicaciones .leaflet-popup-tip {
+    background: var(--color-bg-elevated);
+    box-shadow: none;
+  }
+  #ubicaciones .leaflet-popup-content {
+    margin: var(--space-3) var(--space-4);
+    display: grid;
+    gap: var(--space-1);
+  }
+  #ubicaciones .ubi-pop {
+    display: grid;
+    gap: var(--space-1);
+    justify-items: start;
+  }
+  #ubicaciones .ubi-pop__badge {
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+  }
+  #ubicaciones .ubi-pop__badge[data-tipo='tienda'] {
+    background: oklch(from var(--color-brand-500) l c h / 0.12);
+    color: var(--color-text-brand);
+  }
+  #ubicaciones .ubi-pop__badge[data-tipo='corner'] {
+    background: oklch(from var(--color-accent-500) l c h / 0.28);
+    color: var(--color-text-accent);
+  }
+  #ubicaciones .ubi-pop__name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+  }
+  #ubicaciones .ubi-pop__addr {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-snug);
+  }
+
+  /* ----- Controles: touch target ≥44×44 ---------------------------- */
+  #ubicaciones .leaflet-bar a,
+  #ubicaciones .leaflet-touch .leaflet-bar a {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    line-height: 2.75rem;
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    background: var(--color-bg-elevated);
+    border-block-end-color: var(--color-border-subtle);
+  }
+  #ubicaciones .leaflet-bar a:hover {
+    background: var(--color-surface-subtle);
+  }
+  #ubicaciones .leaflet-bar {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  /* ----- Atribución (aviso legal, obligatorio) --------------------- */
+  #ubicaciones .leaflet-control-attribution {
+    padding-inline: var(--space-2);
+    background: oklch(from var(--color-bg-elevated) l c h / 0.88);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-2xs);
+  }
+  #ubicaciones .leaflet-control-attribution a {
+    color: var(--color-text-brand);
+    text-decoration: underline;
+  }
+</style>

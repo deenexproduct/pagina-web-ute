@@ -1,0 +1,567 @@
+---
+/**
+ * Quiénes somos — spec punto 5. Ancla `#nosotros` (la usa NAV_PRIMARY).
+ *
+ * El spec pide "corto y visual: texto breve + números clave + foto/video
+ * de planta y logística". Es la presentación institucional de QUEM como
+ * GRUPO — no de una unidad — y está escrita también para el inversor.
+ *
+ * ── DECISIONES ───────────────────────────────────────────────────────
+ *
+ * 1. ABSORBE A ProofStrip. Los números salen de METRICS / METRICS_SOURCE
+ *    (site.ts) y se renderizan acá, en la banda inferior de la sección.
+ *    `ProofStrip.astro` queda sin usar (no lo borré; lo marqué como
+ *    superseded en su cabecera). Motivo: los números sin el contexto de
+ *    quiénes somos son ruido arriba del fold, y duplicar el dataset en
+ *    dos componentes es exactamente lo que este repo ya sufrió antes.
+ *
+ * 2. LA FUENTE NO ES UN LINK EXTERNO. ProofStrip linkeaba a lanacion.com
+ *    con target="_blank". En Fase 1 la regla es que ninguna CTA saque al
+ *    visitante del sitio, y el lugar canónico para las notas es la
+ *    sección Prensa (spec punto 9). Acá la atribución es TEXTO PLANO
+ *    —"La Nación, oct. 2023" es verificable por sí solo— y el único link
+ *    es interno, a #prensa, derivado de NAV_PRIMARY para no hardcodear
+ *    el ancla ni pisar el base path / idioma.
+ *
+ * 3. NÚMEROS REALES. Nada inventado: 2018 / 21 tiendas / $800M / AMBA+PBA
+ *    salen de site.ts, sourceados de prensa. El EN traduce las etiquetas,
+ *    nunca los valores.
+ *
+ * 4. MEDIA = PLACEHOLDER DELIBERADO. No hay ningún asset institucional en
+ *    el repo. El slot renderiza una pieza gráfica tokenizada (no un hueco
+ *    roto, no una imagen rota) y hace el swap solo cuando se complete
+ *    MEDIA.src acá abajo.
+ */
+import { getLangFromUrl, localizedPath, type Lang } from '../i18n/utils';
+import { METRICS, METRICS_SOURCE, NAV_PRIMARY, type Metric } from '../config/site';
+
+const lang = getLangFromUrl(Astro.url);
+
+/* -------------------------------------------------------------------- */
+/*  COPY                                                                */
+/* -------------------------------------------------------------------- */
+
+const COPY = {
+  es: {
+    eyebrow: 'Quiénes somos',
+    tituloA: 'Un grupo,',
+    tituloEm: 'una sola operación.',
+    lead: 'QUEM es un grupo de alimentos congelados. Integramos tiendas, abastecimiento mayorista, franquicias y desarrollo de producto en una misma estructura.',
+    p2: 'Operamos con infraestructura propia en AMBA y Provincia de Buenos Aires: logística de frío, distribución y una red de puntos de venta que crece por franquicias y córners.',
+    p3: 'Cada unidad se apoya en esa misma base. Por eso abrir una tienda, sumar un cliente mayorista o lanzar un producto nunca arranca de cero.',
+    /* Media */
+    mediaSubject: 'Planta y logística',
+    mediaNote: 'Material institucional en producción.',
+    mediaAlt: 'Planta y logística de QUEM.',
+    /* Números */
+    metricsTitle: 'QUEM en números',
+    sourceLink: 'Ver las notas de prensa',
+  },
+  en: {
+    eyebrow: 'About us',
+    tituloA: 'One group,',
+    tituloEm: 'one operation.',
+    lead: 'QUEM is a frozen food group. We bring retail stores, wholesale supply, franchising and product development together into a single structure.',
+    p2: 'We run our own infrastructure across the Buenos Aires metro area and province: cold chain logistics, distribution and a retail network that grows through franchises and in-store corners.',
+    p3: 'Every unit runs on that same foundation — which is why opening a store, onboarding a wholesale client or launching a product never starts from zero.',
+    mediaSubject: 'Plant & logistics',
+    mediaNote: 'Institutional footage in production.',
+    mediaAlt: 'QUEM plant and logistics operation.',
+    metricsTitle: 'QUEM in numbers',
+    sourceLink: 'See the press coverage',
+  },
+} as const;
+
+const c = COPY[lang];
+
+/* -------------------------------------------------------------------- */
+/*  MEDIA — foto o video de planta / logística                          */
+/* -------------------------------------------------------------------- */
+
+interface MediaAsset {
+  /** Path en /public. Vacío → placeholder deliberado. */
+  src: string;
+  /** Poster del video. Ignorado si `src` es una imagen. */
+  poster: string;
+}
+
+/**
+ * VACÍO A PROPÓSITO. `src/assets/images/` solo tiene un .gitkeep y el
+ * único video que había en el repo se retiró por tener marca de terceros
+ * quemada. Cuando llegue el asset: dejarlo en `public/` y completar acá.
+ *
+ * Pedir al cliente: 16:9 o 3:4, ≥1920px de lado mayor, sin marcas de
+ * terceros ni texto quemado. Si es video: 8-12 s en loop, SIN audio.
+ */
+const MEDIA: MediaAsset = {
+  src: '', // TODO foto/video de planta y logística
+  poster: '',
+};
+
+const hasMedia = MEDIA.src.length > 0;
+const isVideo = /\.(mp4|webm)$/i.test(MEDIA.src);
+
+/* -------------------------------------------------------------------- */
+/*  NÚMEROS CLAVE                                                       */
+/* -------------------------------------------------------------------- */
+
+/**
+ * METRICS vive en site.ts en español (es la fuente de verdad de los
+ * datos). Acá solo se traducen las ETIQUETAS, nunca los valores: el
+ * valor es el dato sourceado y se muestra igual en los dos idiomas.
+ *
+ * Se mapea por `value` porque es lo único estable e idioma-neutral. Si
+ * el cliente actualiza un número en site.ts sin traducir acá, el item
+ * cae al label en español en vez de romperse.
+ */
+const METRIC_EN: Record<string, { label: string; detail: string }> = {
+  '2018': { label: 'Founded', detail: 'operating ever since' },
+  '21': { label: 'Stores', detail: '15 franchised' },
+  /* El monto es en pesos argentinos: explicitarlo evita que un lector en
+     inglés lo lea como USD. No es un dato nuevo, es el mismo de la nota. */
+  $800M: { label: 'Revenue', detail: 'annual, in pesos (reported)' },
+  'AMBA + PBA': {
+    label: 'Own coverage',
+    detail: 'Buenos Aires metro + province, Colombia 2026',
+  },
+};
+
+const metrics: ReadonlyArray<Metric> = METRICS.map((m) => {
+  const en = lang === 'en' ? METRIC_EN[m.value] : undefined;
+  return en ? { value: m.value, label: en.label, detail: en.detail } : m;
+});
+
+/**
+ * Atribución. El ES sale de site.ts; el EN es traducción propia — si
+ * METRICS_SOURCE.text cambia, actualizar también esta línea.
+ */
+const SOURCE: Record<Lang, string> = {
+  es: METRICS_SOURCE.text,
+  en: 'Source: La Nación, Oct. 2023. Also covered by iProfesional and TN.',
+};
+
+/* Link interno a Prensa, derivado del nav. Si Prensa saliera del nav,
+   la sección degrada a atribución sin link en vez de romper el ancla. */
+const prensaHref = NAV_PRIMARY.find((n) => n.key === 'prensa')?.href ?? '';
+const prensaUrl = prensaHref ? localizedPath(prensaHref, lang) : '';
+---
+
+<section id="nosotros" class="ns section-y" aria-labelledby="ns-title">
+  <div class="ns__bg" aria-hidden="true"></div>
+
+  <div class="container-content ns__inner">
+    <div class="ns__grid">
+      {/* ---------- Texto breve ---------- */}
+      <div class="ns__copy">
+        <p class="eyebrow" data-reveal style="--reveal-y: 12px;">{c.eyebrow}</p>
+
+        <h2 id="ns-title" class="ns__title" data-reveal style="--reveal-delay: 80ms;">
+          {c.tituloA}
+          <em class="ns__title-em">{c.tituloEm}</em>
+        </h2>
+
+        <p class="ns__lead" data-reveal style="--reveal-delay: 160ms;">{c.lead}</p>
+        <p class="ns__text" data-reveal style="--reveal-delay: 220ms;">{c.p2}</p>
+        <p class="ns__text" data-reveal style="--reveal-delay: 280ms;">{c.p3}</p>
+      </div>
+
+      {/* ---------- Foto / video de planta y logística ---------- */}
+      <figure class="ns__media" data-reveal="right" style="--reveal-delay: 180ms;">
+        <div class="ns__frame">
+          {
+            hasMedia ? (
+              isVideo ? (
+                /* Si el asset final es video: muted + loop + playsinline.
+                   El poster cubre el caso de reduced-motion y de red lenta. */
+                <video
+                  class="ns__asset"
+                  src={MEDIA.src}
+                  poster={MEDIA.poster}
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                  aria-label={c.mediaAlt}
+                />
+              ) : (
+                <img
+                  class="ns__asset"
+                  src={MEDIA.src}
+                  alt={c.mediaAlt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )
+            ) : (
+              /* Placeholder deliberado: pieza gráfica propia, no un hueco.
+                 Decorativo — el texto real lo lleva el <figcaption>. */
+              <div class="ns-ph" aria-hidden="true">
+                <div class="ns-ph__pattern" />
+                <div class="ns-ph__stack">
+                  <span class="ns-ph__icon">
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <path
+                        d="M6 42V20l18-10 18 10v22"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M3 42h42"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M17 42V30h14v12"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M24 18v8M20.5 20l7 4M27.5 20l-7 4"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span class="ns-ph__label">{c.mediaSubject}</span>
+                </div>
+              </div>
+            )
+          }
+        </div>
+
+        <figcaption class="ns__caption">
+          {hasMedia ? c.mediaAlt : `${c.mediaSubject} — ${c.mediaNote}`}
+        </figcaption>
+      </figure>
+    </div>
+
+    {/* ---------- Números clave ---------- */}
+    <div class="ns__facts">
+      <h3 class="sr-only">{c.metricsTitle}</h3>
+
+      <ul class="ns__metrics" data-reveal-stagger role="list">
+        {
+          metrics.map((m) => (
+            <li class="ns-metric" data-reveal>
+              <span class="ns-metric__value">{m.value}</span>
+              <span class="ns-metric__label">{m.label}</span>
+              <span class="ns-metric__detail">{m.detail}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="ns__source-row" data-reveal style="--reveal-y: 10px;">
+        <p class="ns__source">{SOURCE[lang]}</p>
+
+        {
+          prensaUrl ? (
+            <a class="ns__source-link" href={prensaUrl}>
+              {c.sourceLink}
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          ) : null
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ===== Shell ==================================================== */
+  .ns {
+    position: relative;
+    background: var(--color-bg);
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .ns__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .ns__bg::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -20%;
+    inset-inline-start: -10%;
+    width: 55%;
+    height: 70%;
+    background: radial-gradient(
+      circle,
+      oklch(from var(--color-brand-500) l c h / 0.1) 0%,
+      transparent 65%
+    );
+    filter: blur(var(--blur-xl));
+  }
+
+  .ns__inner {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  /* ===== Grid texto + media ======================================= */
+  .ns__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .ns__grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: var(--space-8);
+    }
+  }
+
+  /* ===== Texto ==================================================== */
+  .ns__copy {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    max-width: 54ch;
+  }
+
+  .ns__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: var(--leading-tight);
+    margin-block-start: var(--space-2);
+  }
+  .ns__title-em {
+    font-style: normal;
+    color: var(--color-text-brand);
+  }
+
+  .ns__lead {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-primary);
+    line-height: var(--leading-normal);
+    margin-block-start: var(--space-2);
+  }
+  .ns__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  /* ===== Media =================================================== */
+  .ns__media {
+    --ns-ratio: 16 / 10;
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+  @media (min-width: 900px) {
+    .ns__media {
+      --ns-ratio: 4 / 5;
+    }
+  }
+
+  .ns__frame {
+    position: relative;
+    aspect-ratio: var(--ns-ratio);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border-subtle);
+    background: linear-gradient(
+      160deg,
+      var(--color-surface-subtle) 0%,
+      var(--color-bg-elevated) 100%
+    );
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .ns__asset {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ns__caption {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  /* ----- Placeholder deliberado --------------------------------- */
+  .ns-ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  /* Retícula tenue: lee como "espacio reservado", no como error. */
+  .ns-ph__pattern {
+    --ns-cell: var(--space-6);
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 calc(var(--ns-cell) - 1px),
+        oklch(from var(--color-brand-500) l c h / 0.14) calc(var(--ns-cell) - 1px) var(--ns-cell)
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 calc(var(--ns-cell) - 1px),
+        oklch(from var(--color-brand-500) l c h / 0.1) calc(var(--ns-cell) - 1px) var(--ns-cell)
+      );
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, black 15%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, black 15%, transparent 85%);
+  }
+
+  .ns-ph__stack {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    text-align: center;
+  }
+
+  .ns-ph__icon {
+    width: var(--space-8);
+    height: var(--space-8);
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-xl);
+    color: var(--color-brand-600);
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-bg-elevated));
+    border: 1px solid var(--color-brand-100);
+    box-shadow: var(--shadow-sm);
+  }
+  .ns-ph__icon svg {
+    width: var(--space-6);
+    height: var(--space-6);
+  }
+
+  .ns-ph__label {
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    background: oklch(from var(--color-brand-500) l c h / 0.1);
+    border: 1px solid oklch(from var(--color-brand-500) l c h / 0.2);
+    color: var(--color-text-brand);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+
+  /* ===== Números clave ============================================ */
+  .ns__facts {
+    display: grid;
+    gap: var(--space-4);
+    padding-block-start: var(--space-6);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  .ns__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+  @media (min-width: 760px) {
+    .ns__metrics {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+    }
+    .ns-metric {
+      padding-inline: var(--space-5);
+      border-inline-start: 1px solid var(--color-border-subtle);
+    }
+    .ns-metric:first-child {
+      padding-inline-start: 0;
+      border-inline-start: none;
+    }
+  }
+
+  .ns-metric {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+  }
+  .ns-metric__value {
+    font-family: var(--font-display);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: var(--leading-tight);
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ns-metric__label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text-primary);
+  }
+  .ns-metric__detail {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  /* ===== Atribución =============================================== */
+  .ns__source-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+  }
+  .ns__source {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  .ns__source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 44px;
+    padding-inline: var(--space-3);
+    margin-inline-start: calc(-1 * var(--space-3));
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-secondary);
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur-fast) var(--ease-standard);
+  }
+  .ns__source-link svg {
+    width: 1em;
+    height: 1em;
+    transition: transform var(--dur-fast) var(--ease-out-cubic);
+  }
+  .ns__source-link:hover {
+    color: var(--color-text-brand);
+    background: var(--color-surface-subtle);
+  }
+  .ns__source-link:hover svg {
+    transform: translateX(2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ns__source-link:hover svg {
+      transform: none;
+    }
+  }
+</style>

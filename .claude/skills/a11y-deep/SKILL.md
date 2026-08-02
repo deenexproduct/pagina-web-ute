@@ -29,7 +29,7 @@ WCAG 2.2 AA es el piso. La web institucional B2B también atraviesa procesos de 
 ### Para form
 
 - [ ] `<label for="<id>">` por cada input.
-- [ ] Required indicado en label visible (asterisco *) + `required` attribute.
+- [ ] Required indicado en label visible (asterisco \*) + `required` attribute.
 - [ ] Error con `role="alert"` o `aria-live="polite"`.
 - [ ] Error vinculado al input con `aria-describedby="<error-id>"` + `aria-invalid="true"`.
 - [ ] Submit con `aria-busy="true"` durante envío.
@@ -60,10 +60,10 @@ CSS en `global.css`: aparece al focus, escondido por default con `transform: tra
 ```astro
 <a class="card" href="..." aria-label="Empanadas — abrir en app">
   <div class="card__photo" aria-hidden="true">
-    <svg ...>
-  </div>
-  <span class="card__name">Empanadas</span>
-</a>
+    <svg ...> </svg>
+    <span class="card__name">Empanadas</span>
+  </div></a
+>
 ```
 
 `aria-hidden="true"` en el photo wrap porque es decorativo. El `aria-label` del link da el contexto completo (nombre + acción).
@@ -136,16 +136,20 @@ Hoy el Header.astro NO hace esto explícitamente. Sumar como mejora.
 Si se agrega un modal:
 
 ```js
-const focusable = modal.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+const focusable = modal.querySelectorAll(
+  'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+);
 const first = focusable[0];
 const last = focusable[focusable.length - 1];
 
 modal.addEventListener('keydown', (e) => {
   if (e.key === 'Tab') {
     if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault(); last.focus();
+      e.preventDefault();
+      last.focus();
     } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault(); first.focus();
+      e.preventDefault();
+      first.focus();
     }
   }
   if (e.key === 'Escape') closeModal();
@@ -156,12 +160,12 @@ modal.addEventListener('keydown', (e) => {
 
 DevTools → Inspect → click en el color → muestra el ratio. WCAG mínimos:
 
-| Texto                   | Mínimo  |
-|-------------------------|---------|
-| Body (< 18pt regular)   | 4.5:1   |
-| Large (18pt+ o 14pt bold) | 3:1   |
-| Icon meaningful         | 3:1     |
-| UI components borders   | 3:1     |
+| Texto                     | Mínimo |
+| ------------------------- | ------ |
+| Body (< 18pt regular)     | 4.5:1  |
+| Large (18pt+ o 14pt bold) | 3:1    |
+| Icon meaningful           | 3:1    |
+| UI components borders     | 3:1    |
 
 Para auditar todo el sitio: **Lighthouse → Accessibility → Contrast**.
 
@@ -190,6 +194,7 @@ Si algo NO funciona, hay un bug a11y.
 - **Android TalkBack**: Settings → Accessibility.
 
 Test mínimo:
+
 1. Activar VO.
 2. Recorrer la web entera con flechas.
 3. ¿Cada sección anuncia su heading?
@@ -220,6 +225,7 @@ Test mínimo:
 ## Compliance
 
 Para clientes B2B con licitaciones (gobierno, salud, finanzas), apuntar:
+
 - **WCAG 2.2 AA** (mínimo).
 - **EAA** (European Accessibility Act, aplica desde junio 2025 a productos digitales en EU).
 - Documentar el reporte Lighthouse + axe en un PDF de compliance.

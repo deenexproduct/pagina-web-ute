@@ -11,52 +11,72 @@ const { showHead = true } = Astro.props;
  * Roles tag por orden de listado en config (Liderazgo / Operación / Expansión).
  */
 const initials = (name: string): string =>
-  name.split(' ').slice(0, 2).map((n) => n.charAt(0)).join('').toUpperCase();
+  name
+    .split(' ')
+    .slice(0, 2)
+    .map((n) => n.charAt(0))
+    .join('')
+    .toUpperCase();
 
 const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
 ---
 
-<section class="team section-y" aria-labelledby="team-title" style="background: var(--color-surface-subtle);">
+<section
+  class="team section-y"
+  aria-labelledby="team-title"
+  style="background: var(--color-surface-subtle);"
+>
   <div class="container-content">
-    {showHead && (
-      <header class="team__head">
-        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Equipo directivo</p>
-        <h2 id="team-title" class="team__title" data-reveal style="--reveal-delay: 100ms;">
-          El equipo detrás de <em>Qüem Central</em>.
-        </h2>
-        <p class="team__lede" data-reveal style="--reveal-delay: 200ms;">
-          Experiencia en operación, desarrollo comercial y crecimiento de unidades.
-        </p>
-      </header>
-    )}
+    {
+      showHead && (
+        <header class="team__head">
+          <p class="eyebrow" data-reveal style="--reveal-y: 16px;">
+            Equipo directivo
+          </p>
+          <h2 id="team-title" class="team__title" data-reveal style="--reveal-delay: 100ms;">
+            El equipo detrás de <em>Qüem Central</em>.
+          </h2>
+          <p class="team__lede" data-reveal style="--reveal-delay: 200ms;">
+            Experiencia en operación, desarrollo comercial y crecimiento de unidades.
+          </p>
+        </header>
+      )
+    }
 
     <ul class="team__grid" role="list" data-reveal-stagger>
-      {TEAM.map((m, i) => (
-        <li class="team-card" data-reveal>
-          <div class="team-card__avatar" aria-hidden="true">
-            {m.photo ? (
-              <img src={m.photo} alt={`Retrato de ${m.name}`} loading="lazy" decoding="async" />
-            ) : (
-              <>
-                <span class="team-card__initials">{initials(m.name)}</span>
-                <span class="team-card__avatar-dot" aria-hidden="true"></span>
-              </>
-            )}
-          </div>
-          <div class="team-card__body">
-            <span class="team-card__role">{memberRoles[i] ?? 'Equipo'}</span>
-            <h3>{m.name}</h3>
-            <p class="team-card__title">{m.title}</p>
-            {m.org && <p class="team-card__org">{m.org}</p>}
-          </div>
-        </li>
-      ))}
+      {
+        TEAM.map((m, i) => (
+          <li class="team-card" data-reveal>
+            <div class="team-card__avatar" aria-hidden="true">
+              {m.photo ? (
+                <img src={m.photo} alt={`Retrato de ${m.name}`} loading="lazy" decoding="async" />
+              ) : (
+                <>
+                  <span class="team-card__initials">{initials(m.name)}</span>
+                  <span class="team-card__avatar-dot" aria-hidden="true" />
+                </>
+              )}
+            </div>
+            <div class="team-card__body">
+              <span class="team-card__role">{memberRoles[i] ?? 'Equipo'}</span>
+              <h3>{m.name}</h3>
+              <p class="team-card__title">{m.title}</p>
+              {m.org && <p class="team-card__org">{m.org}</p>}
+            </div>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </section>
 
 <style>
-  .team__head { display: grid; gap: var(--space-3); margin-block-end: var(--space-7); max-width: 56ch; }
+  .team__head {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+    max-width: 56ch;
+  }
   .team__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
@@ -91,7 +111,10 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     display: grid;
     gap: var(--space-4);
     overflow: hidden;
-    transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-normal);
+    transition:
+      transform var(--dur-fast),
+      border-color var(--dur-fast),
+      box-shadow var(--dur-normal);
   }
   .team-card::before {
     content: '';
@@ -99,7 +122,11 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     inset: -40% -40% auto auto;
     width: 70%;
     height: 70%;
-    background: radial-gradient(circle, oklch(from var(--color-brand-500) l c h / 0.10) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      oklch(from var(--color-brand-500) l c h / 0.1) 0%,
+      transparent 70%
+    );
     pointer-events: none;
     transition: background var(--dur-normal);
   }
@@ -109,7 +136,11 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     box-shadow: var(--shadow-card);
   }
   .team-card:hover::before {
-    background: radial-gradient(circle, oklch(from var(--color-brand-500) l c h / 0.16) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      oklch(from var(--color-brand-500) l c h / 0.16) 0%,
+      transparent 70%
+    );
   }
 
   .team-card__avatar {
@@ -118,7 +149,11 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     height: 5rem;
     border-radius: var(--radius-pill);
     background:
-      radial-gradient(circle at 30% 30%, oklch(from var(--color-brand-200) l c h / 0.9) 0%, transparent 60%),
+      radial-gradient(
+        circle at 30% 30%,
+        oklch(from var(--color-brand-200) l c h / 0.9) 0%,
+        transparent 60%
+      ),
       linear-gradient(135deg, var(--color-brand-200) 0%, var(--color-brand-400) 100%);
     color: var(--color-brand-900);
     display: grid;
@@ -127,9 +162,13 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     border: 2px solid oklch(100% 0 0 / 0.4);
     box-shadow:
       inset 0 -2px 8px oklch(from var(--color-brand-500) l c h / 0.18),
-      0 6px 20px oklch(from var(--color-brand-500) l c h / 0.20);
+      0 6px 20px oklch(from var(--color-brand-500) l c h / 0.2);
   }
-  .team-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .team-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   .team-card__initials {
     font-family: var(--font-display);
     font-weight: var(--weight-extrabold);
@@ -149,7 +188,11 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     border: 2px solid var(--color-bg-elevated);
   }
 
-  .team-card__body { display: grid; gap: 0.25rem; position: relative; }
+  .team-card__body {
+    display: grid;
+    gap: 0.25rem;
+    position: relative;
+  }
   .team-card__role {
     display: inline-block;
     width: max-content;
@@ -169,7 +212,11 @@ const memberRoles = ['Liderazgo', 'Operación', 'Expansión'] as const;
     letter-spacing: -0.02em;
     color: var(--color-text-primary);
   }
-  .team-card__title { color: var(--color-text-primary); font-size: var(--font-size-sm); font-weight: var(--weight-medium); }
+  .team-card__title {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-medium);
+  }
   .team-card__org {
     color: var(--color-text-muted);
     font-size: var(--font-size-xs);

@@ -26,7 +26,12 @@ La web usa **SVG inline custom**, no Heroicons / Lucide / Phosphor / Font Awesom
 
 ```astro
 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-  <path d="…" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path
+    d="…"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"></path>
 </svg>
 ```
 
@@ -35,11 +40,19 @@ La web usa **SVG inline custom**, no Heroicons / Lucide / Phosphor / Font Awesom
 Atributos `width`/`height` en HTML hacen al SVG raster. Mejor controlar size desde CSS para que herede del padre:
 
 ```css
-.my-icon { width: 1.5rem; height: 1.5rem; color: var(--color-brand-600); }
-.my-icon svg { width: 100%; height: 100%; }
+.my-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-brand-600);
+}
+.my-icon svg {
+  width: 100%;
+  height: 100%;
+}
 ```
 
 ⚠️ **Importante**: el reset de `global.css` tiene `img, svg { max-width: 100%; height: auto; }`. Eso puede estirar SVGs sin width fijo. Solución:
+
 - Setear `width`/`height` explícitos en el wrapper.
 - O agregar attributes `width="X" height="Y"` al SVG si necesitás bypass del reset.
 
@@ -56,11 +69,13 @@ Convención: el `path` se define en `ICONS` map dentro del componente. No hay ar
 12 iconos custom de tipos de espacio (supermercado, café, club, gym, etc.). Conditional rendering por nombre:
 
 ```astro
-{v.icon === 'cafe' && (
-  <svg viewBox="0 0 32 32" fill="none">
-    <path d="M6 12h20v8c0 4-3 8-10 8s-10-4-10-8v-8Z" stroke="currentColor" stroke-width="1.6"/>
-  </svg>
-)}
+{
+  v.icon === 'cafe' && (
+    <svg viewBox="0 0 32 32" fill="none">
+      <path d="M6 12h20v8c0 4-3 8-10 8s-10-4-10-8v-8Z" stroke="currentColor" stroke-width="1.6" />
+    </svg>
+  )
+}
 ```
 
 ### Iconos por formato corner (`CornerFormatos.astro`)
@@ -83,11 +98,27 @@ Para componentes icon reutilizables:
 ```astro
 ---
 // src/components/icons/IconArrowUpRight.astro
-interface Props { size?: number; class?: string; }
+interface Props {
+  size?: number;
+  class?: string;
+}
 const { size = 14, class: className = '' } = Astro.props;
 ---
-<svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true" class={className}>
-  <path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 14 14"
+  fill="none"
+  aria-hidden="true"
+  class={className}
+>
+  <path
+    d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"></path>
 </svg>
 ```
 
@@ -102,8 +133,12 @@ const { size = 14, class: className = '' } = Astro.props;
 Para iconos que rotan / cambian:
 
 ```css
-.cta:hover .cta__arrow { transform: translateX(2px); }
-.cta { transition: ... }
+.cta:hover .cta__arrow {
+  transform: translateX(2px);
+}
+.cta {
+  transition: ...;
+}
 ```
 
 Animar `stroke-dashoffset` para path animations (logo intro). Hoy NO se usa.

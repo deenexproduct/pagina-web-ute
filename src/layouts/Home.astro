@@ -1,0 +1,116 @@
+---
+/**
+ * Home.astro — Orden canónico de la landing Fase 1.
+ *
+ * Lo consumen `src/pages/index.astro` (ES) y `src/pages/en/index.astro` (EN).
+ * Las secciones detectan el idioma solas desde `Astro.url`, así que ambas
+ * páginas montan exactamente este árbol y no hay que duplicar el orden.
+ *
+ * El orden ES el de los 12 puntos del spec Fase 1 — no reordenar sin
+ * volver al spec:
+ *
+ *   1. Header ....................... BaseLayout
+ *   2. Hero ......................... HeroCorporativo
+ *   3. Las 4 opciones ............... Opciones          (hub navegacional)
+ *   4. Descargar App ................ DescargarApp      (QUEM Tiendas, B2C)
+ *   5. Quiénes somos ................ QuienesSomos      #nosotros
+ *   6. Unidades de negocio .......... UnidadesDeNegocio #unidades
+ *   7. Mapa de ubicaciones .......... Ubicaciones       #ubicaciones
+ *   8. CTAs por sección ............. CTABand ×3        (intercalados)
+ *   9. Prensa ....................... PrensaList        #prensa
+ *  10. Aliados ...................... Aliados
+ *  11. Contacto ..................... Contacto          #contacto
+ *  12. Footer ...................... BaseLayout
+ *
+ * IDs canónicos: los ancla `NAV_PRIMARY` en `src/config/site.ts` y los
+ * ilumina el scroll-spy del header. NO renombrar de un solo lado.
+ *
+ * Fuera de Fase 1 (los archivos siguen en el repo, sin montar):
+ * QueEsQuemCentral, PlataformaApp, CategoriasProducto, Garantias,
+ * Ecosistema, CornerTeaser, EquipoDirectivo, QuemEnNumeros.
+ * Salieron porque el spec pide una institucional de grupo sin catálogo
+ * ni compra online, no porque estén mal.
+ */
+import { getLangFromUrl } from '../i18n/utils';
+
+import HeroCorporativo from '../sections/HeroCorporativo.astro';
+import Opciones from '../sections/Opciones.astro';
+import DescargarApp from '../sections/DescargarApp.astro';
+import QuienesSomos from '../sections/QuienesSomos.astro';
+import UnidadesDeNegocio from '../sections/UnidadesDeNegocio.astro';
+import Ubicaciones from '../sections/Ubicaciones.astro';
+import PrensaList from '../sections/prensa/PrensaList.astro';
+import Aliados from '../sections/Aliados.astro';
+import Contacto from '../sections/Contacto.astro';
+import CTABand from '../components/ui/CTABand.astro';
+
+const lang = getLangFromUrl(Astro.url);
+
+/* Copy de las bandas de conversión intercaladas (spec punto 8).
+   Vive acá porque es el orquestador quien decide dónde va cada una. */
+const COPY = {
+  es: {
+    unidades: {
+      titulo: '¿Buscás abastecerte con nosotros?',
+      texto: 'Contanos qué volumen manejás y armamos una propuesta.',
+    },
+    /* Ojo: la sección de Ubicaciones ya cierra con su propio CTA de
+       córner, así que esta banda apunta a franquicias — el único
+       interés que si no se quedaba sin banda propia. */
+    franquicia: {
+      titulo: '¿Querés abrir tu propia unidad?',
+      texto: 'Te damos la marca, el producto y la operación ya probada.',
+    },
+    inversion: {
+      titulo: '¿Te interesa acompañar el crecimiento del grupo?',
+      texto: 'Hablemos de las oportunidades abiertas.',
+    },
+  },
+  en: {
+    unidades: {
+      titulo: 'Looking to source from us?',
+      texto: 'Tell us your volume and we will put together a proposal.',
+    },
+    franquicia: {
+      titulo: 'Want to open your own unit?',
+      texto: 'You get the brand, the product and an operation that already works.',
+    },
+    inversion: {
+      titulo: 'Interested in backing the group as it grows?',
+      texto: "Let's talk about what is open right now.",
+    },
+  },
+} as const;
+
+const c = COPY[lang];
+---
+
+<HeroCorporativo />
+<Opciones />
+<DescargarApp />
+
+<QuienesSomos />
+
+<CTABand titulo={c.unidades.titulo} texto={c.unidades.texto} interes="mayorista" variant="subtle" />
+
+<UnidadesDeNegocio />
+<Ubicaciones />
+
+<CTABand
+  titulo={c.franquicia.titulo}
+  texto={c.franquicia.texto}
+  interes="franquicia"
+  variant="brand"
+/>
+
+<PrensaList />
+<Aliados />
+
+<CTABand
+  titulo={c.inversion.titulo}
+  texto={c.inversion.texto}
+  interes="inversion"
+  variant="subtle"
+/>
+
+<Contacto />

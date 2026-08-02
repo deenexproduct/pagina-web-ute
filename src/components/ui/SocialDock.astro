@@ -1,0 +1,270 @@
+---
+/**
+ * SocialDock.astro — Redes sociales de QUEM.
+ *
+ * Regla transversal del spec: "Redes sociales flotantes (YouTube ·
+ * Facebook · Instagram · WhatsApp), siempre visibles".
+ *
+ * FUENTE ÚNICA de los íconos de red del sitio. Dos variantes sobre el
+ * mismo markup, para no duplicar los SVG en el footer:
+ *   - `dock`   → flotante fijo. Lo monta BaseLayout una sola vez.
+ *   - `inline` → fila estática. La usa el footer dentro de su columna
+ *                de contacto.
+ *
+ * DEGRADACIÓN: la lista sale de `activeSocials()` + `hasWhatsapp()`. Si
+ * el cliente todavía no entregó ninguna URL (estado de hoy), el
+ * componente no renderiza NADA — ni el contenedor ni un link muerto.
+ *
+ * COLISIÓN CON ScrollToTop (decisión de layout):
+ *   ScrollToTop vive fijo en la esquina inferior DERECHA. El dock se
+ *   ancla a la esquina inferior IZQUIERDA con el mismo offset, así los
+ *   dos comparten baseline y no se pisan en NINGÚN viewport — la
+ *   separación no depende del alto de la pantalla (que es lo que rompe
+ *   un dock vertical centrado en landscape) ni del ancho del gutter
+ *   (que es lo que rompe un dock pegado al borde izquierdo entre 1024
+ *   y 1400px, donde el container ya llega al borde).
+ *   Ancho máximo del dock: 4 targets de 44px + gaps + padding ≈ 196px.
+ *   En el viewport más chico soportado (320px) termina en x≈216 y
+ *   ScrollToTop arranca en x=256: quedan ~40px de aire.
+ *
+ *   Además, el CTA del formulario en mobile queda a la DERECHA de su
+ *   fila (`.wizard__actions` usa `space-between`, el primario va
+ *   último), así que el dock a la izquierda tampoco lo tapa.
+ */
+import { BRAND, activeSocials, hasWhatsapp, whatsappLink } from '../../config/site';
+import type { SocialKey } from '../../config/site';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+interface Props {
+  /** `dock` = flotante fijo (BaseLayout). `inline` = fila estática (footer). */
+  variant?: 'dock' | 'inline';
+  class?: string;
+}
+
+const { variant = 'dock', class: className } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const COPY = {
+  es: {
+    /* El nombre de la red es marca y no se traduce; sí la preposición. */
+    perfilEn: (red: string): string => `${BRAND.group} en ${red}`,
+    waMensaje: `Hola ${BRAND.group}, quiero hacer una consulta.`,
+    ariaPie: 'Redes sociales en el pie de página',
+  },
+  en: {
+    perfilEn: (red: string): string => `${BRAND.group} on ${red}`,
+    waMensaje: `Hi ${BRAND.group}, I have a question.`,
+    ariaPie: 'Social media in the footer',
+  },
+} as const;
+const c = COPY[lang];
+
+/** WhatsApp no vive en SOCIAL (sale de la constante WHATSAPP), pero acá es una red más. */
+type DockKey = SocialKey | 'whatsapp';
+
+interface DockIcon {
+  /** Nombre de la red. Marca: igual en ES y EN. */
+  name: string;
+  /** Contenido interno del <svg viewBox="0 0 24 24">. Constante local, nunca input. */
+  svg: string;
+}
+
+/*
+ * Marcas monocromas en `currentColor`: el color lo pone el token del
+ * estado (reposo / hover), no el ícono. Instagram va con primitivas
+ * porque su glifo oficial es de contorno.
+ */
+const ICONS: Record<DockKey, DockIcon> = {
+  youtube: {
+    name: 'YouTube',
+    svg: '<path d="M23.5 6.5a3 3 0 0 0-2.1-2.1C19.5 3.9 12 3.9 12 3.9s-7.5 0-9.4.5A3 3 0 0 0 .5 6.5C0 8.4 0 12 0 12s0 3.6.5 5.5a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.5.5-5.5s0-3.6-.5-5.5zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/>',
+  },
+  facebook: {
+    name: 'Facebook',
+    svg: '<path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.09 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.96h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.09 24 18.1 24 12.07z"/>',
+  },
+  instagram: {
+    name: 'Instagram',
+    svg:
+      '<rect x="2.2" y="2.2" width="19.6" height="19.6" rx="5.6" fill="none" stroke="currentColor" stroke-width="2"/>' +
+      '<circle cx="12" cy="12" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>' +
+      '<circle cx="17.6" cy="6.4" r="1.4"/>',
+  },
+  whatsapp: {
+    name: 'WhatsApp',
+    svg: '<path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37s-1.04 1.01-1.04 2.48 1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35zM12.04 21.8h-.01a9.8 9.8 0 0 1-4.99-1.37l-.36-.21-3.71.97.99-3.62-.23-.37a9.79 9.79 0 0 1-1.5-5.23c0-5.41 4.4-9.81 9.82-9.81 2.62 0 5.08 1.02 6.93 2.88a9.74 9.74 0 0 1 2.87 6.94c0 5.41-4.4 9.82-9.81 9.82zM20.52 3.45A11.7 11.7 0 0 0 12.04 0C5.55 0 .28 5.27.27 11.75c0 2.07.54 4.09 1.57 5.87L.17 24l6.53-1.71a11.74 11.74 0 0 0 5.34 1.36h.01c6.49 0 11.76-5.27 11.76-11.75 0-3.14-1.22-6.09-3.44-8.31z"/>',
+  },
+};
+
+interface DockItem {
+  key: DockKey;
+  href: string;
+  /** Nombre accesible del link. El SVG va `aria-hidden`. */
+  label: string;
+  svg: string;
+}
+
+/* Orden del spec: YouTube · Facebook · Instagram · WhatsApp. Las tres
+   primeras salen en el orden de SOCIAL; WhatsApp cierra la fila. */
+const items: ReadonlyArray<DockItem> = [
+  ...activeSocials().map((s) => ({
+    key: s.key,
+    href: s.url,
+    label: c.perfilEn(ICONS[s.key].name),
+    svg: ICONS[s.key].svg,
+  })),
+  ...(hasWhatsapp()
+    ? [
+        {
+          key: 'whatsapp' as DockKey,
+          href: whatsappLink(c.waMensaje, lang),
+          label: t('cta.whatsapp'),
+          svg: ICONS.whatsapp.svg,
+        },
+      ]
+    : []),
+];
+
+/*
+ * Las dos variantes son navegación, así que las dos son `<nav>`. Pero
+ * dos landmarks del mismo tipo NO pueden compartir nombre accesible: el
+ * dock se queda con el genérico y la fila del footer se identifica como
+ * la del pie.
+ */
+const ariaLabel = variant === 'dock' ? t('a11y.social') : c.ariaPie;
+---
+
+{
+  items.length > 0 && (
+    <nav class:list={['social', `social--${variant}`, className]} aria-label={ariaLabel}>
+      <ul class="social__list">
+        {items.map((item) => (
+          <li class="social__item">
+            <a class="social__link" href={item.href} target="_blank" rel="noopener noreferrer">
+              <span class="sr-only">{item.label}</span>
+              <svg class="social__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <Fragment set:html={item.svg} />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .social {
+    /* Mínimo de touch target del proyecto (≥44×44). No es un valor de
+       diseño tokenizable: es el piso de accesibilidad, igual que en
+       ScrollToTop.astro y en `.btn`. */
+    --social-target: 44px;
+  }
+
+  .social__list {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .social__link {
+    display: grid;
+    place-items: center;
+    inline-size: var(--social-target);
+    block-size: var(--social-target);
+    border-radius: var(--radius-circle);
+    color: var(--color-text-secondary);
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-standard);
+  }
+  .social__link:hover {
+    color: var(--color-text-on-brand);
+    background-color: var(--color-brand-500);
+    transform: translateY(-2px);
+  }
+  .social__link:active {
+    transform: translateY(0);
+  }
+
+  .social__icon {
+    inline-size: var(--space-5);
+    block-size: var(--space-5);
+  }
+
+  /* ===== Variante `dock` — flotante fijo =================================== */
+  .social--dock {
+    /*
+     * Espejo EXACTO del offset de ScrollToTop.astro: los dos flotantes
+     * comparten la misma línea de base sobre bordes opuestos. Si cambia
+     * allá, cambia acá.
+     */
+    --social-inset: clamp(1.25rem, 3vw, 2rem);
+
+    position: fixed;
+    inset-block-end: var(--social-inset);
+    inset-inline-start: var(--social-inset);
+    /*
+     * Debajo del header sticky a propósito: con el menú mobile abierto
+     * el panel del header tiene que quedar por encima del dock, no al
+     * revés. Sobre el contenido normal, que no crea stacking context.
+     */
+    z-index: calc(var(--z-sticky) - 1);
+    /* La píldora es decorativa: los clicks que no caen en un ícono
+       siguen llegando al contenido de abajo. */
+    pointer-events: none;
+  }
+
+  .social--dock .social__list {
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: var(--shadow-md);
+  }
+
+  .social--dock .social__link {
+    pointer-events: auto;
+  }
+
+  /* ===== Variante `inline` — fila estática del footer ====================== */
+  .social--inline .social__list {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .social--inline .social__link {
+    border: 1px solid var(--color-border-subtle);
+    background-color: var(--color-bg-elevated);
+  }
+  .social--inline .social__link:hover {
+    border-color: var(--color-border-brand);
+  }
+
+  /* ===== Motion ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .social__link {
+      transition:
+        color var(--dur-fast),
+        background-color var(--dur-fast),
+        border-color var(--dur-fast);
+    }
+    .social__link:hover,
+    .social__link:active {
+      transform: none;
+    }
+  }
+
+  /* ===== Print — un flotante no se imprime ================================= */
+  @media print {
+    .social--dock {
+      display: none !important;
+    }
+  }
+</style>

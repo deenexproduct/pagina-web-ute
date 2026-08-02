@@ -1,756 +1,410 @@
 ---
-import { APP_IS_LIVE, buyOnlineLink, link } from '../config/site';
-
-const buyHref = buyOnlineLink();
-const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
-
 /**
- * Hero v2 — Dirección "Promesa + entrada a la app".
+ * HeroCorporativo — Hero institucional del grupo QUEM (spec Fase 1, punto 2).
  *
- * Reglas de la versión:
- *  - Una sola promesa fuerte en title.
- *  - Subtitle = una línea dot-separated.
- *  - UNA sola CTA primaria dominante + 1 link discreto.
- *  - Visual = phone mockup grande con preview real de la app
- *    (categorías reales del config). Floating con animación sutil.
- *  - Sin chips, sin bars chart, sin sub-grid cargado.
+ * Qué cambió respecto de la versión anterior:
+ *  - Se eliminó el mockup de teléfono con carrito + badge de cantidad, los dos
+ *    CTAs "Comprar online" y el CSS muerto de `.hero__brand-mark`. Fase 1
+ *    deroga el e-commerce: toda CTA va a contacto o WhatsApp.
+ *  - El h1 dejó de vender "proveedor de congelados" y pasó a hablar como
+ *    GRUPO (QUEM es la marca madre; Qüem Central es una de sus 4 unidades).
+ *  - Se tokenizaron los ~35 `oklch()` literales del fondo. Los que estaban en
+ *    hue azul (254 / 252 / 240) eran resabios de una paleta abandonada: se
+ *    reemplazaron por brand (oliva) y accent (dorado).
  *
- * Objetivo: conversión al click "Comprar online" → app.
+ * Video de fondo: `HERO_VIDEO` está vacío A PROPÓSITO (el asset anterior tenía
+ * marca de terceros). Mientras esté vacío el hero renderiza un fondo tratado
+ * —mesh + orbs + trama de puntos— que se lee como decisión, no como hueco.
+ * Cuando llegue el asset definitivo se prende solo, sin tocar este archivo.
  */
+import { BRAND, hasHeroVideo, hasWhatsapp, HERO_VIDEO, whatsappLink } from '../config/site';
+import { getLangFromUrl, localizedPath, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const COPY = {
+  es: {
+    eyebrow: `Grupo ${BRAND.group}`,
+    tituloL1: 'Toda la cadena del',
+    tituloL2: 'alimento congelado.',
+    bajada:
+      'Tiendas, abastecimiento mayorista, franquicias y desarrollo de producto, bajo un mismo grupo.',
+    whatsappMsg: `Hola ${BRAND.group}. Quiero conocer más sobre el grupo.`,
+    cue: 'Conocé el grupo',
+  },
+  en: {
+    eyebrow: `${BRAND.group} Group`,
+    tituloL1: 'The entire',
+    tituloL2: 'frozen food chain.',
+    bajada:
+      'Retail stores, wholesale supply, franchises and product development, under a single group.',
+    whatsappMsg: `Hi ${BRAND.group}. I'd like to know more about the group.`,
+    cue: 'Meet the group',
+  },
+} as const;
+const c = COPY[lang];
+
+const showVideo = hasHeroVideo();
+const showWhatsapp = hasWhatsapp();
 
 /*
- * 6 categorías visibles en el preview de la app.
- * Copy con presentación + volumen para que un comprador entienda
- * el formato real del catálogo (no es retail unidad, es mayorista por bolsa/caja).
+ * `contactLink()` de site.ts es agnóstico de idioma: devuelve `/#contacto`, que
+ * desde `/en/` saca al visitante a la home en español. Hasta que el helper sea
+ * lang-aware, el anchor se localiza acá. En ES el resultado es idéntico.
  */
-const previewCategories = [
-  { slug: 'empanadas',    nombre: 'Empanadas',    pack: 'Caja 24u',    hue: 38 },
-  { slug: 'hamburguesas', nombre: 'Hamburguesas', pack: 'Caja 12u',    hue: 28 },
-  { slug: 'pizzas',       nombre: 'Pizzas',       pack: 'Bolsa 6u',    hue: 12 },
-  { slug: 'postres',      nombre: 'Postres',      pack: 'Caja 24u',    hue: 320 },
-  { slug: 'frutas',       nombre: 'Frutas',       pack: 'Bolsa 5kg',   hue: 18 },
-  { slug: 'pescados',     nombre: 'Pescados',     pack: 'Caja 4kg',    hue: 200 },
-];
+const contactHref = localizedPath('/#contacto', lang);
+const whatsappHref = whatsappLink(c.whatsappMsg, lang);
+const nosotrosHref = localizedPath('/#nosotros', lang);
+
+/*
+ * Guard de `prefers-reduced-motion` para el video.
+ * El CSS ya oculta el `<video>` y muestra el poster, pero un video en
+ * `display: none` puede seguir decodificando: esto lo frena de verdad.
+ * Va como `is:inline` y sólo se emite si existe el asset.
+ */
+const REDUCED_MOTION_GUARD = `
+(function () {
+  var v = document.querySelector('[data-hero-video]');
+  if (!v) return;
+  var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    if (mq.matches) {
+      v.pause();
+      v.removeAttribute('autoplay');
+    } else {
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+  }
+  apply();
+  if (mq.addEventListener) mq.addEventListener('change', apply);
+})();
+`;
 ---
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" id="hero" aria-labelledby="hero-title">
   <div class="hero__bg" aria-hidden="true">
-    <div class="hero__bg-mesh" data-parallax="0.15"></div>
-    <div class="hero__bg-dots"></div>
-    <div class="hero__bg-orb hero__bg-orb--brand" data-parallax="0.25"></div>
-    <div class="hero__bg-orb hero__bg-orb--accent" data-parallax="0.35"></div>
+    {
+      showVideo ? (
+        <Fragment>
+          <video
+            class="hero__video"
+            data-hero-video
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster={HERO_VIDEO.poster || undefined}
+          >
+            {HERO_VIDEO.webm.length > 0 && <source src={HERO_VIDEO.webm} type="video/webm" />}
+            <source src={HERO_VIDEO.mp4} type="video/mp4" />
+          </video>
+          {HERO_VIDEO.poster.length > 0 && (
+            <div class="hero__poster" style={`background-image: url('${HERO_VIDEO.poster}');`} />
+          )}
+          <div class="hero__scrim" />
+        </Fragment>
+      ) : (
+        <Fragment>
+          <div class="hero__mesh" data-parallax="0.12" />
+          <div class="hero__grid" />
+          <div class="hero__orb hero__orb--brand" data-parallax="0.22" />
+          <div class="hero__orb hero__orb--accent" data-parallax="0.32" />
+        </Fragment>
+      )
+    }
   </div>
 
   <div class="hero__inner container-content">
-    <!-- COPY -->
-    <div class="hero__copy">
-      <h1 id="hero-title" class="hero__title">
-        <span class="hero__title-line" data-reveal style="--reveal-delay: 250ms; --reveal-duration: 800ms;">{APP_IS_LIVE ? 'Comprá alimentos' : 'Tu proveedor de'}</span>
-        <span class="hero__title-line hero__title-line--gradient" data-reveal style="--reveal-delay: 400ms; --reveal-duration: 800ms;">congelados</span>
-        <span class="hero__title-line" data-reveal style="--reveal-delay: 550ms; --reveal-duration: 800ms;">{APP_IS_LIVE ? 'con un click.' : 'sin vueltas.'}</span>
-      </h1>
+    <p class="eyebrow" data-reveal="fade">{c.eyebrow}</p>
 
-      <p class="hero__meta" data-reveal style="--reveal-delay: 800ms;">
-        <span class="hero__meta-item">
-          <svg class="hero__meta-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="2" y="3" width="10" height="8" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2 6h10M5 3V1M9 3V1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          Catálogo B2B
-        </span>
-        <span class="hero__meta-item">
-          <svg class="hero__meta-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 9V4h7v5M8 6h3l2 2v1H8M1 9h12" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="4" cy="11" r="1.2" stroke="currentColor" stroke-width="1.4"/><circle cx="11" cy="11" r="1.2" stroke="currentColor" stroke-width="1.4"/></svg>
-          Logística incluida
-        </span>
-        <span class="hero__meta-item">
-          <svg class="hero__meta-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 13s5-4 5-8a5 5 0 0 0-10 0c0 4 5 8 5 8Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="7" cy="5" r="1.7" stroke="currentColor" stroke-width="1.4"/></svg>
-          AMBA + PBA
-        </span>
-      </p>
+    <h1 id="hero-title" class="hero__title">
+      <span class="hero__title-line" data-reveal style="--reveal-delay: 80ms;">{c.tituloL1}</span>
+      <span class="hero__title-line hero__title-line--em" data-reveal style="--reveal-delay: 180ms;"
+        >{c.tituloL2}</span
+      >
+    </h1>
 
-      <div class="hero__actions" data-reveal style="--reveal-delay: 950ms;">
-        <a class="hero__cta-main" href={buyHref} {...buyTargetProps}>
-          <span class="hero__cta-main-text">Comprar online</span>
-          <span class="hero__cta-main-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 12 12 4M12 4H6M12 4v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="hero__cta-main-shine" aria-hidden="true"></span>
-        </a>
-        <a class="hero__cta-alt" href={link('/#contacto')}>
-          Hablar con ventas
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
+    <p class="hero__lede" data-reveal style="--reveal-delay: 300ms;">{c.bajada}</p>
+
+    <div class="hero__actions" data-reveal style="--reveal-delay: 400ms;">
+      <a class="btn hero__cta hero__cta--main" href={contactHref}>{t('cta.hablemos')}</a>
+      {
+        showWhatsapp && (
+          <a
+            class="btn btn-outline hero__cta"
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('cta.whatsapp')}
+          </a>
+        )
+      }
     </div>
-
-    <!-- PHONE MOCKUP -->
-    <aside class="hero__phone" aria-hidden="true" data-reveal="right" style="--reveal-delay: 600ms; --reveal-duration: 1100ms;">
-      <div class="hero__phone-glow"></div>
-
-      <div class="hero__phone-device">
-        <!-- Dynamic island -->
-        <div class="hero__phone-island" aria-hidden="true"></div>
-
-        <!-- Status bar -->
-        <div class="hero__phone-status">
-          <span class="hero__phone-status-time">9:41</span>
-          <span class="hero__phone-status-icons">
-            <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M1 7h2v3H1zM5 5h2v5H5zM9 3h2v7H9zM13 1h2v9h-2z" fill="currentColor"/></svg>
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M7 2.5c1.5 0 2.9.5 4 1.5l1.4-1.4C10.9 1.1 9 0.5 7 0.5S3.1 1.1 1.6 2.6L3 4c1.1-1 2.5-1.5 4-1.5Z" fill="currentColor"/><circle cx="7" cy="8" r="1.5" fill="currentColor"/></svg>
-            <svg width="22" height="10" viewBox="0 0 22 10" fill="none"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="currentColor"/><rect x="2" y="2" width="14" height="6" rx="1" fill="currentColor"/><rect x="19.5" y="3.5" width="1.5" height="3" rx="0.5" fill="currentColor"/></svg>
-          </span>
-        </div>
-
-        <!-- App screen -->
-        <div class="hero__phone-screen">
-          <!-- App header -->
-          <header class="hero__phone-header">
-            <div class="hero__phone-header-brand">
-              <span class="hero__phone-header-mark">Q</span>
-              <span class="hero__phone-header-name">Qüem</span>
-            </div>
-            <span class="hero__phone-header-cart" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M2 3h2l2 9h10l2-7H5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                <circle cx="7" cy="15" r="1.2" stroke="currentColor" stroke-width="1.6"/>
-                <circle cx="14" cy="15" r="1.2" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-              <span class="hero__phone-header-cart-dot"></span>
-            </span>
-          </header>
-
-          <!-- Search bar -->
-          <div class="hero__phone-search">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="m12.5 12.5-3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            <span>Buscar productos</span>
-          </div>
-
-          <!-- Section title -->
-          <div class="hero__phone-section">
-            <span class="hero__phone-section-label">Categorías</span>
-            <span class="hero__phone-section-more">Ver todas →</span>
-          </div>
-
-          <!-- Categorías grid -->
-          <ul class="hero__phone-cats">
-            {previewCategories.map((c, i) => (
-              <li class="hero__phone-cat" style={`--cat-hue: ${c.hue}; --cat-delay: ${i * 90 + 1400}ms;`}>
-                <div class="hero__phone-cat-thumb">
-                  <span class="hero__phone-cat-mark"></span>
-                </div>
-                <div class="hero__phone-cat-info">
-                  <span class="hero__phone-cat-name">{c.nombre}</span>
-                  <span class="hero__phone-cat-pack">{c.pack}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <!-- Floating CTA dentro de la app -->
-          <div class="hero__phone-cta" aria-hidden="true">
-            <span class="hero__phone-cta-pulse"></span>
-            <span class="hero__phone-cta-text">Comprar online</span>
-            <span class="hero__phone-cta-icon">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 7h6m0 0L7 4m3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Floating chip 1: stock status -->
-      <div class="hero__phone-chip hero__phone-chip--stock" data-reveal="scale" style="--reveal-delay: 1600ms;" aria-hidden="true">
-        <span class="hero__phone-chip-dot"></span>
-        <span>Stock en línea</span>
-      </div>
-
-      <!-- Floating chip 2: cobertura -->
-      <div class="hero__phone-chip hero__phone-chip--coverage" data-reveal="scale" style="--reveal-delay: 1800ms;" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/></svg>
-        <span>AMBA + PBA</span>
-      </div>
-    </aside>
   </div>
 
+  <!-- Sin aria-label: el nombre accesible tiene que contener el texto visible (WCAG 2.5.3). -->
+  <a class="hero__cue" href={nosotrosHref}>
+    <span class="hero__cue-label">{c.cue}</span>
+    <span class="hero__cue-line" aria-hidden="true"></span>
+  </a>
+
+  {showVideo && <script is:inline set:html={REDUCED_MOTION_GUARD} />}
 </section>
 
 <style>
-  /* ===== Hero shell =============================================== */
+  /* ===== Shell ===================================================== */
   .hero {
     position: relative;
-    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3.5rem, 5vw, 5rem);
-    overflow: hidden;
-    isolation: isolate;
-    min-height: clamp(540px, 78vh, 820px);
     display: flex;
     align-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    /* El header es sticky, así que ocupa flujo: descontarlo del alto. */
+    min-height: clamp(30rem, calc(100svh - var(--header-height)), 52rem);
+    padding-block: var(--space-8) var(--space-9);
+
+    /*
+     * Velo del video. Único knob de la sección: cuánto se ve el material
+     * detrás del texto. 0.45 es el techo que mantiene contraste AA del
+     * cuerpo de texto incluso si el cliente entrega footage muy oscuro.
+     */
+    --hero-video-veil: 0.45;
   }
 
-  /* ===== Background ================================================ */
+  /* ===== Fondo — base común ======================================== */
   .hero__bg {
     position: absolute;
     inset: 0;
     z-index: -1;
     background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-brand-tint) 100%);
   }
-  .hero__bg-mesh {
-    position: absolute;
-    inset: -20%;
-    background:
-      radial-gradient(45% 55% at 80% 10%, oklch(58% 0.155 254 / 0.18) 0%, transparent 60%),
-      radial-gradient(40% 50% at 10% 90%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%);
-    transform: translateY(var(--parallax-y, 0));
-    will-change: transform;
-  }
-  .hero__bg-dots {
+
+  /* ===== Fondo — CON video ========================================= */
+  .hero__video,
+  .hero__poster {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
-    background-size: 28px 28px;
-    mask-image: linear-gradient(180deg, transparent 0%, black 25%, black 75%, transparent 100%);
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 25%, black 75%, transparent 100%);
-  }
-  .hero__bg-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(var(--blur-xl));
-    transform: translateY(var(--parallax-y, 0));
-    will-change: transform;
-    opacity: 0.45;
-  }
-  .hero__bg-orb--brand {
-    width: 50rem; height: 50rem;
-    top: -25rem; right: -18rem;
-    background: var(--color-brand-300);
-  }
-  .hero__bg-orb--accent {
-    width: 32rem; height: 32rem;
-    bottom: -15rem; left: -10rem;
-    background: var(--color-accent-300);
-  }
-
-  /* ===== Grid layout ============================================== */
-  .hero__inner {
-    display: grid;
-    gap: var(--space-7);
-    align-items: center;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: var(--hero-video-veil);
   }
-  @media (min-width: 960px) {
-    .hero__inner {
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-      gap: var(--space-8);
+  .hero__poster {
+    display: none;
+    background-size: cover;
+    background-position: center;
+  }
+  /* Reduced motion: nada de reproducción, sólo el poster fijo. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__video {
+      display: none;
+    }
+    .hero__poster {
+      display: block;
     }
   }
 
-  /* Legacy brand-mark (kept for backward compat — no longer used in markup) */
-  .hero__brand-mark {
-    display: inline-grid;
-    place-items: center;
-    width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 0.4rem;
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    font-family: var(--font-display);
-    font-weight: var(--weight-extrabold);
-    font-size: 0.7rem;
-    letter-spacing: -0.06em;
-    box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.2);
+  /*
+   * Scrim: crema opaco en el centro (donde vive el texto) que se desvanece
+   * hacia los bordes. Garantiza AA del titular, la bajada y las CTAs sin
+   * depender de qué footage entregue el cliente.
+   */
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(78% 82% at 50% 50%, var(--color-bg) 0%, var(--color-bg) 46%, transparent 82%),
+      linear-gradient(
+        180deg,
+        var(--color-bg) 0%,
+        transparent 24%,
+        transparent 70%,
+        var(--color-brand-tint) 100%
+      );
   }
 
-  /* ===== Title — 3 líneas grandes ================================== */
+  /* ===== Fondo — SIN video (estado actual) =========================
+   * Tratamiento deliberado: mesh de marca + trama fina + dos orbs
+   * difusos. Ni hueco ni caja vacía esperando un asset.
+   * ================================================================= */
+  .hero__mesh {
+    position: absolute;
+    inset: -20%;
+    background: var(--gradient-mesh);
+    transform: translateY(var(--parallax-y, 0));
+    will-change: transform;
+  }
+  .hero__grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      circle,
+      oklch(from var(--color-brand-500) l c h / 0.07) 1px,
+      transparent 1px
+    );
+    background-size: 30px 30px;
+    mask-image: linear-gradient(180deg, transparent 0%, black 22%, black 72%, transparent 100%);
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      black 22%,
+      black 72%,
+      transparent 100%
+    );
+  }
+  .hero__orb {
+    position: absolute;
+    border-radius: var(--radius-circle);
+    filter: blur(var(--blur-xl));
+    transform: translateY(var(--parallax-y, 0));
+    will-change: transform;
+    opacity: 0.4;
+  }
+  .hero__orb--brand {
+    inline-size: 46rem;
+    block-size: 46rem;
+    inset-block-start: -24rem;
+    inset-inline-end: -16rem;
+    background: var(--color-brand-300);
+  }
+  .hero__orb--accent {
+    inline-size: 30rem;
+    block-size: 30rem;
+    inset-block-end: -14rem;
+    inset-inline-start: -10rem;
+    background: var(--color-accent-300);
+  }
+
+  /* ===== Contenido ================================================= */
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+  }
+
   .hero__title {
-    margin-block: var(--space-5) var(--space-4);
-    font-size: clamp(2.75rem, 1.8rem + 4.5vw, 5.5rem);
-    line-height: 0.96;
-    letter-spacing: -0.045em;
-    font-weight: var(--weight-extrabold);
+    max-inline-size: 20ch;
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: var(--leading-tight);
     color: var(--color-text-primary);
-    text-wrap: balance;
   }
   .hero__title-line {
     display: block;
   }
-  .hero__title-line--gradient {
-    background: var(--gradient-text-brand);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  /* Sólido, no gradiente: el extremo claro del gradient-text no llega a AA. */
+  .hero__title-line--em {
+    color: var(--color-brand-700);
   }
 
-  /* ===== Meta line con icons ====================================== */
-  .hero__meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.7rem;
+  .hero__lede {
+    max-inline-size: 46ch;
+    font-size: var(--font-size-md);
+    line-height: var(--leading-normal);
     color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-medium);
-    margin-block-end: var(--space-6);
-  }
-  .hero__meta-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    white-space: nowrap;
-  }
-  /* Dot separator — attached to item so it can never orphan on a new line */
-  .hero__meta-item:not(:last-child)::after {
-    content: '·';
-    color: var(--color-text-muted);
-    font-weight: var(--weight-bold);
-    margin-inline-start: 0.35rem;
-    flex-shrink: 0;
-  }
-  .hero__meta-icon {
-    color: var(--color-text-brand);
-    flex-shrink: 0;
+    text-wrap: pretty;
   }
 
-  /* ===== Actions =================================================== */
+  /* ===== CTAs ====================================================== */
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-5);
-  }
-
-  .hero__cta-main {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 1.05rem 1.6rem 1.05rem 1.75rem;
-    border-radius: var(--radius-pill);
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    font-size: var(--font-size-base);
-    font-weight: var(--weight-semibold);
-    letter-spacing: -0.005em;
-    overflow: hidden;
-    transition: transform var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-normal) var(--ease-out-expo);
-    box-shadow:
-      0 1px 0 oklch(100% 0 0 / 0.2) inset,
-      0 10px 28px oklch(42% 0.190 252 / 0.32),
-      0 2px 6px oklch(42% 0.190 252 / 0.18);
-    min-height: 56px;
-  }
-  .hero__cta-main:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 1px 0 oklch(100% 0 0 / 0.25) inset,
-      0 14px 36px oklch(42% 0.190 252 / 0.42),
-      0 4px 12px oklch(42% 0.190 252 / 0.22);
-  }
-  .hero__cta-main:active { transform: translateY(0); }
-  .hero__cta-main-icon {
-    display: inline-flex;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    background: oklch(100% 0 0 / 0.22);
-    place-items: center;
-    transition: transform var(--dur-fast) var(--ease-standard);
-  }
-  .hero__cta-main-icon svg { display: block; }
-  .hero__cta-main:hover .hero__cta-main-icon { transform: translate(2px, -2px) rotate(0); }
-  .hero__cta-main-shine {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(110deg, oklch(100% 0 0 / 0) 0%, oklch(100% 0 0 / 0.18) 50%, oklch(100% 0 0 / 0) 100%);
-    transform: translateX(-110%);
-    pointer-events: none;
-    transition: transform 720ms var(--ease-out-expo);
-  }
-  .hero__cta-main:hover .hero__cta-main-shine { transform: translateX(110%); }
-
-  .hero__cta-alt {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    min-block-size: 44px;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    padding-block: 0.5rem;
-    border-bottom: 1.5px solid transparent;
-    transition: color var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard);
-  }
-  .hero__cta-alt:hover {
-    color: var(--color-text-primary);
-    border-color: var(--color-brand-500);
-  }
-  .hero__cta-alt:hover span { transform: translateX(3px); }
-  .hero__cta-alt span {
-    transition: transform var(--dur-fast) var(--ease-standard);
-    display: inline-block;
-  }
-
-  /* ===== PHONE MOCKUP ============================================== */
-  .hero__phone {
-    position: relative;
-    display: grid;
-    place-items: center;
-    padding: var(--space-5) 0;
-    isolation: isolate;
-  }
-
-  .hero__phone-glow {
-    position: absolute;
-    inset: 5% 5%;
-    z-index: -1;
-    background: var(--gradient-mixed);
-    filter: blur(72px);
-    opacity: 0.35;
-    border-radius: 50%;
-  }
-
-  .hero__phone-device {
-    position: relative;
-    width: clamp(260px, 24vw, 320px);
-    aspect-ratio: 9 / 19.5;
-    background: linear-gradient(180deg, oklch(20% 0.012 240) 0%, oklch(14% 0.014 240) 100%);
-    border-radius: 2.6rem;
-    padding: 0.55rem;
-    box-shadow:
-      0 0 0 1.5px oklch(28% 0.018 240) inset,
-      0 0 0 8px oklch(8% 0.008 240),
-      0 30px 60px oklch(15% 0.018 240 / 0.45),
-      0 60px 120px oklch(42% 0.190 252 / 0.30);
-    animation: hero-phone-float 6s ease-in-out infinite;
-  }
-  @keyframes hero-phone-float {
-    0%, 100% { transform: translateY(0) rotate(0); }
-    50%      { transform: translateY(-10px) rotate(-0.4deg); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__phone-device { animation: none; }
-  }
-
-  /* Dynamic island */
-  .hero__phone-island {
-    position: absolute;
-    top: 0.85rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5.5rem;
-    height: 1.2rem;
-    background: oklch(6% 0.006 240);
-    border-radius: 0.7rem;
-    z-index: 3;
-  }
-
-  /* Status bar */
-  .hero__phone-status {
-    position: absolute;
-    top: 0.65rem;
-    left: 1.5rem;
-    right: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: oklch(100% 0 0 / 0.9);
-    font-size: 0.65rem;
-    font-weight: var(--weight-bold);
-    z-index: 2;
-    letter-spacing: -0.02em;
-  }
-  .hero__phone-status-time {
-    width: 4rem;
-    text-align: left;
-  }
-  .hero__phone-status-icons {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    width: 4rem;
-    justify-content: flex-end;
-  }
-  .hero__phone-status-icons svg { width: 14px; height: auto; }
-
-  /* App screen */
-  .hero__phone-screen {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background:
-      radial-gradient(60% 50% at 0% 0%, oklch(75% 0.110 252 / 0.10) 0%, transparent 60%),
-      radial-gradient(50% 40% at 100% 100%, oklch(62% 0.150 155 / 0.08) 0%, transparent 60%),
-      var(--color-bg-elevated);
-    border-radius: 2.05rem;
-    padding: 2.5rem 0.9rem 0.9rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    overflow: hidden;
-  }
-
-  .hero__phone-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-inline: 0.2rem;
-  }
-  .hero__phone-header-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .hero__phone-header-mark {
-    display: inline-grid;
-    place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.4rem;
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    font-family: var(--font-display);
-    font-weight: var(--weight-extrabold);
-    font-size: 0.75rem;
-    letter-spacing: -0.06em;
-  }
-  .hero__phone-header-name {
-    font-family: var(--font-display);
-    font-weight: var(--weight-extrabold);
-    font-size: 0.85rem;
-    color: var(--color-text-primary);
-    letter-spacing: -0.03em;
-  }
-  .hero__phone-header-cart {
-    position: relative;
-    width: 2rem;
-    height: 2rem;
-    display: grid;
-    place-items: center;
-    background: var(--color-surface-subtle);
-    border-radius: 0.5rem;
-    color: var(--color-text-primary);
-  }
-  .hero__phone-header-cart-dot {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 7px;
-    height: 7px;
-    background: var(--color-accent-500);
-    border-radius: 50%;
-    border: 1.5px solid var(--color-bg-elevated);
-  }
-
-  /* Search */
-  .hero__phone-search {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.7rem;
-    background: var(--color-surface-subtle);
-    border-radius: 0.6rem;
-    color: var(--color-text-muted);
-    font-size: 0.7rem;
-    font-weight: var(--weight-medium);
-  }
-
-  /* Section title */
-  .hero__phone-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-inline: 0.2rem;
-    margin-block-start: 0.3rem;
-  }
-  .hero__phone-section-label {
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold);
-    font-size: 0.78rem;
-    color: var(--color-text-primary);
-    letter-spacing: -0.02em;
-  }
-  .hero__phone-section-more {
-    font-size: 0.65rem;
-    color: var(--color-text-brand);
-    font-weight: var(--weight-semibold);
-  }
-
-  /* Categories grid */
-  .hero__phone-cats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    flex: 1;
-  }
-  .hero__phone-cat {
-    background: var(--color-bg);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 0.7rem;
-    padding: 0.55rem;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.5rem;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(8px);
-    animation: hero-phone-cat-in 500ms var(--ease-out-expo) forwards;
-    animation-delay: var(--cat-delay, 1400ms);
-  }
-  @keyframes hero-phone-cat-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__phone-cat { opacity: 1; transform: none; animation: none; }
-  }
-  .hero__phone-cat-thumb {
-    width: 1.7rem;
-    height: 1.7rem;
-    border-radius: 0.4rem;
-    background:
-      radial-gradient(circle at 30% 30%, oklch(95% 0.05 var(--cat-hue) / 0.8), transparent),
-      linear-gradient(135deg, oklch(94% 0.030 var(--cat-hue)), oklch(86% 0.070 var(--cat-hue)));
-    position: relative;
-    display: grid;
-    place-items: center;
-  }
-  .hero__phone-cat-mark {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: oklch(45% 0.16 var(--cat-hue));
-  }
-  .hero__phone-cat-info {
-    display: grid;
-    gap: 0.05rem;
-    min-width: 0;
-  }
-  .hero__phone-cat-name {
-    font-size: 0.7rem;
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-primary);
-    letter-spacing: -0.01em;
-    line-height: 1.1;
-  }
-  .hero__phone-cat-pack {
-    font-size: 0.55rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: var(--weight-medium);
-    line-height: 1;
-  }
-
-  /* Floating CTA dentro de la app — brand color */
-  .hero__phone-cta {
-    position: relative;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 0.45rem;
-    padding: 0.8rem 1rem;
-    background: var(--gradient-brand);
-    color: var(--color-text-on-brand);
-    border-radius: 0.8rem;
-    font-size: 0.78rem;
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.01em;
-    box-shadow: 0 6px 16px oklch(42% 0.190 252 / 0.36);
-    margin-block-start: 0.3rem;
+    gap: var(--space-3);
+    margin-block-start: var(--space-3);
   }
-  .hero__phone-cta-pulse {
-    position: absolute;
-    inset: 0;
-    border-radius: 0.8rem;
-    box-shadow: 0 0 0 0 oklch(42% 0.190 252 / 0.6);
-    animation: hero-phone-cta-pulse 2.4s ease-out infinite;
-    pointer-events: none;
-  }
-  @keyframes hero-phone-cta-pulse {
-    0%   { box-shadow: 0 0 0 0 oklch(42% 0.190 252 / 0.45); }
-    70%  { box-shadow: 0 0 0 12px oklch(42% 0.190 252 / 0); }
-    100% { box-shadow: 0 0 0 0 oklch(42% 0.190 252 / 0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__phone-cta-pulse { animation: none; }
-  }
-  .hero__phone-cta-icon {
-    display: inline-flex;
-    width: 1.2rem;
-    height: 1.2rem;
-    background: oklch(100% 0 0 / 0.25);
-    border-radius: 50%;
-    place-items: center;
-  }
-  .hero__phone-cta-icon svg { display: block; }
 
-  /* ===== Floating chips alrededor del phone ======================= */
-  .hero__phone-chip {
-    position: absolute;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.6rem 0.95rem;
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-subtle);
+  .hero__cta {
+    padding-block: var(--space-3);
+    padding-inline: var(--space-5);
+    /* Físico a propósito: tiene que ganarle al `min-height` de `.btn`. */
+    min-height: 52px;
+    font-size: var(--font-size-base);
     border-radius: var(--radius-pill);
+  }
+
+  /*
+   * Primaria: brand-700, no brand-500. El `.btn-primary` global queda en
+   * ~3.1:1 con texto blanco, por debajo de AA; acá se corrige localmente.
+   */
+  .hero__cta--main {
+    background-color: var(--color-brand-700);
+    color: var(--color-text-on-brand);
+    box-shadow: var(--shadow-md);
+  }
+  .hero__cta--main:hover {
+    background-color: var(--color-brand-800);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* ===== Scroll cue ================================================ */
+  .hero__cue {
+    position: absolute;
+    inset-block-end: var(--space-4);
+    inset-inline: 0;
+    inline-size: max-content;
+    margin-inline: auto;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: 44px;
+    min-inline-size: 44px;
+    padding: var(--space-2) var(--space-4);
+    /* text-muted quedaría en ~3.6:1 sobre la crema: no llega a AA. */
+    color: var(--color-text-secondary);
     font-size: var(--font-size-2xs);
-    font-weight: var(--weight-bold);
-    color: var(--color-text-primary);
-    text-transform: uppercase;
+    font-weight: var(--weight-semibold);
     letter-spacing: var(--tracking-widest);
-    box-shadow:
-      0 8px 20px oklch(15% 0.018 240 / 0.12),
-      0 2px 4px oklch(15% 0.018 240 / 0.06);
-    z-index: 2;
-    backdrop-filter: blur(8px);
+    text-transform: uppercase;
+    transition: color var(--dur-fast) var(--ease-out-cubic);
   }
-  .hero__phone-chip-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--color-accent-500);
-    box-shadow: 0 0 0 3px oklch(62% 0.150 155 / 0.25);
-    animation: hero-eyebrow-pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes hero-eyebrow-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px oklch(62% 0.150 155 / 0.25); }
-    50%      { box-shadow: 0 0 0 6px oklch(62% 0.150 155 / 0.05); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__phone-chip-dot { animation: none; }
-  }
-
-  .hero__phone-chip--stock {
-    top: 14%;
-    left: -8%;
-    animation: hero-chip-float-a 7s ease-in-out infinite;
-  }
-  /* Prevent chip from clipping on mid-range viewports (641-1120px).
-     En este rango el viewport es chico pero el media query de 640px no
-     dispara — los chips con right/left negativos se cortaban. */
-  @media (min-width: 641px) and (max-width: 1120px) {
-    .hero__phone-chip--stock { left: 2%; }
-    .hero__phone-chip--coverage { right: 2%; }
-  }
-  .hero__phone-chip--coverage {
-    bottom: 22%;
-    right: -10%;
+  .hero__cue:hover {
     color: var(--color-text-brand);
-    animation: hero-chip-float-b 8s ease-in-out infinite;
   }
-  .hero__phone-chip--coverage svg { color: var(--color-text-brand); }
-  @keyframes hero-chip-float-a {
-    0%, 100% { transform: translate(0, 0); }
-    50%      { transform: translate(-6px, -8px); }
+  .hero__cue-line {
+    inline-size: 1px;
+    block-size: var(--space-5);
+    background: linear-gradient(180deg, var(--color-border-strong) 0%, transparent 100%);
+    animation: hero-cue-pulse 2.6s var(--ease-out-cubic) infinite;
   }
-  @keyframes hero-chip-float-b {
-    0%, 100% { transform: translate(0, 0); }
-    50%      { transform: translate(6px, -10px); }
+  @keyframes hero-cue-pulse {
+    0%,
+    100% {
+      transform: scaleY(1);
+      transform-origin: top;
+      opacity: 0.9;
+    }
+    50% {
+      transform: scaleY(0.55);
+      transform-origin: top;
+      opacity: 0.35;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero__phone-chip--stock,
-    .hero__phone-chip--coverage { animation: none; }
+    .hero__cue-line {
+      animation: none;
+    }
+  }
+  /* Sólo cuando hay alto real de sobra: si no, pisa el contenido. */
+  @media (min-width: 48rem) and (min-height: 45rem) {
+    .hero__cue {
+      display: inline-flex;
+    }
   }
 
-  @media (max-width: 640px) {
-    .hero__phone-chip--stock { top: 6%; left: 2%; }
-    .hero__phone-chip--coverage { bottom: 8%; right: 2%; }
+  /* ===== Escalas mayores =========================================== */
+  @media (min-width: 48rem) {
+    .hero__inner {
+      gap: var(--space-5);
+    }
   }
 </style>

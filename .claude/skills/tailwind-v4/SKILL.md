@@ -13,13 +13,15 @@ QUEM Central usa **Tailwind v4 CSS-first** vía `@tailwindcss/vite`. No hay `tai
 ## Cómo agregar un valor nuevo
 
 1. **Agregar al token primero** en `tokens.css`:
+
    ```css
    :root {
-     --color-brand-150: oklch(96% 0.040 252);   /* tint nuevo */
+     --color-brand-150: oklch(96% 0.04 252); /* tint nuevo */
    }
    ```
 
 2. **Exponerlo a Tailwind** en `global.css` dentro de `@theme inline`:
+
    ```css
    @theme inline {
      --color-brand-150: var(--color-brand-150);
@@ -33,17 +35,17 @@ QUEM Central usa **Tailwind v4 CSS-first** vía `@tailwindcss/vite`. No hay `tai
 
 ## Prefijos generados por `@theme`
 
-| `@theme` key            | Utility class generada                |
-|-------------------------|---------------------------------------|
-| `--color-<name>`        | `bg-<name>`, `text-<name>`, `border-<name>`, `ring-<name>` |
-| `--font-<name>`         | `font-<name>`                         |
-| `--text-<name>`         | `text-<name>` (font-size)             |
-| `--radius-<name>`       | `rounded-<name>`                      |
-| `--shadow-<name>`       | `shadow-<name>`                       |
-| `--spacing-<name>`      | `p-<name>`, `m-<name>`, `gap-<name>`, etc. |
-| `--container-<name>`    | `max-w-<name>`                        |
-| `--ease-<name>`         | `ease-<name>`                         |
-| `--breakpoint-<name>`   | `<name>:` prefix variant              |
+| `@theme` key          | Utility class generada                                     |
+| --------------------- | ---------------------------------------------------------- |
+| `--color-<name>`      | `bg-<name>`, `text-<name>`, `border-<name>`, `ring-<name>` |
+| `--font-<name>`       | `font-<name>`                                              |
+| `--text-<name>`       | `text-<name>` (font-size)                                  |
+| `--radius-<name>`     | `rounded-<name>`                                           |
+| `--shadow-<name>`     | `shadow-<name>`                                            |
+| `--spacing-<name>`    | `p-<name>`, `m-<name>`, `gap-<name>`, etc.                 |
+| `--container-<name>`  | `max-w-<name>`                                             |
+| `--ease-<name>`       | `ease-<name>`                                              |
+| `--breakpoint-<name>` | `<name>:` prefix variant                                   |
 
 ## Modo CSS-first
 
@@ -61,7 +63,9 @@ Tailwind v4 usa **cascade layers** internamente. Si necesitás overrides, escrib
 
 ```css
 @layer utilities {
-  .text-balance { text-wrap: balance; }
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 ```
 
@@ -71,7 +75,7 @@ Patrón del proyecto: todos los colores en `oklch()` para mejor mezcla perceptua
 
 ```css
 :root {
-  --color-brand-500: oklch(42% 0.190 252);
+  --color-brand-500: oklch(42% 0.19 252);
 }
 ```
 
@@ -89,13 +93,12 @@ Tailwind v4 los soporta nativos. Para que un card responda al **ancho de su cont
 
 ```html
 <div class="@container">
-  <div class="grid grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3">
-    …
-  </div>
+  <div class="grid grid-cols-1 @md:grid-cols-2 @lg:grid-cols-3">…</div>
 </div>
 ```
 
 Breakpoints del container query:
+
 - `@sm:` (24rem ≈ 384px del contenedor)
 - `@md:` (28rem)
 - `@lg:` (32rem)

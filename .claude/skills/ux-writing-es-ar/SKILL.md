@@ -13,11 +13,11 @@ Toda comunicación escrita en la web debe pasar por estas reglas. Si una pantall
 
 Tres ejes (siempre vivos en cada string):
 
-| Eje | Sí | No |
-|---|---|---|
-| **Tono** | Profesional, sereno, cercano | Vendedor, marketinero, urgente |
+| Eje          | Sí                                | No                                                                 |
+| ------------ | --------------------------------- | ------------------------------------------------------------------ |
+| **Tono**     | Profesional, sereno, cercano      | Vendedor, marketinero, urgente                                     |
 | **Lenguaje** | Concreto, B2B, claridad operativa | Buzzwords, "soluciones", "sinergia", "ecosistema" cuando no aporta |
-| **Promesa** | Lo que SÍ hacemos, hoy | Aspiracional vago, futurista |
+| **Promesa**  | Lo que SÍ hacemos, hoy            | Aspiracional vago, futurista                                       |
 
 Acid test: si una frase podría estar en la web de cualquier startup, **no es Qüem**. Reescribir más concreta y operativa.
 
@@ -25,14 +25,14 @@ Acid test: si una frase podría estar en la web de cualquier startup, **no es Q�
 
 Argentina = `vos`, NO `tú`. Aplica en TODO copy directo al usuario.
 
-| ❌ Evitar | ✅ Usar |
-|---|---|
-| Tú puedes comprar | Comprá / Podés comprar |
+| ❌ Evitar           | ✅ Usar                        |
+| ------------------- | ------------------------------ |
+| Tú puedes comprar   | Comprá / Podés comprar         |
 | Contacta con ventas | Contactá a ventas / Escribinos |
-| Conoce el modelo | Conocé el modelo |
-| Solicita una demo | Pedí una demo |
-| Tu empresa | Tu empresa (igual) |
-| Te ayudamos | Te ayudamos (igual) |
+| Conoce el modelo    | Conocé el modelo               |
+| Solicita una demo   | Pedí una demo                  |
+| Tu empresa          | Tu empresa (igual)             |
+| Te ayudamos         | Te ayudamos (igual)            |
 
 Imperativos siempre voseo: **Comprá, Pedí, Conocé, Escribinos, Sumate, Probá**.
 
@@ -63,11 +63,13 @@ Malos: ~~`01 · Qué es Qüem Central`~~, ~~`08 · Qüem en crecimiento`~~ (romp
 - **Sin signos de admiración**.
 
 Excelentes:
+
 - `9 unidades comerciales. Una sola operación.`
 - `11 categorías. Un solo catálogo.`
 - `Más que un proveedor. Un ecosistema integrado.`
 
 Pobres:
+
 - ~~`Te ayudamos a crecer con nuestras soluciones integrales`~~ (vendedor, abstracto)
 - ~~`Bienvenidos a Qüem Central, donde transformamos la distribución`~~ (largo, saludo innecesario)
 
@@ -78,10 +80,12 @@ Pobres:
 - **Empezar con concreto**: verbo de acción o sustantivo fuerte.
 
 Buenos:
+
 - `Misma propuesta de marca, formato distinto según el espacio.`
 - `Operamos abastecimiento, distribución y desarrollo comercial — de alimentos congelados.`
 
 Pobres:
+
 - ~~`Somos la empresa líder en el rubro, con años de experiencia y un equipo que...`~~ (auto-bombo)
 
 ### Body / descripción de card
@@ -121,19 +125,19 @@ Malos: ~~`Click aquí`~~, ~~`Más info`~~, ~~`Enviar`~~ (genéricos), ~~`¡Quier
 
 Eliminar de TODO copy de la web:
 
-| ❌ Prohibido | ✅ Reemplazar por |
-|---|---|
-| "Soluciones integrales" | qué hacés concretamente |
-| "Innovación" / "innovador" | qué innovás concretamente |
-| "Calidad superior" | qué garantiza la calidad |
-| "Líder en el mercado" | dato o quitar |
-| "Pasión por X" | quitar |
-| "Hace [N] años" sin dato | quitar hasta confirmar |
-| "Más de [N]" inventado | NO. Brief explícito: no inventar números |
-| Signos `!` en marketing | quitar, salvo errores de form |
-| Emojis decorativos | quitar |
-| "Estamos para vos" | algo accionable |
-| Mayúsculas iniciales en cada palabra de título inglés ("Title Case") | usar "Sentence case" en español |
+| ❌ Prohibido                                                         | ✅ Reemplazar por                        |
+| -------------------------------------------------------------------- | ---------------------------------------- |
+| "Soluciones integrales"                                              | qué hacés concretamente                  |
+| "Innovación" / "innovador"                                           | qué innovás concretamente                |
+| "Calidad superior"                                                   | qué garantiza la calidad                 |
+| "Líder en el mercado"                                                | dato o quitar                            |
+| "Pasión por X"                                                       | quitar                                   |
+| "Hace [N] años" sin dato                                             | quitar hasta confirmar                   |
+| "Más de [N]" inventado                                               | NO. Brief explícito: no inventar números |
+| Signos `!` en marketing                                              | quitar, salvo errores de form            |
+| Emojis decorativos                                                   | quitar                                   |
+| "Estamos para vos"                                                   | algo accionable                          |
+| Mayúsculas iniciales en cada palabra de título inglés ("Title Case") | usar "Sentence case" en español          |
 
 ## Marca: "Qüem" con diéresis
 
@@ -198,6 +202,7 @@ Después: `Comprá alimentos congelados con un click.`
 ## Referencias y comparables
 
 Tono modelo a estudiar:
+
 - **Stripe (es)**: precisión + claridad operativa
 - **Linear**: brevedad agresiva, voz de producto
 - **Mercado Libre / dLocal B2B**: voseo + tono argentino corporate
@@ -216,22 +221,22 @@ Aprendizajes de auditorías previas:
 
 ## Quick reference por sección de la web Qüem
 
-| Sección | Eyebrow | Title formato |
-|---|---|---|
-| Hero | (no eyebrow, brand-tag) | Promesa 3 líneas |
-| Qué hacemos | `01 · Qué hacemos` | Contraste posicional 2 líneas |
-| Ecosistema | `02 · Ecosistema` | `[N] [unidades]. [Matiz].` |
-| Unidades de negocio | `03 · Unidades de negocio` | `9 unidades comerciales. Una sola operación.` |
-| Corner Qüem (sub-hero) | `04 · Modelo comercial` | Promesa transformacional |
-| Corner Formatos | `01 · Formatos` (numeración interna) | `5 formatos. Un solo modelo.` |
-| Corner Incluye | `02 · Qué incluye` | `Una solución llave en mano.` |
-| Corner Dónde | `03 · Dónde funciona` | `Para espacios con tráfico real.` |
-| Corner Valor | `04 · Propuesta de valor` | `Sumá facturación sin complejizar la operación.` |
-| Categorías | `05 · Categorías` | `[N] categorías. Un solo catálogo.` |
-| Plataforma | `06 · Plataforma` | `Catálogo, pedidos y compra en una sola app.` |
-| Franquicias | `07 · Franquicias y expansión` | `[N] formatos para crecer con Qüem.` |
-| Números | `08 · La compañía` | `Operación, red comercial y tecnología integradas.` |
-| Equipo | `09 · Equipo directivo` | `El equipo detrás de Qüem Central.` |
-| Prensa | `10 · Prensa` | `Qüem en los medios.` |
-| Contacto | `11 · Contacto` | `Trabajemos con Qüem.` |
-| Footer pitch | `Empezá a operar hoy` | `Pedidos, abastecimiento y expansión desde un único canal.` |
+| Sección                | Eyebrow                              | Title formato                                               |
+| ---------------------- | ------------------------------------ | ----------------------------------------------------------- |
+| Hero                   | (no eyebrow, brand-tag)              | Promesa 3 líneas                                            |
+| Qué hacemos            | `01 · Qué hacemos`                   | Contraste posicional 2 líneas                               |
+| Ecosistema             | `02 · Ecosistema`                    | `[N] [unidades]. [Matiz].`                                  |
+| Unidades de negocio    | `03 · Unidades de negocio`           | `9 unidades comerciales. Una sola operación.`               |
+| Corner Qüem (sub-hero) | `04 · Modelo comercial`              | Promesa transformacional                                    |
+| Corner Formatos        | `01 · Formatos` (numeración interna) | `5 formatos. Un solo modelo.`                               |
+| Corner Incluye         | `02 · Qué incluye`                   | `Una solución llave en mano.`                               |
+| Corner Dónde           | `03 · Dónde funciona`                | `Para espacios con tráfico real.`                           |
+| Corner Valor           | `04 · Propuesta de valor`            | `Sumá facturación sin complejizar la operación.`            |
+| Categorías             | `05 · Categorías`                    | `[N] categorías. Un solo catálogo.`                         |
+| Plataforma             | `06 · Plataforma`                    | `Catálogo, pedidos y compra en una sola app.`               |
+| Franquicias            | `07 · Franquicias y expansión`       | `[N] formatos para crecer con Qüem.`                        |
+| Números                | `08 · La compañía`                   | `Operación, red comercial y tecnología integradas.`         |
+| Equipo                 | `09 · Equipo directivo`              | `El equipo detrás de Qüem Central.`                         |
+| Prensa                 | `10 · Prensa`                        | `Qüem en los medios.`                                       |
+| Contacto               | `11 · Contacto`                      | `Trabajemos con Qüem.`                                      |
+| Footer pitch           | `Empezá a operar hoy`                | `Pedidos, abastecimiento y expansión desde un único canal.` |

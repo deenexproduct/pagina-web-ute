@@ -37,12 +37,14 @@ La web debe construir percepción de escala, solidez, operación y visión. La c
 Sujeto a la compra final del dominio.
 
 **Requerimiento para desarrollo:**
+
 - Preparar la web para dominio propio.
 - Configurar redirecciones desde la web anterior si corresponde.
 - Reemplazar todos los links actuales de `app.meetyquem.com` por la nueva URL de la app cuando esté definida.
 - Reemplazar el mail actual `ventas@meetyquem.com`, visible en la web anterior, por un nuevo mail institucional cuando se defina el dominio.
 
 **Mail sugerido una vez comprado el dominio:**
+
 - `ventas@quem-central.com`
 - `comercial@quem-central.com`
 - `contacto@quem-central.com`
@@ -100,6 +102,7 @@ Debe transmitir:
 - Capacidad operativa
 
 **Evitar:**
+
 - Tono demasiado startup abstracto
 - Tono de catálogo mayorista
 - Exceso de frases marketineras
@@ -111,6 +114,7 @@ Debe transmitir:
 ## 7. Diagnóstico de la web actual
 
 **Lo que hoy está bien encaminado:**
+
 - La estructura visual base es usable.
 - Ya existen fotos y categorías de productos.
 - La navegación es clara.
@@ -118,6 +122,7 @@ Debe transmitir:
 - Ya hay una lógica de contacto comercial.
 
 **Problemas a corregir:**
+
 - La web actual posiciona a la empresa como proveedor comercial de congelados y no como plataforma corporativa. El hero actual dice "Servicios gastronómicos y puntos de venta de alimentos", con foco en suministro de insumos.
 - La historia actual menciona que Meet & Quem nace de la unión entre Emplatame/Somos Palta y Quem, lo cual debe eliminarse por completo en la nueva versión.
 - También hay secciones de fundadores donde aparece Marcos Aldazabal y cargos anteriores que ya no corresponden a la nueva etapa.
@@ -148,6 +153,7 @@ La sección de productos sí puede reutilizarse conceptualmente, porque ya prese
 ## 9. Header / navegación
 
 **Menú recomendado:**
+
 - Inicio
 - QUEM Central
 - Ecosistema
@@ -175,6 +181,7 @@ La sección de productos sí puede reutilizarse conceptualmente, porque ya prese
 > Integramos distribución B2B, logística especializada, franquicias, corners comerciales y tecnología para conectar productos congelados con negocios gastronómicos, comercios y nuevos canales de venta.
 
 **Botones:**
+
 - Comprar online
 - Conocer QUEM Central
 - Contactar
@@ -198,6 +205,7 @@ La sección de productos sí puede reutilizarse conceptualmente, porque ya prese
 > El modelo combina operación gastronómica, capilaridad comercial y tecnología para facilitar compras, ordenar el abastecimiento y escalar nuevas unidades de negocio.
 
 **Puntos clave visuales:**
+
 - Abastecimiento B2B
 - Logística de congelados
 - Red comercial
@@ -220,16 +228,16 @@ La sección de productos sí puede reutilizarse conceptualmente, porque ya prese
 
 **Cards recomendadas:**
 
-| Card                         | Copy                                                                                                |
-|------------------------------|-----------------------------------------------------------------------------------------------------|
-| **Distribución B2B**         | Abastecimiento para restaurantes, comercios, cafeterías, hoteles, eventos y operadores gastronómicos. |
-| **Retail B2C**               | Tiendas y canales de venta directa al consumidor final.                                              |
-| **Franquicias**              | Modelo de expansión comercial para operar unidades QUEM bajo una estructura definida.                |
-| **Corner QUEM**              | Formato comercial flexible para insertar productos QUEM en puntos estratégicos de venta.             |
-| **Logística especializada**  | Distribución de alimentos congelados de última milla con foco en AMBA y Provincia de Buenos Aires.   |
+| Card                         | Copy                                                                                                              |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Distribución B2B**         | Abastecimiento para restaurantes, comercios, cafeterías, hoteles, eventos y operadores gastronómicos.             |
+| **Retail B2C**               | Tiendas y canales de venta directa al consumidor final.                                                           |
+| **Franquicias**              | Modelo de expansión comercial para operar unidades QUEM bajo una estructura definida.                             |
+| **Corner QUEM**              | Formato comercial flexible para insertar productos QUEM en puntos estratégicos de venta.                          |
+| **Logística especializada**  | Distribución de alimentos congelados de última milla con foco en AMBA y Provincia de Buenos Aires.                |
 | **Tecnología / App**         | Catálogo digital para facilitar la compra, ordenar pedidos y conectar la operación comercial con el canal online. |
-| **Fraccionamiento**          | Capacidad operativa para adaptar productos y presentaciones a distintas necesidades comerciales.     |
-| **Representación comercial** | Potencial unidad para representar marcas de alimentos congelados en eventos y puntos de expendio.    |
+| **Fraccionamiento**          | Capacidad operativa para adaptar productos y presentaciones a distintas necesidades comerciales.                  |
+| **Representación comercial** | Potencial unidad para representar marcas de alimentos congelados en eventos y puntos de expendio.                 |
 
 ---
 
@@ -327,6 +335,7 @@ Ejemplo futuro: `https://app.quem-central.com/categoria/empanadas`
 > Desde allí, clientes gastronómicos, comercios y compradores pueden consultar disponibilidad, explorar productos y realizar pedidos de forma simple.
 
 **Mensajes clave:**
+
 - Catálogo digital siempre disponible
 - Compra online desde un único canal
 - Acceso directo a categorías
@@ -350,6 +359,7 @@ Ejemplo futuro: `https://app.quem-central.com/categoria/empanadas`
 > A través de franquicias, corners y alianzas comerciales, la compañía busca llevar su propuesta a más zonas, más canales y más consumidores.
 
 **Cards sugeridas:**
+
 - **Franquicias** — Para operar unidades comerciales bajo la marca QUEM Central.
 - **Corner QUEM** — Para incorporar productos congelados dentro de espacios comerciales existentes.
 - **Alianzas comerciales** — Para marcas, operadores y partners que buscan capilaridad comercial.
@@ -371,6 +381,7 @@ Ejemplo futuro: `https://app.quem-central.com/categoria/empanadas`
 > Una compañía en expansión, con operación B2B, red comercial, franquicias, corners, logística especializada y tecnología aplicada al abastecimiento de alimentos congelados.
 
 **Cuando el cliente habilite datos, completar con:**
+
 - Años de operación
 - Volumen de pedidos
 - Red logística
@@ -401,6 +412,7 @@ Ejemplo futuro: `https://app.quem-central.com/categoria/empanadas`
 - **Joaquín Sepúlveda** — Cargo a definir.
 
 Opciones sugeridas para Joaquín:
+
 - Director de Expansión Comercial
 - Director de Desarrollo de Negocios
 - Director de Franquicias y Corners
@@ -410,6 +422,7 @@ Opciones sugeridas para Joaquín:
 **Recomendación:** Director de Expansión Comercial, porque conecta perfecto con franquicias, corners, desarrollo comercial e inversores.
 
 **Importante — eliminar de la web:**
+
 - Marcos Aldazabal
 - Palta
 - Emplatame
@@ -429,11 +442,13 @@ Opciones sugeridas para Joaquín:
 > Si querés comprar online, conocer el catálogo, consultar por abastecimiento B2B, franquicias, corners o alianzas comerciales, nuestro equipo puede ayudarte.
 
 **CTAs:**
+
 - Comprar online
 - Contactar por WhatsApp
 - Consultar por franquicias / corners
 
 **Campos del formulario:**
+
 - Nombre y apellido
 - Empresa
 - Tipo de consulta
@@ -442,6 +457,7 @@ Opciones sugeridas para Joaquín:
 - Mensaje
 
 **Opciones para "Tipo de consulta":**
+
 - Compra B2B
 - Corner QUEM
 - Franquicias
@@ -450,6 +466,7 @@ Opciones sugeridas para Joaquín:
 - Otro
 
 **Pendientes:**
+
 - Definir WhatsApp final
 - Definir mail institucional
 - Definir dirección comercial si corresponde
@@ -459,6 +476,7 @@ Opciones sugeridas para Joaquín:
 ## 21. Footer
 
 **Contenido recomendado:**
+
 - Logo QUEM Central
 - Breve descripción institucional
 - Links rápidos
@@ -482,6 +500,7 @@ Opciones sugeridas para Joaquín:
 **Branding:** Usar logo nuevo de QUEM Central. El archivo compartido por Drive figura como imagen del logo, pero requiere acceso/logueo para visualizarlo desde navegador externo, por lo que desarrollo/diseño debe descargarlo desde la cuenta autorizada.
 
 **Estilo visual:**
+
 - Corporativo moderno
 - Limpio
 - Institucional
@@ -493,6 +512,7 @@ Opciones sugeridas para Joaquín:
 - Usar la misma línea visual, colores y tipografía del branding de QUEM S.A.
 
 **Evitar:**
+
 - Exceso de placas comerciales
 - Grillas infinitas de producto
 - Lenguaje de supermercado mayorista
@@ -525,6 +545,7 @@ Opciones sugeridas para Joaquín:
 **Meta description:** QUEM Central integra abastecimiento B2B, distribución, logística especializada, franquicias, corners y tecnología para el desarrollo comercial de alimentos congelados.
 
 **Keywords orientativas:**
+
 - alimentos congelados B2B
 - distribución de congelados
 - proveedor de alimentos congelados
@@ -535,6 +556,7 @@ Opciones sugeridas para Joaquín:
 - QUEM Central
 
 **URLs sugeridas:**
+
 - `/`
 - `/ecosistema`
 - `/unidades-de-negocio`

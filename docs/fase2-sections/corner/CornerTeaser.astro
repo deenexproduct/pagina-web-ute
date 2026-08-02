@@ -6,26 +6,32 @@ import { link, contactLink } from '../../config/site';
  * Reemplaza los 5 sub-bloques de Corner en la home (~3500px → ~500px).
  * El detalle completo vive en /corner-quem.
  */
-const cornerContactLink = contactLink('Corner Qüem');
+const cornerContactLink = contactLink('corner');
 
 const formats = [
-  { label: 'Módulo fijo',     desc: 'Exhibidor exclusivo instalado.' },
-  { label: 'Sección curada',  desc: 'Góndola o espacio compartido.' },
-  { label: 'Corner express',  desc: 'Minimódulo para espacios chicos.' },
-  { label: 'Dark corner',     desc: 'Operación exclusivamente delivery.' },
-  { label: 'Módulo eventos',  desc: 'Ferias y eventos puntuales.' },
+  { label: 'Módulo fijo', desc: 'Exhibidor exclusivo instalado.' },
+  { label: 'Sección curada', desc: 'Góndola o espacio compartido.' },
+  { label: 'Corner express', desc: 'Minimódulo para espacios chicos.' },
+  { label: 'Dark corner', desc: 'Operación exclusivamente delivery.' },
+  { label: 'Módulo eventos', desc: 'Ferias y eventos puntuales.' },
 ] as const;
 
 const highlights = [
   { label: 'Implementación', value: 'rápida' },
-  { label: 'Operación',      value: 'baja complejidad' },
-  { label: 'Inversión',      value: 'sin stock propio' },
-  { label: 'Rotación',       value: 'alta' },
+  { label: 'Operación', value: 'baja complejidad' },
+  { label: 'Inversión', value: 'sin stock propio' },
+  { label: 'Rotación', value: 'alta' },
 ] as const;
 
 const venues = [
-  'Cafeterías', 'Gimnasios', 'Oficinas', 'Clubes',
-  'Hoteles', 'Universidades', 'Kioscos premium', 'Coworkings',
+  'Cafeterías',
+  'Gimnasios',
+  'Oficinas',
+  'Clubes',
+  'Hoteles',
+  'Universidades',
+  'Kioscos premium',
+  'Coworkings',
 ] as const;
 ---
 
@@ -33,7 +39,6 @@ const venues = [
   <div class="ct__bg" aria-hidden="true"></div>
 
   <div class="container-content ct__inner">
-
     <!-- COPY -->
     <div class="ct__copy">
       <p class="ct__eyebrow" data-reveal style="--reveal-y: 14px;">
@@ -46,44 +51,72 @@ const venues = [
       </h2>
 
       <p class="ct__lede" data-reveal style="--reveal-delay: 200ms;">
-        Instalamos y operamos un corner con producto Qüem dentro de tu comercio. Sin inversión inicial ni complejidad operativa.
+        Instalamos y operamos un corner con producto Qüem dentro de tu comercio. Sin inversión
+        inicial ni complejidad operativa.
       </p>
 
-      <dl class="ct__highlights" data-reveal style="--reveal-delay: 300ms;" aria-label="Características del modelo">
-        {highlights.map((h) => (
-          <div>
-            <dt>{h.label}</dt>
-            <dd>{h.value}</dd>
-          </div>
-        ))}
+      <dl
+        class="ct__highlights"
+        data-reveal
+        style="--reveal-delay: 300ms;"
+        aria-label="Características del modelo"
+      >
+        {
+          highlights.map((h) => (
+            <div>
+              <dt>{h.label}</dt>
+              <dd>{h.value}</dd>
+            </div>
+          ))
+        }
       </dl>
 
       <div class="ct__actions" data-reveal style="--reveal-delay: 400ms;">
         <a class="btn btn-primary" href={link('/corner-quem')}>
           Conocer Corner Qüem
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"
+            ><path
+              d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path></svg
+          >
         </a>
         <a class="btn btn-outline" href={cornerContactLink}>
           Hablar con comercial
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"
+            ><path
+              d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path></svg
+          >
         </a>
       </div>
     </div>
 
     <!-- VISUAL -->
-    <div class="ct__visual" aria-hidden="true" data-reveal="right" style="--reveal-delay: 200ms; --reveal-duration: 900ms;">
-
+    <div
+      class="ct__visual"
+      aria-hidden="true"
+      data-reveal="right"
+      style="--reveal-delay: 200ms; --reveal-duration: 900ms;"
+    >
       <!-- Formatos -->
       <div class="ct__formats-block">
         <p class="ct__block-label">5 formatos disponibles</p>
         <ul class="ct__formats">
-          {formats.map((f) => (
-            <li class="ct__format">
-              <span class="ct__format-dot"></span>
-              <span class="ct__format-label">{f.label}</span>
-              <span class="ct__format-desc">{f.desc}</span>
-            </li>
-          ))}
+          {
+            formats.map((f) => (
+              <li class="ct__format">
+                <span class="ct__format-dot" />
+                <span class="ct__format-label">{f.label}</span>
+                <span class="ct__format-desc">{f.desc}</span>
+              </li>
+            ))
+          }
         </ul>
       </div>
 
@@ -91,15 +124,12 @@ const venues = [
       <div class="ct__venues-block">
         <p class="ct__block-label">12 tipos de espacios</p>
         <ul class="ct__venues">
-          {venues.map((v) => (
-            <li class="ct__venue-chip">{v}</li>
-          ))}
+          {venues.map((v) => <li class="ct__venue-chip">{v}</li>)}
           <li class="ct__venue-more">
             <a href={link('/corner-quem#cn-where-title')} class="ct__venue-more-link">+4 más →</a>
           </li>
         </ul>
       </div>
-
     </div>
   </div>
 </section>
@@ -116,14 +146,26 @@ const venues = [
     inset: 0;
     z-index: -1;
     background:
-      radial-gradient(50% 70% at 100% 0%, oklch(from var(--color-brand-500) l c h / 0.14) 0%, transparent 65%),
-      radial-gradient(35% 50% at 0% 100%, oklch(from var(--color-accent-500) l c h / 0.12) 0%, transparent 65%);
+      radial-gradient(
+        50% 70% at 100% 0%,
+        oklch(from var(--color-brand-500) l c h / 0.14) 0%,
+        transparent 65%
+      ),
+      radial-gradient(
+        35% 50% at 0% 100%,
+        oklch(from var(--color-accent-500) l c h / 0.12) 0%,
+        transparent 65%
+      );
   }
   .ct__bg::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, oklch(from var(--color-brand-500) l c h / 0.055) 1px, transparent 1px);
+    background-image: radial-gradient(
+      circle,
+      oklch(from var(--color-brand-500) l c h / 0.055) 1px,
+      transparent 1px
+    );
     background-size: 28px 28px;
     mask-image: linear-gradient(180deg, black 0%, transparent 85%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 85%);
@@ -135,11 +177,17 @@ const venues = [
     align-items: start;
   }
   @media (min-width: 960px) {
-    .ct__inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; }
+    .ct__inner {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      align-items: center;
+    }
   }
 
   /* ── COPY ── */
-  .ct__copy { display: grid; gap: var(--space-4); }
+  .ct__copy {
+    display: grid;
+    gap: var(--space-4);
+  }
 
   .ct__eyebrow {
     display: inline-flex;
@@ -157,10 +205,11 @@ const venues = [
     font-weight: var(--weight-bold);
   }
   .ct__eyebrow-dot {
-    width: 7px; height: 7px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(from var(--color-accent-500) l c h / 0.30);
+    box-shadow: 0 0 0 4px oklch(from var(--color-accent-500) l c h / 0.3);
   }
 
   .ct__title {
@@ -199,9 +248,14 @@ const venues = [
     width: 100%;
   }
   @media (min-width: 640px) {
-    .ct__highlights { grid-template-columns: repeat(4, 1fr); }
+    .ct__highlights {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
-  .ct__highlights > div { display: grid; gap: 0.2rem; }
+  .ct__highlights > div {
+    display: grid;
+    gap: 0.2rem;
+  }
   /* Separadores verticales sutiles entre items en desktop */
   @media (min-width: 640px) {
     .ct__highlights > div + div {
@@ -254,7 +308,10 @@ const venues = [
     border-radius: var(--radius-xl);
     padding: var(--space-5);
   }
-  .ct__formats { display: grid; gap: var(--space-2); }
+  .ct__formats {
+    display: grid;
+    gap: var(--space-2);
+  }
   .ct__format {
     display: grid;
     grid-template-columns: auto auto 1fr;
@@ -264,9 +321,12 @@ const venues = [
     border-radius: var(--radius-md);
     transition: background var(--dur-fast);
   }
-  .ct__format:hover { background: var(--color-surface-subtle); }
+  .ct__format:hover {
+    background: var(--color-surface-subtle);
+  }
   .ct__format-dot {
-    width: 6px; height: 6px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--color-brand-400);
     flex-shrink: 0;
@@ -321,7 +381,9 @@ const venues = [
     background: var(--color-surface-subtle);
     color: var(--color-text-muted);
     border: 1px solid var(--color-border-subtle);
-    transition: border-color var(--dur-fast), color var(--dur-fast);
+    transition:
+      border-color var(--dur-fast),
+      color var(--dur-fast);
   }
   .ct__venue-more:hover {
     border-color: var(--color-brand-300);

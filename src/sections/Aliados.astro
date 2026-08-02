@@ -1,0 +1,140 @@
+---
+/**
+ * Aliados — spec punto 10. Franja de logos de proveedores y aliados.
+ *
+ * DEGRADACIÓN (patrón del repo): `ALIADOS` está vacío hasta que el
+ * cliente entregue los logos, así que hoy la sección NO se monta. Es lo
+ * correcto: una franja vacía o con cuadrados punteados resta autoridad
+ * en vez de sumarla, y esta sección existe justamente para sumarla.
+ *
+ * El cableado queda listo: apenas se cargue un item con `logo` en
+ * `ALIADOS` (src/config/site.ts), la sección aparece sola.
+ *
+ * El render de la franja vive en LogoStrip, que también filtra los
+ * items sin logo. El guard de acá es a nivel sección (título, bajada y
+ * padding): sin él quedaría el encabezado colgado sobre la nada.
+ */
+import LogoStrip from '../components/ui/LogoStrip.astro';
+import { ALIADOS, contactLink } from '../config/site';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+
+const COPY = {
+  es: {
+    eyebrow: 'Aliados',
+    titulo: 'La cadena que sostiene la operación.',
+    bajada:
+      'Trabajamos con proveedores y socios que acompañan el volumen, el frío y los tiempos que exige la operación del grupo.',
+    caption: 'Proveedores y socios',
+    ctaPregunta: '¿Querés proveer a QUEM?',
+    ctaLink: 'Escribinos',
+  },
+  en: {
+    eyebrow: 'Partners',
+    titulo: 'The chain behind the operation.',
+    bajada:
+      'We work with suppliers and partners who keep up with the volume, the cold chain and the lead times the group operates on.',
+    caption: 'Suppliers and partners',
+    ctaPregunta: 'Want to supply QUEM?',
+    ctaLink: 'Get in touch',
+  },
+} as const;
+
+const c = COPY[lang];
+
+/* Mismo predicado que usa LogoStrip. Se repite porque un componente
+   .astro no puede exportar helpers a quien lo importa. */
+const hayLogos = ALIADOS.some((a) => a.logo.length > 0);
+
+/* Los proveedores entran por "Otro" en el desplegable del formulario
+   (ver INTERESES en site.ts: "Prensa, proveedores y todo lo que no
+   entre arriba"). */
+const contactHref = contactLink('otro', lang);
+---
+
+{
+  hayLogos && (
+    <section class="aliados section-y" id="aliados" aria-labelledby="aliados-title">
+      <div class="container-content aliados__inner">
+        <header class="aliados__head">
+          <p class="eyebrow" data-reveal style="--reveal-y: 12px;">
+            {c.eyebrow}
+          </p>
+          <h2 id="aliados-title" class="aliados__title" data-reveal style="--reveal-delay: 80ms;">
+            {c.titulo}
+          </h2>
+          <p class="aliados__lede" data-reveal style="--reveal-delay: 160ms;">
+            {c.bajada}
+          </p>
+        </header>
+
+        <LogoStrip items={ALIADOS} titulo={c.caption} variant="card" id="aliados-logos" />
+
+        <p class="aliados__cta" data-reveal>
+          {c.ctaPregunta}{' '}
+          <a class="aliados__cta-link" href={contactHref}>
+            {c.ctaLink}
+          </a>
+        </p>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .aliados {
+    position: relative;
+    background-color: var(--color-bg);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  .aliados__inner {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .aliados__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 56ch;
+  }
+
+  .aliados__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-tight);
+    color: var(--color-text-primary);
+    max-width: 20ch;
+  }
+
+  .aliados__lede {
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+    color: var(--color-text-secondary);
+  }
+
+  .aliados__cta {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .aliados__cta-link {
+    display: inline-block;
+    min-height: 44px;
+    padding-block: 0.75rem;
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-brand);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-border-strong);
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      text-decoration-color var(--dur-fast) var(--ease-standard);
+  }
+  .aliados__cta-link:hover {
+    color: var(--color-brand-700);
+    text-decoration-color: var(--color-brand-500);
+  }
+</style>

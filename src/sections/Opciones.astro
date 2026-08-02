@@ -1,0 +1,413 @@
+---
+/**
+ * Opciones — spec punto 3: "las 4 opciones", bloque navegacional central.
+ *
+ * Va JUSTO DESPUÉS DEL HERO: es el hub de entrada del sitio. Alguien que
+ * no sabe qué es QUEM tiene que poder decidir acá adentro por dónde entra.
+ *
+ * Fase 1: cada tarjeta deriva al formulario de contacto con su interés
+ * PRESELECCIONADO (`?interes=…#contacto`). Nunca a subwebs ni al catálogo.
+ *
+ * Los datos no se inventan: salen de OPCIONES_DESTACADAS + getInteres().
+ * El copy ES es el de site.ts; el EN es override local (site.ts es ES-only).
+ */
+import { OPCIONES_DESTACADAS, getInteres, contactLink, type InteresValue } from '../config/site';
+import { getLangFromUrl, useTranslations, type Lang } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+/* ---------------------------------------------------------------- copy --- */
+
+const COPY = {
+  es: {
+    eyebrow: 'Trabajá con QUEM',
+    titulo: '¿Cómo querés trabajar',
+    tituloEm: 'con QUEM?',
+    lede: 'Cuatro formas de sumarte al grupo. Elegí la tuya y te contesta el equipo que corresponde.',
+    ctaAria: 'Consultar por',
+    otrosTexto: '¿Inversión, prensa o proveedores?',
+    otrosLink: 'Contanos tu caso',
+  },
+  en: {
+    eyebrow: 'Work with QUEM',
+    titulo: 'How do you want to work',
+    tituloEm: 'with QUEM?',
+    lede: 'Four ways to join the group. Pick yours and the right team gets back to you.',
+    ctaAria: 'Get in touch about',
+    otrosTexto: 'Investment, press or suppliers?',
+    otrosLink: 'Tell us about it',
+  },
+} as const;
+
+const c = COPY[lang];
+
+/**
+ * Override de copy en inglés por interés.
+ * `es` va vacío a propósito: el español canónico vive en site.ts y no se
+ * duplica. Si mañana el cliente reescribe un label, se toca un solo lugar.
+ */
+interface OpcionCopy {
+  label: string;
+  desc: string;
+}
+
+const OPCIONES_I18N: Record<Lang, Partial<Record<InteresValue, OpcionCopy>>> = {
+  es: {},
+  en: {
+    mayorista: {
+      label: 'Wholesale',
+      desc: 'Cold-chain supply for restaurants, caterers and retailers.',
+    },
+    franquicia: {
+      label: 'Franchises',
+      desc: 'Open your own store with the identity and backing of the group.',
+    },
+    corner: {
+      label: 'Corners',
+      desc: 'Turnkey frozen retail inside the space you already run.',
+    },
+    'smart-market': {
+      label: 'Smart Market',
+      desc: 'Unattended retail for offices, buildings and high-traffic spaces.',
+    },
+  },
+};
+
+/* --------------------------------------------------------------- links --- */
+
+const contactHref = (interes?: InteresValue): string => contactLink(interes, lang);
+
+/* --------------------------------------------------------------- cards --- */
+
+interface OpcionCard extends OpcionCopy {
+  value: InteresValue;
+  icon: string;
+}
+
+/* Si un value dejara de existir en INTERESES, la card no se renderiza en vez
+   de romper el bloque entero. */
+const cards: OpcionCard[] = OPCIONES_DESTACADAS.map((value): OpcionCard | null => {
+  const base = getInteres(value);
+  if (!base) return null;
+  const override = OPCIONES_I18N[lang][value];
+  return {
+    value,
+    icon: base.icon,
+    label: override?.label ?? base.label,
+    desc: override?.desc ?? base.desc,
+  };
+}).filter((card): card is OpcionCard => card !== null);
+
+/* --------------------------------------------------------------- icons --- */
+
+/* `icon` viene de site.ts como nombre declarativo. El SVG vive acá. */
+const ICON_PATHS: Record<string, string> = {
+  truck:
+    '<path d="M2.5 16.5V5.5h11v11"/><path d="M13.5 9.5h4l4 4v3h-2.6"/><path d="M8.2 16.5h2.6"/><circle cx="6" cy="17.9" r="1.9"/><circle cx="17" cy="17.9" r="1.9"/>',
+  building:
+    '<path d="M2 21h20"/><path d="M4 21V6.2L11.5 3v18"/><path d="M11.5 21V10l8 3.2V21"/><path d="M7 9h1.5M7 12.5h1.5M7 16h1.5M14.5 16h1.5"/>',
+  corner:
+    '<path d="M3 8V3h5"/><path d="M21 16v5h-5"/><rect x="7" y="7.5" width="10" height="9" rx="1.6"/><path d="M7 12h10M12 7.5v9"/>',
+  smart:
+    '<rect x="3" y="3" width="11" height="18" rx="2.2"/><path d="M3 9.6h11"/><path d="M10.6 6.1v1.6M10.6 12.9v1.6"/><path d="M17.2 9.4a4.6 4.6 0 0 1 0 5.2"/><path d="M20 7.3a8.2 8.2 0 0 1 0 9.4"/>',
+};
+
+/* Placeholder deliberado si llega un ícono desconocido. */
+const ICON_FALLBACK = '<circle cx="12" cy="12" r="8.4"/><path d="M9 12h6"/>';
+---
+
+<section class="opciones section-y" id="opciones" aria-labelledby="opciones-title">
+  <div class="container-content">
+    <header class="opciones__head">
+      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">{c.eyebrow}</p>
+      <h2 id="opciones-title" class="opciones__title" data-reveal style="--reveal-delay: 90ms;">
+        {c.titulo}
+        <em>{c.tituloEm}</em>
+      </h2>
+      <p class="opciones__lede" data-reveal style="--reveal-delay: 170ms;">{c.lede}</p>
+    </header>
+
+    <ul class="opciones__grid" data-reveal-stagger role="list">
+      {
+        cards.map((card, idx) => (
+          <li class="opciones__cell" data-reveal>
+            <a
+              class="opcion"
+              href={contactHref(card.value)}
+              aria-label={`${c.ctaAria} ${card.label}`}
+            >
+              <span class="opcion__index" aria-hidden="true">
+                {String(idx + 1).padStart(2, '0')}
+              </span>
+
+              <span class="opcion__icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  set:html={ICON_PATHS[card.icon] ?? ICON_FALLBACK}
+                />
+              </span>
+
+              <h3 class="opcion__title">{card.label}</h3>
+              <p class="opcion__desc">{card.desc}</p>
+
+              <span class="opcion__cta">
+                <span class="opcion__cta-label">{t('cta.consultar')}</span>
+                <svg
+                  class="opcion__arrow"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M4 10h11M10.5 5.5 15 10l-4.5 4.5" />
+                </svg>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="opciones__aside" data-reveal style="--reveal-delay: 260ms;">
+      {c.otrosTexto}{' '}
+      <a class="opciones__aside-link" href={contactHref()}>{c.otrosLink}</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Hub de entrada: arranca en la superficie sutil (corta con el hero) y
+     abre hacia el fondo base para que el scroll siga. */
+  .opciones {
+    position: relative;
+    padding-block: calc(var(--space-section) * 1.6);
+    background: linear-gradient(
+      180deg,
+      var(--color-surface-subtle) 0%,
+      var(--color-bg) 62%,
+      var(--color-bg) 100%
+    );
+  }
+
+  /* ---------- Cabecera ---------------------------------------------------- */
+  .opciones__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 46ch;
+    margin-block-end: var(--space-7);
+  }
+
+  .opciones__title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-tight);
+  }
+  .opciones__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .opciones__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+  }
+
+  /* ---------- Grilla ------------------------------------------------------ */
+  .opciones__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  @media (min-width: 640px) {
+    .opciones__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1040px) {
+    .opciones__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+    }
+  }
+
+  .opciones__cell {
+    display: grid;
+  }
+
+  /* ---------- Tarjeta ----------------------------------------------------- */
+  .opcion {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    min-height: 100%;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      transform var(--dur-normal) var(--ease-out-expo),
+      border-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-normal) var(--ease-out-expo);
+  }
+
+  /* Wash de marca que sube desde abajo en hover. Reemplaza al típico
+     "stripe" superior: se siente más como una superficie viva. */
+  .opcion::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      transparent 30%,
+      oklch(from var(--color-brand-500) l c h / 0.09) 100%
+    );
+    opacity: 0;
+    transition: opacity var(--dur-normal) var(--ease-out-expo);
+  }
+
+  .opcion:hover {
+    transform: translateY(-4px);
+    border-color: oklch(from var(--color-brand-500) l c h / 0.42);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .opcion:hover::before {
+    opacity: 1;
+  }
+
+  /* ---------- Ordinal fantasma ------------------------------------------- */
+  .opcion__index {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1;
+    color: var(--color-text-primary);
+    opacity: 0.08;
+    transition: opacity var(--dur-normal) var(--ease-standard);
+  }
+  .opcion:hover .opcion__index {
+    opacity: 0.16;
+  }
+
+  /* ---------- Ícono ------------------------------------------------------- */
+  .opcion__icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-brand-100);
+    background-color: var(--color-brand-50);
+    color: var(--color-brand-600);
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-normal) var(--ease-out-expo);
+  }
+  .opcion__icon svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .opcion:hover .opcion__icon {
+    background-color: var(--color-brand-500);
+    border-color: var(--color-brand-500);
+    color: var(--color-text-on-brand);
+    transform: scale(1.06);
+  }
+
+  /* ---------- Texto ------------------------------------------------------- */
+  .opcion__title {
+    margin-block-start: var(--space-2);
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-snug);
+  }
+
+  .opcion__desc {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+  }
+
+  /* ---------- CTA visual (el <a> es la tarjeta entera) -------------------- */
+  .opcion__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-block-start: var(--space-3);
+    padding-block-start: var(--space-3);
+    border-block-start: 1px solid var(--color-border-subtle);
+    color: var(--color-text-brand);
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+  }
+  .opcion__arrow {
+    width: 1.1rem;
+    height: 1.1rem;
+    transition: transform var(--dur-normal) var(--ease-out-expo);
+  }
+  .opcion:hover .opcion__arrow {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Salida para inversión / prensa / proveedores ---------------- */
+  .opciones__aside {
+    margin-block-start: var(--space-6);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+  .opciones__aside-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-text-brand);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-decoration-color: oklch(from var(--color-brand-500) l c h / 0.35);
+    text-underline-offset: 4px;
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      text-decoration-color var(--dur-fast) var(--ease-standard);
+  }
+  .opciones__aside-link:hover {
+    color: var(--color-brand-700);
+    text-decoration-color: var(--color-brand-500);
+  }
+
+  /* ---------- Reduced motion --------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    .opcion:hover,
+    .opcion:hover .opcion__icon {
+      transform: none;
+    }
+    .opcion:hover .opcion__arrow {
+      transform: none;
+    }
+  }
+</style>

@@ -38,5 +38,22 @@ export default [
       ...jsxA11y.configs.recommended.rules,
     },
   },
+  {
+    // role="list" on <ul> is intentional in .astro files — fixes Safari stripping
+    // list semantics when list-style:none is applied (known WebKit behaviour).
+    // The rule is a false positive in this context.
+    files: ['**/*.astro'],
+    rules: {
+      'astro/jsx-a11y/no-redundant-roles': 'off',
+
+      // Las cards de radio del formulario ponen su texto a 3 niveles de
+      // anidado (label > span.inner > span.label) para poder maquetar el
+      // ícono y el check. La regla solo mira 2 por defecto y las marcaba
+      // como labels sin texto. El input además lleva `for`/`id` explícito,
+      // así que el nombre accesible es correcto — subimos la profundidad
+      // en vez de apagar la regla.
+      'astro/jsx-a11y/label-has-associated-control': ['error', { depth: 3 }],
+    },
+  },
   prettier,
 ];

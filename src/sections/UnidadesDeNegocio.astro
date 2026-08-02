@@ -1,383 +1,382 @@
 ---
-import { buyOnlineLink, APP_IS_LIVE } from '../config/site';
+/**
+ * UnidadesDeNegocio — spec punto 6.
+ *
+ * "4 bloques: Tiendas · Central · Smart · Origen. Cada uno: imagen + una
+ * línea. Visión de grupo (para el inversor)."
+ *
+ * Es la sección que le habla al inversor: comunica ESCALA (cuatro frentes
+ * operativos) y COHERENCIA (un solo grupo). Por eso las cuatro se tratan
+ * igual — misma card, mismo peso tipográfico — y lo único que las
+ * distingue es la textura del placeholder.
+ *
+ * ── Cambios respecto de la versión anterior ──────────────────────────────
+ *  - Antes describía 9 unidades funcionales inventadas en el markup. Ahora
+ *    los datos salen de UNIDADES (src/config/site.ts), que es la única
+ *    lista.
+ *  - Se sacó el CTA "Empezar a comprar" → buyOnlineLink(): Fase 1 deroga
+ *    el e-commerce.
+ *  - El archivo estaba huérfano (nadie lo importaba). El CSS bueno se
+ *    reusó; el bento de 9 celdas se reemplazó por una fila de 4.
+ *
+ * SIN CTA PROPIA, a propósito: la conversión la manejan los `CTABand`
+ * que `Home.astro` intercala alrededor de esta sección (spec punto 8) —
+ * uno justo arriba y otro de "inversión" más abajo. Meter una tercera acá
+ * sería pisar esa decisión y apilar dos CTAs a 30px una de otra. Si se
+ * decide sumarla, va a `contactLink('inversion')` envuelto en
+ * `localizedPath` (contactLink no conoce el idioma).
+ *
+ * Tampoco fija fondo propio: hereda `--color-bg` de la página para que el
+ * `CTABand variant="subtle"` de arriba siga leyéndose como un escalón.
+ */
+import { UNIDADES, type UnidadSlug } from '../config/site';
+import { getLangFromUrl, useTranslations, type Lang } from '../i18n/utils';
 
-interface Props {
-  showHead?: boolean;
-}
-const { showHead = true } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
-const buyHref = buyOnlineLink();
-const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
+/* ── Copy propio de la sección ─────────────────────────────────────────── */
+const COPY = {
+  es: {
+    eyebrow: 'Unidades de negocio',
+    titulo: 'Cuatro unidades,',
+    tituloEm: 'un solo grupo.',
+    bajada:
+      'Del desarrollo de producto al mostrador: cada unidad cubre un tramo de la cadena del congelado.',
+    /* Prefijo del alt cuando llegue la foto real. TODO: alt propio por unidad con el asset definitivo. */
+    altPrefix: 'Imagen de',
+  },
+  en: {
+    eyebrow: 'Business units',
+    titulo: 'Four units,',
+    tituloEm: 'one group.',
+    bajada:
+      'From product development to the counter: each unit covers one stretch of the frozen-food chain.',
+    altPrefix: 'Photo of',
+  },
+} as const;
+const c = COPY[lang];
 
 /**
- * Unidades de negocio v3 — bento grid.
- * Desktop: 01 (span 2), 02-08 (1×1), 09 (full width horizontal).
- * Hierarchy: featured → brand/accent tint + top bar.
- *            development → dashed, muted, horizontal layout.
+ * Override de idioma de las 4 unidades.
+ *
+ * El ES es la fuente de verdad y vive en site.ts, así que no se duplica
+ * acá: `es` queda vacío a propósito y cae al dato de config. En EN sólo se
+ * traduce la línea — los nombres son marca y no se traducen.
  */
-const unidades = [
-  {
-    n: '01',
-    title: 'Distribución B2B',
-    desc: 'Canal principal. Gastronómicos y comercios con catálogo de alta rotación y logística incluida.',
-    status: 'featured',
-    badge: 'Canal principal',
+interface UnidadCopy {
+  /** Sólo si el nombre cambiara; las marcas no se traducen. */
+  readonly nombre?: string;
+  readonly linea: string;
+}
+
+const UNIDADES_I18N: Record<Lang, Partial<Record<UnidadSlug, UnidadCopy>>> = {
+  es: {},
+  en: {
+    tiendas: { linea: 'The retail network for end consumers, with its own ordering app.' },
+    central: {
+      linea: 'Sourcing, cold-chain logistics and distribution for restaurants and retailers.',
+    },
+    smart: { linea: 'Unattended retail formats for offices, buildings and high-traffic spaces.' },
+    origen: { linea: 'Product development and a direct link to production.' },
   },
-  {
-    n: '02',
-    title: 'Franquicias',
-    desc: 'Formatos replicables bajo marca Qüem en nuevos mercados.',
-    status: 'active',
-    badge: null,
-  },
-  {
-    n: '03',
-    title: 'Corner Qüem',
-    desc: 'Productos Qüem dentro de espacios comerciales existentes. Llave en mano.',
-    status: 'featured',
-    badge: 'Destacado',
-  },
-  {
-    n: '04',
-    title: 'Logística de congelados',
-    desc: 'Última milla AMBA y Provincia de Buenos Aires.',
-    status: 'active',
-    badge: null,
-  },
-  {
-    n: '05',
-    title: 'Retail B2C',
-    desc: 'Tiendas y venta directa al consumidor final.',
-    status: 'active',
-    badge: null,
-  },
-  {
-    n: '06',
-    title: 'Tecnología / App',
-    desc: 'Catálogo digital, pedidos y compra B2B en un solo canal.',
-    status: 'active',
-    badge: null,
-  },
-  {
-    n: '07',
-    title: 'Fraccionamiento',
-    desc: 'Formatos y presentaciones según necesidad comercial.',
-    status: 'active',
-    badge: null,
-  },
-  {
-    n: '08',
-    title: 'Desarrolladora comercial',
-    desc: 'Validamos y escalamos nuevos formatos del mercado.',
-    status: 'active',
-    badge: null,
-  },
-  {
-    n: '09',
-    title: 'Representación de marcas',
-    desc: 'Marcas en eventos, puntos de expendio y canales estratégicos.',
-    status: 'development',
-    badge: 'En desarrollo',
-  },
-];
+};
+
+/**
+ * Vista resuelta: config + override de idioma + numeral de orden.
+ * `draft` viaja hasta el DOM como `data-draft` (ver más abajo).
+ */
+const unidades = UNIDADES.map((u, i) => {
+  const override = UNIDADES_I18N[lang][u.slug];
+  return {
+    slug: u.slug,
+    nombre: override?.nombre ?? u.nombre,
+    linea: override?.linea ?? u.linea,
+    imagen: u.imagen,
+    draft: u.draft === true,
+    num: String(i + 1).padStart(2, '0'),
+  };
+});
 ---
 
-<section
-  class="un section-y"
-  id="unidades-de-negocio"
-  aria-labelledby="un-title"
-  style="background: var(--color-surface-subtle);"
->
-  <div class="container-content">
+{
+  unidades.length > 0 && (
+    <section
+      id="unidades"
+      class="unidades section-y"
+      aria-labelledby="unidades-title"
+      style={`--draft-label: '${t('state.borrador')}'`}
+    >
+      <div class="container-content">
+        <header class="unidades__head">
+          <p class="eyebrow" data-reveal style="--reveal-y: 12px;">
+            {c.eyebrow}
+          </p>
+          <h2 id="unidades-title" class="unidades__title" data-reveal style="--reveal-delay: 80ms;">
+            {c.titulo} <em>{c.tituloEm}</em>
+          </h2>
+          <p class="unidades__lede" data-reveal style="--reveal-delay: 160ms;">
+            {c.bajada}
+          </p>
+        </header>
 
-    {showHead && (
-      <header class="un__head">
-        <p class="eyebrow" data-reveal style="--reveal-y:12px;">Unidades de negocio</p>
-        <h2 id="un-title" class="un__title" data-reveal style="--reveal-delay:80ms;">
-          9 unidades comerciales.<br><em>Una sola operación.</em>
-        </h2>
-        <p class="un__lede" data-reveal style="--reveal-delay:180ms;">
-          Líneas que abastecen, distribuyen, representan y escalan productos congelados.
-        </p>
-      </header>
-    )}
-
-    <ol class="un__grid" aria-label="Unidades de negocio Qüem Central">
-      {unidades.map((u, i) => (
-        <li
-          class:list={['un-card', `un-card--${u.status}`]}
-          data-reveal
-          style={`--reveal-delay:${220 + i * 38}ms`}
-        >
-          <span class="un-card__watermark" aria-hidden="true">{u.n}</span>
-          <div class="un-card__body">
-            <div class="un-card__meta">
-              <span class="un-card__num">{u.n}</span>
-              {u.badge && (
-                <span class:list={['un-card__badge', `un-card__badge--${u.status}`]}>
-                  {u.badge}
-                </span>
+        {/*
+          `data-draft` = copy INFERIDO, pendiente de que el cliente confirme
+          qué son exactamente "Smart" y "Origen". Es invisible para el
+          usuario final (nada de badge feo) pero greppable, y se pinta solo
+          en modo revisión interna: abrir la home con `?review` (ver el
+          script y el bloque `html[data-review]` de más abajo).
+        */}
+        <ol class="unidades__grid" role="list">
+          {unidades.map((u, i) => (
+            <li
+              class="unidad"
+              data-draft={u.draft ? 'true' : undefined}
+              data-reveal
+              style={`--reveal-delay: ${220 + i * 90}ms`}
+            >
+              {/*
+                Slot de imagen. Sin `imagen` en config va un placeholder
+                deliberado: textura propia por unidad + numeral. Cuando llegue
+                la foto, `imagen` en site.ts la reemplaza sin tocar el markup.
+              */}
+              {u.imagen ? (
+                <img
+                  class="unidad__img"
+                  src={u.imagen}
+                  alt={`${c.altPrefix} ${u.nombre}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div
+                  class:list={['unidad__media', `unidad__media--${u.slug}`]}
+                  data-placeholder="imagen"
+                  aria-hidden="true"
+                >
+                  <span class="unidad__num">{u.num}</span>
+                </div>
               )}
-            </div>
-            <h3 class="un-card__title">{u.title}</h3>
-            <p class="un-card__desc">{u.desc}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
 
-    <div class="un__cta" data-reveal style="--reveal-delay:600ms;">
-      <a class="btn btn-primary" href={buyHref} {...buyTargetProps}>
-        Empezar a comprar
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a class="btn btn-outline" href="#contacto">Hablar con ventas ↗</a>
-    </div>
+              <div class="unidad__body">
+                <h3 class="unidad__nombre">{u.nombre}</h3>
+                <p class="unidad__linea">{u.linea}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
 
-  </div>
-</section>
+{
+  /* Modo revisión interna: `?review` en la URL marca el copy en borrador.
+    Inline (son 3 líneas) para no agregar un request en producción, donde
+    además no hace nada. */
+}
+<script is:inline>
+  if (new URLSearchParams(window.location.search).has('review')) {
+    document.documentElement.setAttribute('data-review', '');
+  }
+</script>
 
 <style>
-/* ── CTA ─────────────────────────────────────── */
-.un__cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-block-start: var(--space-8);
-}
+  /* Sin `background` propio: hereda --color-bg de la página (ver docblock). */
 
-/* ── Header ──────────────────────────────────── */
-.un__head {
-  max-width: 52ch;
-  display: grid;
-  gap: var(--space-3);
-  margin-block-end: var(--space-10);
-}
-@media (max-width: 639px) {
-  .un__head { margin-block-end: var(--space-6); }
-}
-.un__title {
-  font-size: clamp(2.1rem, 4.5vw, var(--font-size-4xl));
-  font-weight: var(--weight-extrabold);
-  letter-spacing: var(--tracking-tighter);
-  line-height: 1.0;
-}
-.un__title em {
-  font-style: normal;
-  background: var(--gradient-text-brand);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.un__lede {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
-  line-height: var(--leading-snug);
-}
+  /* ── Header ─────────────────────────────────────────────── */
+  .unidades__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 52ch;
+    margin-block-end: var(--space-7);
+  }
+  @media (min-width: 768px) {
+    .unidades__head {
+      margin-block-end: var(--space-8);
+    }
+  }
+  .unidades__title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-tight);
+  }
+  .unidades__title em {
+    font-style: normal;
+    background: var(--gradient-text-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .unidades__lede {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+    line-height: var(--leading-snug);
+  }
 
-/* ── Bento grid ──────────────────────────────── */
-.un__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-@media (min-width: 600px) {
-  .un__grid { grid-template-columns: repeat(2, 1fr); }
-  .un-card:nth-child(1),
-  .un-card:nth-child(9) { grid-column: 1 / -1; }
-}
-@media (min-width: 960px) {
-  .un__grid {
-    grid-template-columns: repeat(3, 1fr);
+  /* ── Grid: 1 → 2 → 4 ────────────────────────────────────── */
+  .unidades__grid {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: var(--space-4);
   }
-  .un-card:nth-child(1) { grid-column: span 2; }
-  .un-card:nth-child(9) { grid-column: 1 / -1; }
-}
-
-/* ── Card base ───────────────────────────────── */
-.un-card {
-  position: relative;
-  overflow: hidden;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-6);
-  transition:
-    transform 200ms var(--ease-standard),
-    border-color 200ms var(--ease-standard),
-    box-shadow 200ms var(--ease-standard);
-}
-.un-card:hover {
-  transform: translateY(-3px);
-  border-color: oklch(from var(--color-brand-500) l c h / 0.3);
-  box-shadow: 0 10px 28px -6px oklch(from var(--color-brand-500) l c h / 0.1);
-}
-
-/* ── Watermark number ────────────────────────── */
-.un-card__watermark {
-  position: absolute;
-  right: var(--space-4);
-  bottom: -0.15em;
-  font-family: var(--font-display);
-  font-size: 6.5rem;
-  font-weight: var(--weight-extrabold);
-  letter-spacing: -0.05em;
-  line-height: 1;
-  color: var(--color-text-primary);
-  opacity: 0.04;
-  pointer-events: none;
-  user-select: none;
-  transition: opacity 200ms var(--ease-standard);
-}
-.un-card:hover .un-card__watermark { opacity: 0.08; }
-.un-card:nth-child(1) .un-card__watermark { font-size: 9rem; }
-.un-card:nth-child(9) .un-card__watermark { font-size: 8rem; }
-
-/* ── Card body ───────────────────────────────── */
-.un-card__body {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.un-card__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-block-end: var(--space-1);
-}
-
-/* ── Number chip ─────────────────────────────── */
-.un-card__num {
-  font-size: var(--font-size-xs);
-  font-weight: var(--weight-extrabold);
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-brand);
-  background: var(--color-brand-50);
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-sm);
-  line-height: 1.5;
-}
-
-/* ── Badge ───────────────────────────────────── */
-.un-card__badge {
-  font-size: 0.64rem;
-  font-weight: var(--weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-pill);
-}
-.un-card__badge--featured {
-  color: var(--color-brand-700);
-  background: var(--color-brand-50);
-  border: 1px solid oklch(from var(--color-brand-500) l c h / 0.2);
-}
-.un-card__badge--development {
-  color: var(--color-text-muted);
-  background: transparent;
-  border: 1px solid var(--color-border-subtle);
-}
-
-/* ── Title & desc ────────────────────────────── */
-.un-card__title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-  color: var(--color-text-primary);
-}
-.un-card__desc {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  line-height: var(--leading-snug);
-  max-width: 38ch;
-}
-
-/* ── Featured (01 + 03) ──────────────────────── */
-.un-card--featured {
-  background: linear-gradient(
-    145deg,
-    oklch(from var(--color-brand-500) l c h / 0.06) 0%,
-    var(--color-bg-elevated) 58%
-  );
-  border-color: oklch(from var(--color-brand-500) l c h / 0.16);
-}
-.un-card--featured::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color-brand-400), var(--color-brand-600));
-}
-.un-card--featured:hover {
-  border-color: oklch(from var(--color-brand-500) l c h / 0.4);
-  box-shadow: 0 12px 36px -8px oklch(from var(--color-brand-500) l c h / 0.15);
-}
-
-/* card 01 — bigger type */
-.un-card:nth-child(1) .un-card__title { font-size: var(--font-size-xl); }
-.un-card:nth-child(1) .un-card__desc  { font-size: var(--font-size-base); max-width: none; }
-
-/* card 03 — accent green */
-.un-card:nth-child(3) {
-  background: linear-gradient(
-    145deg,
-    oklch(from var(--color-accent-500) l c h / 0.06) 0%,
-    var(--color-bg-elevated) 58%
-  );
-  border-color: oklch(from var(--color-accent-500) l c h / 0.16);
-}
-.un-card:nth-child(3)::before {
-  background: linear-gradient(90deg, var(--color-accent-400), var(--color-accent-600));
-}
-.un-card:nth-child(3):hover {
-  border-color: oklch(from var(--color-accent-500) l c h / 0.38);
-  box-shadow: 0 12px 36px -8px oklch(from var(--color-accent-500) l c h / 0.12);
-}
-.un-card:nth-child(3) .un-card__num {
-  color: var(--color-accent-700);
-  background: var(--color-accent-50);
-}
-.un-card:nth-child(3) .un-card__badge--featured {
-  color: var(--color-accent-700);
-  background: var(--color-accent-50);
-  border-color: oklch(from var(--color-accent-500) l c h / 0.2);
-}
-
-/* ── Development (09) ────────────────────────── */
-.un-card--development {
-  background: transparent;
-  border-style: dashed;
-}
-.un-card--development:hover {
-  border-style: dashed;
-  border-color: var(--color-border-strong);
-  box-shadow: none;
-  transform: none;
-}
-.un-card--development .un-card__num {
-  background: var(--color-surface-subtle);
-  color: var(--color-text-muted);
-}
-.un-card--development .un-card__title,
-.un-card--development .un-card__desc { opacity: 0.72; }
-.un-card--development .un-card__watermark { opacity: 0.025; }
-
-/* 09 — horizontal on wide screens */
-@media (min-width: 960px) {
-  .un-card:nth-child(9) .un-card__body {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-8);
+  @media (min-width: 560px) {
+    .unidades__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
-  .un-card:nth-child(9) .un-card__meta  { margin-block-end: 0; flex-shrink: 0; }
-  .un-card:nth-child(9) .un-card__title { flex-shrink: 0; font-size: var(--font-size-base); }
-  .un-card:nth-child(9) .un-card__desc  { max-width: none; flex: 1; }
-}
+  @media (min-width: 1024px) {
+    .unidades__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  /* ── Card ───────────────────────────────────────────────── */
+  .unidad {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xs);
+    transition:
+      border-color var(--dur-normal) var(--ease-premium),
+      box-shadow var(--dur-normal) var(--ease-premium);
+  }
+  /* Las cards no son links: el hover no levanta (no insinúa click). */
+  .unidad:hover {
+    border-color: oklch(from var(--color-brand-500) l c h / 0.28);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ── Slot de imagen ─────────────────────────────────────── */
+  .unidad__img,
+  .unidad__media {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  @media (min-width: 560px) {
+    .unidad__img,
+    .unidad__media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+  @media (min-width: 1024px) {
+    .unidad__img,
+    .unidad__media {
+      aspect-ratio: 4 / 5;
+    }
+  }
+
+  .unidad__media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+  .unidad__num {
+    font-family: var(--font-display);
+    font-size: var(--font-size-4xl);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-primary);
+    opacity: 0.14;
+    user-select: none;
+  }
+
+  /* Textura propia por unidad — que no sean 4 rectángulos idénticos.
+     Todo sale de tokens; el alpha es lo único numérico (igual que en el
+     resto del repo). */
+
+  /* 01 · Tiendas — retícula de mostrador / punto de venta */
+  .unidad__media--tiendas {
+    background-color: var(--color-brand-50);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        oklch(from var(--color-brand-500) l c h / 0.14) 0 1px,
+        transparent 1px 26px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        oklch(from var(--color-brand-500) l c h / 0.14) 0 1px,
+        transparent 1px 26px
+      );
+  }
+
+  /* 02 · Central — flujo logístico en diagonal */
+  .unidad__media--central {
+    background-color: var(--color-surface-subtle);
+    background-image: repeating-linear-gradient(
+      135deg,
+      oklch(from var(--color-brand-500) l c h / 0.16) 0 2px,
+      transparent 2px 15px
+    );
+  }
+
+  /* 03 · Smart — punto desatendido, ondas concéntricas */
+  .unidad__media--smart {
+    background-color: var(--color-accent-50);
+    background-image: repeating-radial-gradient(
+      circle at 50% 50%,
+      oklch(from var(--color-accent-700) l c h / 0.18) 0 1px,
+      transparent 1px 20px
+    );
+  }
+
+  /* 04 · Origen — estratos horizontales (producción / origen) */
+  .unidad__media--origen {
+    background-color: var(--color-brand-tint);
+    background-image: repeating-linear-gradient(
+      180deg,
+      oklch(from var(--color-brand-700) l c h / 0.12) 0 3px,
+      transparent 3px 22px
+    );
+  }
+
+  /* ── Texto ──────────────────────────────────────────────── */
+  .unidad__body {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+  }
+  .unidad__nombre {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-snug);
+  }
+  .unidad__linea {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-snug);
+    max-width: 34ch;
+  }
+
+  /* ── Modo revisión interna (?review) ─────────────────────
+     Marca las unidades con copy en borrador. Invisible en producción:
+     depende de un atributo que sólo pone el script de arriba. */
+  :global(html[data-review]) .unidad[data-draft='true'] {
+    outline: 2px dashed var(--color-warning);
+    outline-offset: calc(-1 * var(--space-1));
+  }
+  :global(html[data-review]) .unidad[data-draft='true'] .unidad__body::after {
+    content: var(--draft-label, '');
+    justify-self: start;
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text-on-accent);
+    background: var(--color-warning);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+  }
 </style>

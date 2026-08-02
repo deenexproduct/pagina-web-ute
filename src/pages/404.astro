@@ -1,50 +1,86 @@
 ---
+/**
+ * 404 — Fase 1.
+ *
+ * Los atajos apuntan a los 5 anclas del spec. Los anteriores
+ * (#quem-central, #corner-quem, #productos, #franquicias) ya no existen
+ * en la home, así que llevaban al tope de la página en silencio.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { link, APP_IS_LIVE, buyOnlineLink } from '../config/site';
+import { NAV_PRIMARY, contactLink } from '../config/site';
+import { getLangFromUrl, useTranslations, localizedPath } from '../i18n/utils';
 
-const buyHref = buyOnlineLink();
-const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const COPY = {
+  es: {
+    eyebrow: 'Error 404',
+    titulo: 'Esa página',
+    tituloEm: 'se congeló',
+    lede: 'El enlace que abriste no existe o se movió. Acá tenés un par de caminos para seguir.',
+    volver: 'Volver al inicio',
+    atajos: 'Atajos de navegación',
+    metaTitle: 'Página no encontrada',
+    metaDesc: 'La página que buscás no existe. Volvé al inicio o escribinos.',
+  },
+  en: {
+    eyebrow: 'Error 404',
+    titulo: 'That page',
+    tituloEm: 'went cold',
+    lede: 'The link you opened does not exist or has moved. Here are a couple of ways forward.',
+    volver: 'Back to home',
+    atajos: 'Shortcuts',
+    metaTitle: 'Page not found',
+    metaDesc: 'The page you are looking for does not exist. Head back home or get in touch.',
+  },
+} as const;
+
+const c = COPY[lang];
 ---
 
-<BaseLayout
-  title="Página no encontrada"
-  description="La página que buscás no existe. Volvé al inicio o explorá el catálogo de Qüem Central."
-  noindex={true}
->
+<BaseLayout title={c.metaTitle} description={c.metaDesc} noindex={true}>
   <section class="nf section-y" aria-labelledby="nf-title">
     <div class="nf__bg" aria-hidden="true"></div>
 
     <div class="container-content nf__inner">
       <p class="nf__eyebrow">
         <span class="nf__eyebrow-dot" aria-hidden="true"></span>
-        Error 404
+        {c.eyebrow}
       </p>
 
       <h1 id="nf-title" class="nf__title">
-        Esa página <em>se congeló</em>.
+        {c.titulo}
+        <em>{c.tituloEm}</em>.
       </h1>
 
-      <p class="nf__lede">
-        El enlace que abriste no existe o se movió. Acá tenés un par de caminos para seguir.
-      </p>
+      <p class="nf__lede">{c.lede}</p>
 
       <div class="nf__actions">
-        <a class="btn btn-primary nf__cta-main" href={link('/')}>
-          Volver al inicio
+        <a class="btn btn-primary nf__cta-main" href={localizedPath('/', lang)}>
+          {c.volver}
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
           </svg>
         </a>
-        <a class="btn btn-outline" href={buyHref} {...buyTargetProps}>Comprar online</a>
-        <a class="btn btn-ghost" href={link('/#contacto')}>Hablar con ventas</a>
+        <a class="btn btn-outline" href={contactLink(undefined, lang)}>{t('cta.contacto')}</a>
       </div>
 
-      <ul class="nf__shortcuts" aria-label="Atajos de navegación">
-        <li><a href={link('/#quem-central')}>Qué hacemos</a></li>
-        <li><a href={link('/#corner-quem')}>Corner Qüem</a></li>
-        <li><a href={link('/#productos')}>Categorías</a></li>
-        <li><a href={link('/#franquicias')}>Franquicias</a></li>
-        <li><a href={link('/#prensa')}>Prensa</a></li>
+      <ul class="nf__shortcuts" aria-label={c.atajos}>
+        {
+          NAV_PRIMARY.map((item) => (
+            <li>
+              <a href={localizedPath(item.href.replace('/#', '/#'), lang)}>
+                {t(`nav.${item.key}`)}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
@@ -59,17 +95,35 @@ const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
     overflow: hidden;
     isolation: isolate;
   }
+
+  /* Fondo tokenizado. Antes tenía oklch() literales del hue azul/verde
+     que se abandonó en el rebrand — quedaban fuera de la paleta oliva. */
   .nf__bg {
-    position: absolute; inset: 0; z-index: -1;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background:
-      radial-gradient(45% 55% at 80% 10%, oklch(58% 0.155 254 / 0.16) 0%, transparent 60%),
-      radial-gradient(40% 50% at 10% 90%, oklch(62% 0.150 155 / 0.12) 0%, transparent 60%),
+      radial-gradient(
+        45% 55% at 80% 10%,
+        oklch(from var(--color-brand-500) l c h / 0.16) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        40% 50% at 10% 90%,
+        oklch(from var(--color-accent-500) l c h / 0.14) 0%,
+        transparent 60%
+      ),
       linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg) 100%);
   }
   .nf__bg::before {
     content: '';
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      circle,
+      oklch(from var(--color-brand-700) l c h / 0.07) 1px,
+      transparent 1px
+    );
     background-size: 28px 28px;
     mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 90%);
     -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 90%);
@@ -98,15 +152,17 @@ const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
     font-weight: var(--weight-bold);
   }
   .nf__eyebrow-dot {
-    width: 7px; height: 7px; border-radius: 50%;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
+    box-shadow: 0 0 0 4px oklch(from var(--color-accent-500) l c h / 0.2);
   }
 
   .nf__title {
     font-size: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
-    line-height: 1.0;
-    letter-spacing: -0.04em;
+    line-height: 1;
+    letter-spacing: var(--tracking-tightest);
     font-weight: var(--weight-extrabold);
     color: var(--color-text-primary);
     text-wrap: balance;
@@ -137,7 +193,7 @@ const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
     padding-inline: 1.4rem;
     padding-block: 0.95rem;
     font-size: var(--font-size-sm);
-    box-shadow: 0 6px 18px oklch(62% 0.150 155 / 0.32);
+    box-shadow: var(--shadow-glow-brand);
   }
 
   .nf__shortcuts {
@@ -156,8 +212,10 @@ const buyTargetProps = APP_IS_LIVE ? { target: '_blank', rel: 'noopener' } : {};
     font-size: var(--font-size-sm);
     font-weight: var(--weight-medium);
     border-bottom: 1.5px solid transparent;
-    padding-block: 0.25rem;
-    transition: color var(--dur-fast), border-color var(--dur-fast);
+    padding-block: 0.35rem;
+    transition:
+      color var(--dur-fast),
+      border-color var(--dur-fast);
   }
   .nf__shortcuts a:hover {
     color: var(--color-text-brand);

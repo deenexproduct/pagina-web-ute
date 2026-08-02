@@ -11,14 +11,14 @@ UTE empieza en mobile y crece. **No al revés**. Probar primero en 320px, despu�
 
 Definidos en `tokens.css` como `--bp-*` (referencia). Tailwind v4 usa los breakpoints estándar:
 
-| Token / TW | Min width | Uso                              |
-|------------|-----------|----------------------------------|
-| `xs` (custom) | 360px | smallest target real (iPhone SE) |
-| `sm`       | 640px     | mobile landscape, phablet         |
-| `md`       | 768px     | tablet portrait                   |
-| `lg`       | 1024px    | tablet landscape, laptop          |
-| `xl`       | 1280px    | desktop                           |
-| `2xl`      | 1536px    | wide desktop                      |
+| Token / TW    | Min width | Uso                              |
+| ------------- | --------- | -------------------------------- |
+| `xs` (custom) | 360px     | smallest target real (iPhone SE) |
+| `sm`          | 640px     | mobile landscape, phablet        |
+| `md`          | 768px     | tablet portrait                  |
+| `lg`          | 1024px    | tablet landscape, laptop         |
+| `xl`          | 1280px    | desktop                          |
+| `2xl`         | 1536px    | wide desktop                     |
 
 **No usar `xs` ni `2xl` salvo necesidad clara** — 90% del responsive vive entre `sm` y `lg`.
 
@@ -28,7 +28,10 @@ CSS escrito así:
 
 ```css
 /* default = mobile */
-.hero__grid { grid-template-columns: 1fr; gap: var(--space-5); }
+.hero__grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
 
 @media (min-width: 768px) {
   .hero__grid {
@@ -39,14 +42,22 @@ CSS escrito así:
 ```
 
 Tailwind:
+
 ```html
-<div class="grid grid-cols-1 gap-5 md:grid-cols-[8fr_4fr] md:gap-7">
+<div class="grid grid-cols-1 gap-5 md:grid-cols-[8fr_4fr] md:gap-7"></div>
 ```
 
 **Mal**:
+
 ```css
-.hero__grid { grid-template-columns: 8fr 4fr; }
-@media (max-width: 767px) { .hero__grid { grid-template-columns: 1fr; } }
+.hero__grid {
+  grid-template-columns: 8fr 4fr;
+}
+@media (max-width: 767px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+  }
+}
 ```
 
 Esto es desktop-first y siempre termina con bugs en mobile.
@@ -59,11 +70,19 @@ Si necesitás un tamaño distinto, usar otro token:
 
 ```css
 /* mal */
-.hero__title { font-size: 32px; }
-@media (min-width: 768px) { .hero__title { font-size: 64px; } }
+.hero__title {
+  font-size: 32px;
+}
+@media (min-width: 768px) {
+  .hero__title {
+    font-size: 64px;
+  }
+}
 
 /* bien */
-.hero__title { font-size: var(--font-size-display); }  /* clamp 64→144px */
+.hero__title {
+  font-size: var(--font-size-display);
+} /* clamp 64→144px */
 ```
 
 Si **realmente** necesitás un valor que no está en la escala, agregalo a `tokens.css` con su clamp. No hardcodees.
@@ -73,8 +92,12 @@ Si **realmente** necesitás un valor que no está en la escala, agregalo a `toke
 Para padding-block de sections y gutters laterales:
 
 ```css
-.section-y { padding-block: var(--space-section); }       /* clamp(4rem, 7vw, 10rem) */
-.container-content { padding-inline: var(--space-gutter); } /* clamp(1.25rem, 4vw, 3rem) */
+.section-y {
+  padding-block: var(--space-section);
+} /* clamp(4rem, 7vw, 10rem) */
+.container-content {
+  padding-inline: var(--space-gutter);
+} /* clamp(1.25rem, 4vw, 3rem) */
 ```
 
 Para spacing interno de bloques **fijo** (gaps entre elementos), usar la escala step (`--space-3`, `--space-5`, ...). No fluidos.
@@ -82,10 +105,12 @@ Para spacing interno de bloques **fijo** (gaps entre elementos), usar la escala 
 ## Container
 
 Variables:
+
 - `--container-max: 1440px` — ancho máx de contenido.
 - `--container-content: 72ch` — bloques de texto.
 
 Helper en `global.css`:
+
 ```css
 .container-content {
   width: 100%;
@@ -102,18 +127,25 @@ Para bloques de texto largo (artículos, prensa), envolver en un `<div style="ma
 iOS HIG y WCAG. Cualquier control interactivo (botón, link inline, icono clickeable) **mínimo 44×44px de área tocable**, no de visible.
 
 Implementación:
+
 ```css
-.cta { min-height: 44px; min-width: 44px; padding: 0.9rem 1.5rem; }
+.cta {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.9rem 1.5rem;
+}
 ```
 
 Si visualmente parece más chico (un icon button de 24px), usar padding o `:before` invisible para extender el hit area:
 
 ```css
-.icon-button { position: relative; }
+.icon-button {
+  position: relative;
+}
 .icon-button::before {
   content: '';
   position: absolute;
-  inset: -10px;  /* 24 + 20 = 44 */
+  inset: -10px; /* 24 + 20 = 44 */
 }
 ```
 
@@ -124,6 +156,7 @@ Links inline en texto corrido = excepción aceptable (no se puede dar 44px sin d
 ### Grilla asimétrica responsive
 
 Pattern de Hero y Propuesta:
+
 ```css
 .grid {
   display: grid;
@@ -143,16 +176,27 @@ Pattern de Hero y Propuesta:
 ### Stack vertical en mobile, side-by-side en desktop
 
 ```css
-.row { display: grid; gap: var(--space-5); }
-@media (min-width: 640px) { .row { grid-template-columns: repeat(2, 1fr); } }
+.row {
+  display: grid;
+  gap: var(--space-5);
+}
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 ```
 
 ### Lista numerada (Experiencia)
 
 ```css
-.list li { grid-template-columns: 1fr; }   /* mobile: stack */
+.list li {
+  grid-template-columns: 1fr;
+} /* mobile: stack */
 @media (min-width: 768px) {
-  .list li { grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 2fr); }
+  .list li {
+    grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 2fr);
+  }
 }
 ```
 
@@ -168,6 +212,7 @@ header {
 ```
 
 Tener en cuenta `100vh` vs `100svh`:
+
 - `100vh` — incluye chrome del browser → CLS al scroll en mobile.
 - `100svh` — small viewport, sin chrome → estable.
 - `100dvh` — dynamic, ajusta al chrome → para hero full-bleed.

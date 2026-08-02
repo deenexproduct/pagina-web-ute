@@ -41,11 +41,13 @@ const totalNotes = PRESS.length;
     <aside class="pr-hero__outlets" aria-label="Medios donde aparecemos">
       <span class="pr-hero__outlets-label">Aparecimos en</span>
       <ul>
-        {outlets.map((o) => (
-          <li class="pr-outlet-badge">
-            <span class="pr-outlet-badge__wordmark">{o}</span>
-          </li>
-        ))}
+        {
+          outlets.map((o) => (
+            <li class="pr-outlet-badge">
+              <span class="pr-outlet-badge__wordmark">{o}</span>
+            </li>
+          ))
+        }
       </ul>
     </aside>
   </div>
@@ -70,7 +72,7 @@ const totalNotes = PRESS.length;
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, oklch(42% 0.190 252 / 0.06) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(42% 0.19 252 / 0.06) 1px, transparent 1px);
     background-size: 28px 28px;
     mask-image: linear-gradient(180deg, black 0%, transparent 90%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, transparent 90%);
@@ -82,7 +84,9 @@ const totalNotes = PRESS.length;
     align-items: end;
   }
   @media (min-width: 960px) {
-    .pr-hero__inner { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+    .pr-hero__inner {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    }
   }
 
   .pr-hero__tag {
@@ -105,12 +109,12 @@ const totalNotes = PRESS.length;
     height: 7px;
     border-radius: 50%;
     background: var(--color-accent-500);
-    box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
+    box-shadow: 0 0 0 4px oklch(62% 0.15 155 / 0.18);
   }
 
   .pr-hero__title {
     font-size: var(--font-size-4xl);
-    line-height: 1.0;
+    line-height: 1;
     letter-spacing: -0.04em;
     font-weight: var(--weight-extrabold);
     margin-block: var(--space-4) var(--space-3);

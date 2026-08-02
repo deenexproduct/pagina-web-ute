@@ -27,6 +27,7 @@ Cuando agregués una nueva página, **pasale props `title`, `description`, `imag
 ## og-default.jpg
 
 **Pendiente**: arte para el OG share por defecto. Spec:
+
 - 1200×630 px (ratio 1.91:1).
 - PNG o JPG. Si JPG, calidad 80.
 - Tipografía display + algún detalle de la marca. Aparece chiquito en WhatsApp — texto grande, sin filigranas.
@@ -128,13 +129,13 @@ Validador: https://validator.schema.org/ y https://search.google.com/test/rich-r
 
 Reglas de mano:
 
-| Tipo                  | Budget                  |
-|-----------------------|-------------------------|
-| HTML por página       | < 30 KB gzipped         |
-| CSS total inline      | < 14 KB (1 RTT)         |
-| JS total above-fold   | < 90 KB gzipped         |
-| Imagen Hero (LCP)     | < 200 KB                |
-| Fuentes (todas)       | < 200 KB combinado      |
+| Tipo                | Budget             |
+| ------------------- | ------------------ |
+| HTML por página     | < 30 KB gzipped    |
+| CSS total inline    | < 14 KB (1 RTT)    |
+| JS total above-fold | < 90 KB gzipped    |
+| Imagen Hero (LCP)   | < 200 KB           |
+| Fuentes (todas)     | < 200 KB combinado |
 
 Verificar con `pnpm build` + `du -sh dist/*`. Si una página supera, identificar y cortar.
 

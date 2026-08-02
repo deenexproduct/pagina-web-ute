@@ -84,61 +84,113 @@ const guarantees: ReadonlyArray<Guarantee> = [
     </header>
 
     <ul class="grant__grid" role="list" data-reveal-stagger>
-      {guarantees.map((g) => (
-        <li class="grant-card" data-reveal>
-          <div class="grant-card__icon" aria-hidden="true">
-            {g.icon === 'shield' && (
-              <svg viewBox="0 0 28 28" fill="none">
-                <path d="M14 3 5 6v8c0 5 4 9 9 11 5-2 9-6 9-11V6l-9-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                <path d="m10 14 3 3 5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            )}
-            {g.icon === 'cold' && (
-              <svg viewBox="0 0 28 28" fill="none">
-                <path d="M14 3v22M5 7l18 14M5 21l18-14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                <circle cx="14" cy="14" r="2" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-            )}
-            {g.icon === 'truck' && (
-              <svg viewBox="0 0 28 28" fill="none">
-                <path d="M3 20V9h14v11M17 13h5l3 4v3h-8" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                <circle cx="8" cy="22" r="2.4" stroke="currentColor" stroke-width="1.6"/>
-                <circle cx="21" cy="22" r="2.4" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-            )}
-            {g.icon === 'invoice' && (
-              <svg viewBox="0 0 28 28" fill="none">
-                <path d="M6 3h13v22l-3-2-3 2-3-2-3 2-3-2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                <path d="M10 9h7M10 13h7M10 17h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            )}
-            {g.icon === 'package' && (
-              <svg viewBox="0 0 28 28" fill="none">
-                <path d="M14 4 4 9v10l10 5 10-5V9l-10-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                <path d="m4 9 10 5 10-5M14 14v10M9 6.5l10 5" stroke="currentColor" stroke-width="1.6"/>
-              </svg>
-            )}
-            {g.icon === 'refund' && (
-              <svg viewBox="0 0 28 28" fill="none">
-                <path d="M22 14a8 8 0 1 1-2.5-5.8M21 4v5h-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            )}
-          </div>
+      {
+        guarantees.map((g) => (
+          <li class="grant-card" data-reveal>
+            <div class="grant-card__icon" aria-hidden="true">
+              {g.icon === 'shield' && (
+                <svg viewBox="0 0 28 28" fill="none">
+                  <path
+                    d="M14 3 5 6v8c0 5 4 9 9 11 5-2 9-6 9-11V6l-9-3Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="m10 14 3 3 5-6"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              )}
+              {g.icon === 'cold' && (
+                <svg viewBox="0 0 28 28" fill="none">
+                  <path
+                    d="M14 3v22M5 7l18 14M5 21l18-14"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                  <circle cx="14" cy="14" r="2" stroke="currentColor" stroke-width="1.6" />
+                </svg>
+              )}
+              {g.icon === 'truck' && (
+                <svg viewBox="0 0 28 28" fill="none">
+                  <path
+                    d="M3 20V9h14v11M17 13h5l3 4v3h-8"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                  <circle cx="8" cy="22" r="2.4" stroke="currentColor" stroke-width="1.6" />
+                  <circle cx="21" cy="22" r="2.4" stroke="currentColor" stroke-width="1.6" />
+                </svg>
+              )}
+              {g.icon === 'invoice' && (
+                <svg viewBox="0 0 28 28" fill="none">
+                  <path
+                    d="M6 3h13v22l-3-2-3 2-3-2-3 2-3-2Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M10 9h7M10 13h7M10 17h4"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              )}
+              {g.icon === 'package' && (
+                <svg viewBox="0 0 28 28" fill="none">
+                  <path
+                    d="M14 4 4 9v10l10 5 10-5V9l-10-5Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="m4 9 10 5 10-5M14 14v10M9 6.5l10 5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+                </svg>
+              )}
+              {g.icon === 'refund' && (
+                <svg viewBox="0 0 28 28" fill="none">
+                  <path
+                    d="M22 14a8 8 0 1 1-2.5-5.8M21 4v5h-5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              )}
+            </div>
 
-          <h3 class="grant-card__title">{g.title}</h3>
-          <p class="grant-card__value">
-            {g.value}
-            {g.todo && <span class="grant-card__todo" title="Pendiente confirmar con el cliente">·</span>}
-          </p>
-          <p class="grant-card__desc">{g.desc}</p>
-        </li>
-      ))}
+            <h3 class="grant-card__title">{g.title}</h3>
+            <p class="grant-card__value">
+              {g.value}
+              {g.todo && (
+                <span class="grant-card__todo" title="Pendiente confirmar con el cliente">
+                  ·
+                </span>
+              )}
+            </p>
+            <p class="grant-card__desc">{g.desc}</p>
+          </li>
+        ))
+      }
     </ul>
 
     <p class="grant__fineprint" data-reveal style="--reveal-delay: 400ms;">
       <span aria-hidden="true">ⓘ</span>
-      Algunos datos exactos (números de habilitación, plazos finales) se confirman
-      al momento del alta como cliente. Toda la operación es trazable y auditable.
+      Algunos datos exactos (números de habilitación, plazos finales) se confirman al momento del alta
+      como cliente. Toda la operación es trazable y auditable.
     </p>
   </div>
 </section>
@@ -147,7 +199,11 @@ const guarantees: ReadonlyArray<Guarantee> = [
   .grant {
     position: relative;
     background:
-      radial-gradient(50% 60% at 0% 100%, oklch(from var(--color-brand-500) l c h / 0.05) 0%, transparent 60%),
+      radial-gradient(
+        50% 60% at 0% 100%,
+        oklch(from var(--color-brand-500) l c h / 0.05) 0%,
+        transparent 60%
+      ),
       var(--color-bg);
   }
 
@@ -183,10 +239,14 @@ const guarantees: ReadonlyArray<Guarantee> = [
     gap: var(--space-4);
   }
   @media (min-width: 640px) {
-    .grant__grid { grid-template-columns: repeat(2, 1fr); }
+    .grant__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
   @media (min-width: 960px) {
-    .grant__grid { grid-template-columns: repeat(3, 1fr); }
+    .grant__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .grant-card {
@@ -220,7 +280,10 @@ const guarantees: ReadonlyArray<Guarantee> = [
     border: 1px solid var(--color-brand-100);
     margin-block-end: var(--space-2);
   }
-  .grant-card__icon svg { width: 1.4rem; height: 1.4rem; }
+  .grant-card__icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
 
   .grant-card__title {
     font-size: var(--font-size-2xs);
@@ -252,7 +315,9 @@ const guarantees: ReadonlyArray<Guarantee> = [
     transition: opacity var(--dur-fast);
     font-size: 0;
   }
-  .grant-card:hover .grant-card__todo { opacity: 0.6; }
+  .grant-card:hover .grant-card__todo {
+    opacity: 0.6;
+  }
 
   .grant-card__desc {
     color: var(--color-text-secondary);
@@ -281,5 +346,3 @@ const guarantees: ReadonlyArray<Guarantee> = [
     margin-block-start: 0.05rem;
   }
 </style>
-</content>
-</invoke>

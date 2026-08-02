@@ -1,0 +1,13 @@
+---
+/**
+ * Home EN — misma estructura que la ES; las secciones detectan el idioma
+ * desde `Astro.url`, así que el árbol se comparte vía `layouts/Home.astro`.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Home from '../../layouts/Home.astro';
+---
+
+<BaseLayout>
+  <span id="top" class="sr-only" aria-hidden="true"></span>
+  <Home />
+</BaseLayout>

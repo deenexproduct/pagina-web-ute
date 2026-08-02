@@ -1,8 +1,18 @@
 ---
 /**
  * /corner-quem — página dedicada al modelo Corner Qüem.
- * Muestra el detalle completo de las 5 sub-secciones del brief comercial.
- * El home muestra solo el CornerTeaser como resumen.
+ *
+ * ── DESPUBLICADA EN FASE 1 ───────────────────────────────────────────
+ * El spec pide scroll único y "toda CTA deriva al contacto, nunca a
+ * subwebs". Esta página ES una subweb, así que sale del nav y de todo
+ * link interno, y va con `noindex` + fuera del sitemap.
+ *
+ * NO se borra: el contenido es bueno y vuelve en Fase 2, cuando el spec
+ * habilite subwebs por unidad de negocio. En Fase 1 el interés "Córners"
+ * se canaliza por el formulario (`contactLink('corner')`).
+ *
+ * Para republicarla: sacar `noindex`, quitarla del filtro del sitemap en
+ * `astro.config.mjs` y volver a sumar el item al nav en `site.ts`.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CornerHero from '../sections/corner/CornerHero.astro';
@@ -16,6 +26,7 @@ import CornerValor from '../sections/corner/CornerValor.astro';
   title="Corner Qüem — Retail congelado llave en mano"
   description="Instalamos y operamos un corner con producto Qüem dentro de tu comercio. Sin inversión inicial ni complejidad operativa. 5 formatos disponibles para 12+ tipos de espacios."
   canonicalPath="/corner-quem"
+  noindex={true}
 >
   <CornerHero />
   <CornerFormatos />

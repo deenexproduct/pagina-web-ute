@@ -1,113 +1,13 @@
 ---
 /**
- * Landing page única de QUEM Central.
- *
- * Modo single-page: el header nav (definido en `src/config/site.ts`)
- * usa anchors a los `id` de cada `<section>`. El scroll-spy en
- * `components/layout/Header.astro` ilumina el item visible.
- *
- * Orden: respeta el brief original (12 puntos).
- * Corner QÜEM: teaser compacto en home → detalle en /corner-quem.
- *
- * IDs canónicos (NO renombrar sin actualizar NAV_PRIMARY):
- *   #quem-central · #ecosistema · #corner-quem
- *   #productos · #franquicias · #prensa · #contacto
+ * Home ES — landing institucional de QUEM, Fase 1.
+ * El orden de secciones vive en `src/layouts/Home.astro` (compartido con /en).
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-/* Secciones principales (orden brief) */
-import HeroCorporativo from '../sections/HeroCorporativo.astro';
-import ProofStrip from '../sections/ProofStrip.astro';
-import QueEsQuemCentral from '../sections/QueEsQuemCentral.astro';
-import Ecosistema from '../sections/Ecosistema.astro';
-
-/* Corner QÜEM — teaser home, detalle en /corner-quem */
-import CornerTeaser from '../sections/corner/CornerTeaser.astro';
-
-import CategoriasProducto from '../sections/CategoriasProducto.astro';
-import PlataformaApp from '../sections/PlataformaApp.astro';
-import Garantias from '../sections/Garantias.astro';
-import FranquiciasExpansion from '../sections/FranquiciasExpansion.astro';
-import QuemEnNumeros from '../sections/QuemEnNumeros.astro';
-import EquipoDirectivo from '../sections/EquipoDirectivo.astro';
-import PrensaList from '../sections/prensa/PrensaList.astro';
-import Contacto from '../sections/Contacto.astro';
+import Home from '../layouts/Home.astro';
 ---
 
 <BaseLayout>
   <span id="top" class="sr-only" aria-hidden="true"></span>
-
-  {/* ────────────────────────────────────────────────────────────────────
-       BUYER FLOW — flujo principal para el comprador B2B
-       Promesa → confianza → qué hacemos → cómo funciona → qué vendemos →
-       garantías → por qué Qüem → validación externa (prensa)
-       ──────────────────────────────────────────────────────────────── */}
-  <HeroCorporativo />
-  <ProofStrip />
-  <QueEsQuemCentral />
-  <PlataformaApp />
-  <CategoriasProducto />
-  <Garantias />
-  <QuemEnNumeros />
-  <PrensaList />
-
-  {/* ────────────────────────────────────────────────────────────────────
-       PARTNER FLOW — secciones para franquiciados, corners, alianzas e
-       inversores. Separador visual marca el cambio de foco.
-       ──────────────────────────────────────────────────────────────── */}
-  <div id="partners" class="partners-divider">
-    <div class="container-content partners-divider__inner">
-      <span class="partners-divider__line" aria-hidden="true"></span>
-      <p class="partners-divider__label">
-        Para partners, franquiciados e inversores
-      </p>
-      <span class="partners-divider__line" aria-hidden="true"></span>
-    </div>
-  </div>
-
-  <Ecosistema />
-  <CornerTeaser />
-  <FranquiciasExpansion />
-  <EquipoDirectivo />
-
-  <Contacto />
+  <Home />
 </BaseLayout>
-
-<style>
-  .partners-divider {
-    background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface-subtle) 50%, var(--color-bg) 100%);
-    padding-block: var(--space-7);
-  }
-  .partners-divider__inner {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-  }
-  .partners-divider__line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--color-border-strong) 50%, transparent 100%);
-  }
-  .partners-divider__label {
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
-    color: var(--color-text-muted);
-    font-weight: var(--weight-bold);
-    text-align: center;
-    /* Permite shrink + wrap en viewports angostos. En desktop el texto
-       entra en una línea; en mobile ≤540px wrappea sin romper el pill. */
-    flex-shrink: 1;
-    min-width: 0;
-    white-space: normal;
-    padding: 0.4rem 0.85rem;
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-  }
-  /* En móvil muy angosto, las líneas laterales se achican para dejar
-     al menos la mitad del ancho al label centrado. */
-  @media (max-width: 479px) {
-    .partners-divider__line { flex: 0 0 clamp(12px, 5vw, 32px); }
-  }
-</style>

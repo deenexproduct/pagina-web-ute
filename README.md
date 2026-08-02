@@ -24,16 +24,16 @@ pnpm dev           # http://localhost:4321
 
 ## Scripts
 
-| Comando            | Qué hace                                       |
-|--------------------|------------------------------------------------|
-| `pnpm dev`         | Dev server con HMR                             |
-| `pnpm build`       | Build de producción → `dist/`                  |
-| `pnpm preview`     | Servir el build localmente                     |
-| `pnpm check`       | `astro check` (TS + Astro)                     |
-| `pnpm lint`        | ESLint sin warnings tolerados                  |
-| `pnpm lint:fix`    | ESLint con autofix                             |
-| `pnpm format`      | Prettier write sobre todo                      |
-| `pnpm format:check`| Prettier verify (CI-friendly)                  |
+| Comando             | Qué hace                      |
+| ------------------- | ----------------------------- |
+| `pnpm dev`          | Dev server con HMR            |
+| `pnpm build`        | Build de producción → `dist/` |
+| `pnpm preview`      | Servir el build localmente    |
+| `pnpm check`        | `astro check` (TS + Astro)    |
+| `pnpm lint`         | ESLint sin warnings tolerados |
+| `pnpm lint:fix`     | ESLint con autofix            |
+| `pnpm format`       | Prettier write sobre todo     |
+| `pnpm format:check` | Prettier verify (CI-friendly) |
 
 ## Stack
 

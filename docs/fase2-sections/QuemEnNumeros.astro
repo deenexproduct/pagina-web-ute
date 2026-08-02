@@ -43,67 +43,116 @@ const isPlaceholder = clients.every((c) => !c.logo);
 const hideSection = isPlaceholder;
 ---
 
-{!hideSection && (
-<section class="trust section-y" aria-labelledby="trust-title">
-  <div class="container-content trust__inner">
-    <header class="trust__head" data-reveal>
-      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">Confianza</p>
-      <h2 id="trust-title" class="trust__title" data-reveal style="--reveal-delay: 100ms;">
-        Compran en Qüem.
-      </h2>
-      <p class="trust__lede" data-reveal style="--reveal-delay: 200ms;">
-        Cadenas gastronómicas, hoteles, cafeterías y comercios que abastecen su operación con nuestro catálogo.
-      </p>
-    </header>
+{
+  !hideSection && (
+    <section class="trust section-y" aria-labelledby="trust-title">
+      <div class="container-content trust__inner">
+        <header class="trust__head" data-reveal>
+          <p class="eyebrow" data-reveal style="--reveal-y: 12px;">
+            Confianza
+          </p>
+          <h2 id="trust-title" class="trust__title" data-reveal style="--reveal-delay: 100ms;">
+            Compran en Qüem.
+          </h2>
+          <p class="trust__lede" data-reveal style="--reveal-delay: 200ms;">
+            Cadenas gastronómicas, hoteles, cafeterías y comercios que abastecen su operación con
+            nuestro catálogo.
+          </p>
+        </header>
 
-    <ul class="trust__grid" role="list" data-reveal-stagger>
-      {clients.map((c, idx) => (
-        <li
-          class:list={['trust-logo', isPlaceholder && 'trust-logo--placeholder']}
-          data-reveal
-          style={`--reveal-delay: ${100 + idx * 60}ms;`}
-          title={c.segment}
-        >
-          {c.logo ? (
-            <img src={c.logo} alt={c.name} loading="lazy" decoding="async" width="160" height="60" />
-          ) : (
-            <span class="trust-logo__placeholder" aria-hidden="true">
-              <svg viewBox="0 0 60 24" fill="none" aria-hidden="true">
-                <rect x="2" y="2" width="56" height="20" rx="3" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.4"/>
-                <circle cx="10" cy="12" r="2" fill="currentColor" opacity="0.25"/>
-                <rect x="18" y="9" width="16" height="2" rx="1" fill="currentColor" opacity="0.25"/>
-                <rect x="18" y="13" width="10" height="2" rx="1" fill="currentColor" opacity="0.25"/>
-              </svg>
-              <span class="trust-logo__segment">{c.segment}</span>
-            </span>
-          )}
-        </li>
-      ))}
-    </ul>
+        <ul class="trust__grid" role="list" data-reveal-stagger>
+          {clients.map((c, idx) => (
+            <li
+              class:list={['trust-logo', isPlaceholder && 'trust-logo--placeholder']}
+              data-reveal
+              style={`--reveal-delay: ${100 + idx * 60}ms;`}
+              title={c.segment}
+            >
+              {c.logo ? (
+                <img
+                  src={c.logo}
+                  alt={c.name}
+                  loading="lazy"
+                  decoding="async"
+                  width="160"
+                  height="60"
+                />
+              ) : (
+                <span class="trust-logo__placeholder" aria-hidden="true">
+                  <svg viewBox="0 0 60 24" fill="none" aria-hidden="true">
+                    <rect
+                      x="2"
+                      y="2"
+                      width="56"
+                      height="20"
+                      rx="3"
+                      stroke="currentColor"
+                      stroke-width="1"
+                      stroke-dasharray="3 3"
+                      opacity="0.4"
+                    />
+                    <circle cx="10" cy="12" r="2" fill="currentColor" opacity="0.25" />
+                    <rect
+                      x="18"
+                      y="9"
+                      width="16"
+                      height="2"
+                      rx="1"
+                      fill="currentColor"
+                      opacity="0.25"
+                    />
+                    <rect
+                      x="18"
+                      y="13"
+                      width="10"
+                      height="2"
+                      rx="1"
+                      fill="currentColor"
+                      opacity="0.25"
+                    />
+                  </svg>
+                  <span class="trust-logo__segment">{c.segment}</span>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
 
-    {isPlaceholder && (
-      <p class="trust__fineprint" data-reveal style="--reveal-delay: 600ms;">
-        <span aria-hidden="true">ⓘ</span>
-        Logos de clientes en alta resolución se incorporan con cada autorización
-        comercial. Lista completa al alta como cliente.
-      </p>
-    )}
-  </div>
-</section>
-)}
+        {isPlaceholder && (
+          <p class="trust__fineprint" data-reveal style="--reveal-delay: 600ms;">
+            <span aria-hidden="true">ⓘ</span>
+            Logos de clientes en alta resolución se incorporan con cada autorización comercial.
+            Lista completa al alta como cliente.
+          </p>
+        )}
+      </div>
+    </section>
+  )
+}
 
 <style>
   .trust {
     position: relative;
     background:
-      radial-gradient(70% 70% at 50% 0%, oklch(from var(--color-brand-500) l c h / 0.04) 0%, transparent 60%),
+      radial-gradient(
+        70% 70% at 50% 0%,
+        oklch(from var(--color-brand-500) l c h / 0.04) 0%,
+        transparent 60%
+      ),
       var(--color-bg);
     overflow: hidden;
     isolation: isolate;
   }
 
-  .trust__inner { display: grid; gap: var(--space-6); }
-  .trust__head { display: grid; gap: var(--space-3); max-width: 56ch; }
+  .trust__inner {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .trust__head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 56ch;
+  }
   .trust__title {
     font-size: var(--font-size-3xl);
     font-weight: var(--weight-extrabold);
@@ -125,8 +174,16 @@ const hideSection = isPlaceholder;
     gap: var(--space-3);
     margin-block-start: var(--space-3);
   }
-  @media (min-width: 540px) { .trust__grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 880px) { .trust__grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 540px) {
+    .trust__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 880px) {
+    .trust__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
 
   .trust-logo {
     aspect-ratio: 5 / 2;
@@ -136,7 +193,9 @@ const hideSection = isPlaceholder;
     display: grid;
     place-items: center;
     padding: var(--space-3);
-    transition: border-color var(--dur-fast), background var(--dur-fast);
+    transition:
+      border-color var(--dur-fast),
+      background var(--dur-fast);
   }
   .trust-logo:hover {
     border-color: var(--color-brand-300);
@@ -148,12 +207,19 @@ const hideSection = isPlaceholder;
     object-fit: contain;
     filter: grayscale(1);
     opacity: 0.85;
-    transition: filter var(--dur-fast), opacity var(--dur-fast);
+    transition:
+      filter var(--dur-fast),
+      opacity var(--dur-fast);
   }
-  .trust-logo:hover img { filter: grayscale(0); opacity: 1; }
+  .trust-logo:hover img {
+    filter: grayscale(0);
+    opacity: 1;
+  }
 
   /* ----- Placeholder mode (sin logos reales todavía) ----- */
-  .trust-logo--placeholder { background: var(--color-surface-subtle); }
+  .trust-logo--placeholder {
+    background: var(--color-surface-subtle);
+  }
   .trust-logo--placeholder:hover {
     border-color: var(--color-border-strong);
     background: var(--color-bg-elevated);
@@ -164,7 +230,11 @@ const hideSection = isPlaceholder;
     gap: 0.4rem;
     color: var(--color-text-muted);
   }
-  .trust-logo__placeholder svg { width: 60%; max-width: 60px; height: auto; }
+  .trust-logo__placeholder svg {
+    width: 60%;
+    max-width: 60px;
+    height: auto;
+  }
   .trust-logo__segment {
     font-size: var(--font-size-2xs);
     font-weight: var(--weight-semibold);
@@ -196,5 +266,3 @@ const hideSection = isPlaceholder;
     margin-block-start: 0.05rem;
   }
 </style>
-</content>
-</invoke>

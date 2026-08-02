@@ -23,8 +23,11 @@
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
-  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* -------- Tailwind v4 @theme — expone los tokens como utilidades ----------- */
@@ -114,8 +117,13 @@
 /* -------- RESET moderno ---------------------------------------------------- */
 *,
 *::before,
-*::after { box-sizing: border-box; }
-* { margin: 0; padding: 0; }
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -127,13 +135,19 @@ html {
   overflow-x: clip; /* prevents fixed children (scroll-progress) from widening the initial containing block */
 }
 
-html.has-lenis { scroll-behavior: auto; }
+html.has-lenis {
+  scroll-behavior: auto;
+}
 
 /* Smooth scroll nativo como base — Lenis lo sobreescribe cuando está activo */
 @media (prefers-reduced-motion: no-preference) {
-  :root { scroll-behavior: smooth; }
+  :root {
+    scroll-behavior: smooth;
+  }
   /* Cuando Lenis está corriendo, quitar el nativo para evitar conflicto */
-  html.has-lenis { scroll-behavior: auto; }
+  html.has-lenis {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -150,19 +164,43 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-img, picture, svg, video {
+img,
+picture,
+svg,
+video {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-button, input, textarea, select { font: inherit; color: inherit; }
-button { background: none; border: none; cursor: pointer; }
-a { color: inherit; text-decoration: none; }
-ul, ol { list-style: none; }
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul,
+ol {
+  list-style: none;
+}
 
 /* -------- Tipografía base -------------------------------------------------- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
@@ -171,7 +209,9 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-primary);
 }
 
-p { text-wrap: pretty; }
+p {
+  text-wrap: pretty;
+}
 
 ::selection {
   background-color: var(--color-brand-500);
@@ -198,11 +238,15 @@ p { text-wrap: pretty; }
   transform: translateY(-200%);
   transition: transform var(--dur-fast) var(--ease-standard);
 }
-.skip-link:focus { transform: translateY(0); }
+.skip-link:focus {
+  transform: translateY(0);
+}
 
 /* -------- Reduced motion --------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -238,16 +282,30 @@ html[data-reveal-ready] [data-reveal] {
   opacity: 0;
   transform: translateY(var(--reveal-y, 18px));
   transition:
-    opacity var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
-    transform var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms),
-    filter var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1)) var(--reveal-delay, 0ms);
+    opacity var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1))
+      var(--reveal-delay, 0ms),
+    transform var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1))
+      var(--reveal-delay, 0ms),
+    filter var(--reveal-duration, 520ms) var(--reveal-ease, cubic-bezier(0.16, 1, 0.3, 1))
+      var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
-html[data-reveal-ready] [data-reveal="fade"]  { transform: none; }
-html[data-reveal-ready] [data-reveal="left"]  { transform: translateX(calc(-1 * var(--reveal-y, 32px))); }
-html[data-reveal-ready] [data-reveal="right"] { transform: translateX(var(--reveal-y, 32px)); }
-html[data-reveal-ready] [data-reveal="scale"] { transform: scale(0.96); }
-html[data-reveal-ready] [data-reveal="blur"]  { filter: blur(8px); transform: translateY(16px); }
+html[data-reveal-ready] [data-reveal='fade'] {
+  transform: none;
+}
+html[data-reveal-ready] [data-reveal='left'] {
+  transform: translateX(calc(-1 * var(--reveal-y, 32px)));
+}
+html[data-reveal-ready] [data-reveal='right'] {
+  transform: translateX(var(--reveal-y, 32px));
+}
+html[data-reveal-ready] [data-reveal='scale'] {
+  transform: scale(0.96);
+}
+html[data-reveal-ready] [data-reveal='blur'] {
+  filter: blur(8px);
+  transform: translateY(16px);
+}
 
 /* Specificity must beat html[data-reveal-ready] [data-reveal] (0-2-1) */
 html[data-reveal-ready] [data-reveal][data-revealed],
@@ -259,15 +317,33 @@ html:not([data-reveal-ready]) [data-reveal] {
 
 /* Stagger automático para hijos de un wrapper con data-reveal-stagger.
  * Cada hijo se anima con un delay incremental basado en su nth-child. */
-[data-reveal-stagger] > [data-reveal]:nth-child(1)  { --reveal-delay: 0ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(2)  { --reveal-delay: 55ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(3)  { --reveal-delay: 110ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(4)  { --reveal-delay: 165ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(5)  { --reveal-delay: 220ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(6)  { --reveal-delay: 275ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(7)  { --reveal-delay: 330ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(8)  { --reveal-delay: 385ms; }
-[data-reveal-stagger] > [data-reveal]:nth-child(n+9) { --reveal-delay: 420ms; }
+[data-reveal-stagger] > [data-reveal]:nth-child(1) {
+  --reveal-delay: 0ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(2) {
+  --reveal-delay: 55ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(3) {
+  --reveal-delay: 110ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(4) {
+  --reveal-delay: 165ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(5) {
+  --reveal-delay: 220ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(6) {
+  --reveal-delay: 275ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(7) {
+  --reveal-delay: 330ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(8) {
+  --reveal-delay: 385ms;
+}
+[data-reveal-stagger] > [data-reveal]:nth-child(n + 9) {
+  --reveal-delay: 420ms;
+}
 
 /* Hero text reveal — letra por letra al cargar */
 .text-reveal {
@@ -285,14 +361,21 @@ html:not([data-reveal-ready]) [data-reveal] {
   animation-delay: calc(var(--char-index, 0) * 35ms + var(--text-reveal-delay, 0ms));
 }
 @keyframes text-reveal-char {
-  to { transform: translateY(0); }
+  to {
+    transform: translateY(0);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .text-reveal__char { animation: none; transform: none; }
+  .text-reveal__char {
+    animation: none;
+    transform: none;
+  }
 }
 
 /* Number counter — counts up from 0 cuando entra al viewport */
-[data-counter] { transition: color var(--dur-fast); }
+[data-counter] {
+  transition: color var(--dur-fast);
+}
 
 /* -------- Utilities del proyecto ------------------------------------------ */
 .container-content {
@@ -309,7 +392,9 @@ html:not([data-reveal-ready]) [data-reveal] {
   margin-inline: auto;
 }
 
-.section-y { padding-block: var(--space-section); }
+.section-y {
+  padding-block: var(--space-section);
+}
 
 .eyebrow {
   display: inline-block;
@@ -336,30 +421,39 @@ html:not([data-reveal-ready]) [data-reveal] {
   min-height: 44px;
   min-width: 44px;
   border: 1px solid transparent;
-  transition: transform var(--dur-fast) var(--ease-standard),
-              background-color var(--dur-fast) var(--ease-standard),
-              border-color var(--dur-fast) var(--ease-standard),
-              color var(--dur-fast) var(--ease-standard),
-              box-shadow var(--dur-fast) var(--ease-standard);
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
   white-space: nowrap;
 }
 
-.btn:hover { transform: translateY(-1px); }
-.btn:active { transform: translateY(0); }
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+}
 
 /* btn-primary = brand color (azul Qüem), no verde accent */
 .btn-primary {
   background-color: var(--color-brand-500);
   color: var(--color-text-on-brand);
 }
-.btn-primary:hover { background-color: var(--color-brand-600); }
+.btn-primary:hover {
+  background-color: var(--color-brand-600);
+}
 
 /* btn-secondary = accent verde (queda como contraste cuando hace falta) */
 .btn-secondary {
   background-color: var(--color-accent-500);
   color: var(--color-text-on-accent);
 }
-.btn-secondary:hover { background-color: var(--color-accent-600); }
+.btn-secondary:hover {
+  background-color: var(--color-accent-600);
+}
 
 .btn-outline {
   background-color: transparent;
@@ -375,7 +469,9 @@ html:not([data-reveal-ready]) [data-reveal] {
   background-color: transparent;
   color: var(--color-text-primary);
 }
-.btn-ghost:hover { background-color: var(--color-surface-subtle); }
+.btn-ghost:hover {
+  background-color: var(--color-surface-subtle);
+}
 
 /* -------- Visually hidden (a11y) ------------------------------------------ */
 .sr-only {
@@ -398,7 +494,9 @@ html:not([data-reveal-ready]) [data-reveal] {
  *  - Una sola columna
  * ------------------------------------------------------------------------ */
 @media print {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     background: transparent !important;
     color: #000 !important;
     box-shadow: none !important;
@@ -408,7 +506,11 @@ html:not([data-reveal-ready]) [data-reveal] {
     animation: none !important;
   }
 
-  html, body { font-size: 11pt; line-height: 1.5; }
+  html,
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+  }
 
   /* Esconder UI no-imprimible */
   [data-header],
@@ -429,26 +531,50 @@ html:not([data-reveal-ready]) [data-reveal] {
   }
 
   /* Mostrar href de links externos */
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
     font-size: 0.85em;
     color: #555 !important;
   }
   /* No mostrar href de mailto ni anchors */
-  a[href^="mailto"]::after,
-  a[href^="tel"]::after,
-  a[href^="#"]::after { content: ""; }
+  a[href^='mailto']::after,
+  a[href^='tel']::after,
+  a[href^='#']::after {
+    content: '';
+  }
 
   /* Una columna, sin grids */
-  .container-content, .qe__pillars, .eco__bento, .un__timeline,
-  .cats__grid, .franq__grid, .team__grid, .num__capabilities,
-  .pr-list__grid, .cn-formats__grid, .cn-includes__grid, .cn-where__grid,
-  .cn-value__split, .contact__inner, .plat__inner, .hero__inner {
+  .container-content,
+  .qe__pillars,
+  .eco__bento,
+  .un__timeline,
+  .cats__grid,
+  .franq__grid,
+  .team__grid,
+  .num__capabilities,
+  .pr-list__grid,
+  .cn-formats__grid,
+  .cn-includes__grid,
+  .cn-where__grid,
+  .cn-value__split,
+  .contact__inner,
+  .plat__inner,
+  .hero__inner {
     display: block !important;
     grid-template-columns: none !important;
   }
 
-  section, .section-y { padding: 1.5rem 0 !important; page-break-inside: avoid; }
-  h1, h2, h3 { page-break-after: avoid; }
-  img { max-width: 100% !important; }
+  section,
+  .section-y {
+    padding: 1.5rem 0 !important;
+    page-break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+  img {
+    max-width: 100% !important;
+  }
 }

@@ -1,300 +1,505 @@
 ---
-import { PRESS } from '../../config/press';
+/**
+ * Prensa — spec punto 9: "Franja de logos de medios + link a las notas.
+ * Genera autoridad."
+ *
+ * ORDEN DELIBERADO: primero la franja de medios (el activo de autoridad,
+ * se lee en un segundo), después las notas con título, bajada y link.
+ *
+ * LOGOS: no tenemos los logos oficiales de los medios y no se pueden
+ * bajar sin licencia, así que la franja se compone con WORDMARKS
+ * TIPOGRÁFICOS: el nombre de cada medio tratado con la familia, el peso
+ * y el tracking que evocan su cabecera, en escala de grises y alineados
+ * ópticamente. El cableado para el swap ya está: si una nota de
+ * `src/config/press.ts` trae `logo`, la franja usa la imagen y el
+ * wordmark desaparece, sin tocar la estructura.
+ *
+ * IDIOMA: los títulos y bajadas son contenido de los medios, siempre en
+ * español. En la versión EN se marcan con `lang="es"` (lectores de
+ * pantalla) y se avisa arriba. Se traduce solo el chrome de la sección.
+ */
+import { PRESS, pressOutlets } from '../../config/press';
+import { link } from '../../config/site';
+import { getLangFromUrl } from '../../i18n/utils';
+import { LOCALE } from '../../i18n/ui';
 
-interface Props {
-  showHead?: boolean;
-}
-const { showHead = true } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+
+const COPY = {
+  es: {
+    eyebrow: 'Prensa',
+    tituloA: 'QUEM en',
+    tituloEm: 'los medios.',
+    bajada:
+      'Cobertura de medios nacionales de economía y negocios sobre el grupo, sus modelos de expansión y su operación.',
+    franjaCaption: 'Aparecimos en',
+    franjaLinkPrefijo: 'Leer la nota de',
+    nuevaPestana: 'Abre en una pestaña nueva',
+    leerNota: 'Leer la nota',
+    avisoIdioma: 'Las notas están publicadas en español.',
+  },
+  en: {
+    eyebrow: 'Press',
+    tituloA: 'QUEM in',
+    tituloEm: 'the press.',
+    bajada:
+      'Coverage from Argentina’s business and economics outlets on the group, how it expands and how it operates.',
+    franjaCaption: 'Featured in',
+    franjaLinkPrefijo: 'Read the article in',
+    nuevaPestana: 'Opens in a new tab',
+    leerNota: 'Read the article',
+    avisoIdioma: 'These articles are published in Spanish.',
+  },
+} as const;
+
+const c = COPY[lang];
+
+const medios = pressOutlets();
+
+/* Marca el contenido de los medios como español cuando la página no lo es. */
+const quoteLang = lang === 'es' ? undefined : 'es';
+
+/* Mes + año: dos notas tienen la fecha exacta pendiente de confirmar
+   (ver TODOs en press.ts) y publicar un día equivocado en una sección
+   de prensa es peor que no publicarlo. `timeZone: 'UTC'` es obligatorio:
+   sin él, un ISO sin hora se corre un día hacia atrás en Argentina. */
+const fmtFecha = new Intl.DateTimeFormat(LOCALE[lang].html, {
+  year: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+});
+const fecha = (iso: string): string => fmtFecha.format(new Date(`${iso}T00:00:00Z`));
+
+const dominio = (url: string): string => new URL(url).hostname.replace(/^www\./, '');
 ---
 
-<section class="pr-list section-y" id="prensa" aria-labelledby="pr-list-title">
-  <div class="container-content">
+<section class="prensa section-y" id="prensa" aria-labelledby="prensa-title">
+  <div class="container-content prensa__inner">
+    <header class="prensa__head">
+      <p class="eyebrow" data-reveal style="--reveal-y: 12px;">{c.eyebrow}</p>
+      <h2 id="prensa-title" class="prensa__title" data-reveal style="--reveal-delay: 80ms;">
+        {c.tituloA}
+        <em>{c.tituloEm}</em>
+      </h2>
+      <p class="prensa__lede" data-reveal style="--reveal-delay: 160ms;">{c.bajada}</p>
+    </header>
 
-    {showHead && (
-      <header class="pr-list__section-head">
-        <p class="eyebrow" data-reveal style="--reveal-y: 16px;">Prensa</p>
-        <h2 id="pr-list-title" class="pr-list__section-title" data-reveal style="--reveal-delay: 100ms;">
-          Qüem en <em>los medios</em>.
-        </h2>
-        <p class="pr-list__section-lede" data-reveal style="--reveal-delay: 200ms;">
-          Cobertura de medios económicos y de negocios sobre Qüem Central.
+    {/* Franja de medios — el activo de autoridad va primero. */}
+    <div class="prensa__strip">
+      <p class="prensa__strip-caption" id="prensa-medios" data-reveal style="--reveal-y: 10px;">
+        {c.franjaCaption}
+      </p>
+
+      <ul class="prensa__strip-list" role="list" aria-labelledby="prensa-medios">
+        {
+          medios.map((m, idx) => (
+            <li class="prensa__outlet" data-reveal style={`--reveal-delay: ${idx * 60}ms;`}>
+              <a
+                class="prensa__outlet-link"
+                href={m.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${c.franjaLinkPrefijo} ${m.name}. ${c.nuevaPestana}.`}
+              >
+                {m.logo ? (
+                  <img
+                    class="prensa__logo"
+                    src={link(m.logo)}
+                    alt={m.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span class:list={['prensa__wordmark', `prensa__wordmark--${m.wordmark}`]}>
+                    {m.name}
+                  </span>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {/* Notas. El aviso de idioma solo tiene sentido fuera del español. */}
+    {
+      lang !== 'es' && (
+        <p class="prensa__aviso" data-reveal>
+          {c.avisoIdioma}
         </p>
-      </header>
-    )}
+      )
+    }
 
-    {!showHead && <h2 id="pr-list-title" class="sr-only">Notas de prensa</h2>}
+    {
+      /* `pr-list__grid` es el hook que el print stylesheet de global.css
+        usa para desarmar la grilla al imprimir. Se conserva a propósito. */
+    }
+    <ul class="prensa__grid pr-list__grid" role="list" data-reveal-stagger>
+      {
+        PRESS.map((p) => (
+          <li data-reveal>
+            <article class:list={['prensa-card', p.featured && 'prensa-card--featured']}>
+              <p class="prensa-card__meta">
+                <span class="prensa-card__outlet">{p.outlet}</span>
+                <span class="prensa-card__sep" aria-hidden="true">
+                  ·
+                </span>
+                <time class="prensa-card__date" datetime={p.date}>
+                  {fecha(p.date)}
+                </time>
+              </p>
 
-    {/* Pull-quote destacado — La Nación (datos del artículo oct 2023) */}
-    <a
-      class="pr-pullquote"
-      href="https://www.lanacion.com.ar/economia/se-hizo-socio-para-ayudar-a-un-amigo-y-termino-adquiriendo-un-emprendimiento-de-congelados-que-nid16102023/"
-      target="_blank"
-      rel="noopener"
-      data-reveal
-      aria-label="Leer nota completa en La Nación"
-    >
-      <div class="pr-pullquote__left">
-        <div class="pr-pullquote__outlet">
-          <span class="pr-pullquote__dot" aria-hidden="true"></span>
-          <span class="pr-pullquote__outlet-name">La Nación</span>
-        </div>
-        <blockquote class="pr-pullquote__text">
-          "21 tiendas, 15 franquiciadas, expansión proyectada a Colombia. Una operación que factura $800M al año."
-        </blockquote>
-        <span class="pr-pullquote__cta" aria-hidden="true">
-          Leer nota completa
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </div>
-    </a>
+              {p.tag && <p class="prensa-card__tag">{p.tag[lang]}</p>}
 
-    <ul class="pr-list__grid" role="list" data-reveal-stagger>
-      {PRESS.map((p) => (
-        <li data-reveal>
-          <a
-            class:list={['pr-card', `pr-card--${p.outletSlug}`, p.featured && 'pr-card--featured']}
-            href={p.url}
-            target="_blank"
-            rel="noopener"
-            aria-label={`${p.title} — ${p.outlet}`}
-          >
-            <header class="pr-card__head">
-              <span class="pr-card__outlet" aria-hidden="true">
-                <span class="pr-card__outlet-mark"></span>
-                <span class="pr-card__outlet-name">{p.outlet}</span>
-              </span>
-            </header>
+              <h3 class="prensa-card__title">
+                <a
+                  class="prensa-card__link"
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  hreflang="es"
+                >
+                  <span lang={quoteLang}>{p.title}</span>
+                  {/* El nombre accesible del link = título + este aviso. */}
+                  <span class="sr-only">. {c.nuevaPestana}</span>
+                </a>
+              </h3>
 
-            {p.tag && (
-              <div class="pr-card__tag">
-                {p.featured && <span class="pr-card__tag-star" aria-hidden="true">★</span>}
-                {p.tag}
-              </div>
-            )}
+              <p class="prensa-card__excerpt" lang={quoteLang}>
+                {p.excerpt}
+              </p>
 
-            <h3 class="pr-card__title">{p.title}</h3>
-
-            <p class="pr-card__excerpt">{p.excerpt}</p>
-
-            <div class="pr-card__foot">
-              <span class="pr-card__cta">
-                Leer la nota
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
-              <span class="pr-card__domain">{new URL(p.url).hostname.replace(/^www\./, '')}</span>
-            </div>
-          </a>
-        </li>
-      ))}
+              <p class="prensa-card__foot">
+                <span class="prensa-card__cta" aria-hidden="true">
+                  {c.leerNota}
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path
+                      d="M3.5 10.5 10.5 3.5M10.5 3.5H5M10.5 3.5V9"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="prensa-card__domain">{dominio(p.url)}</span>
+              </p>
+            </article>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </section>
 
 <style>
-  /* Section header — muestra cuando showHead=true */
-  .pr-list__section-head {
+  .prensa {
+    position: relative;
+    background-color: var(--color-bg);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  .prensa__inner {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  /* ---------- Encabezado ------------------------------------------- */
+  .prensa__head {
     display: grid;
     gap: var(--space-3);
     max-width: 56ch;
-    margin-block-end: var(--space-7);
   }
-  .pr-list__section-title {
-    font-size: var(--font-size-3xl);
+
+  .prensa__title {
+    font-size: var(--font-size-2xl);
     font-weight: var(--weight-extrabold);
     letter-spacing: var(--tracking-tighter);
-    line-height: 1.02;
+    line-height: var(--leading-tight);
     color: var(--color-text-primary);
+    max-width: 20ch;
   }
-  .pr-list__section-title em {
+  .prensa__title em {
     font-style: normal;
     background: var(--gradient-text-brand);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .pr-list__section-lede {
-    color: var(--color-text-secondary);
+
+  .prensa__lede {
     font-size: var(--font-size-md);
     line-height: var(--leading-snug);
+    color: var(--color-text-secondary);
   }
 
-  /* Pull-quote La Nación */
-  .pr-pullquote {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-5);
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-5) var(--space-6);
-    margin-block-end: var(--space-6);
-    background: linear-gradient(135deg, #eef3fa 0%, var(--color-bg-elevated) 100%);
-    border: 1px solid #c5d4e8;
-    border-inline-start: 4px solid #003366;
-    border-radius: var(--radius-xl);
-    text-decoration: none;
-    transition: transform var(--dur-fast), box-shadow var(--dur-fast), border-color var(--dur-fast);
-  }
-  .pr-pullquote:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: #003366;
-  }
-
-  .pr-pullquote__left {
+  /* ---------- Franja de medios --------------------------------------
+   * Misma métrica que LogoStrip (la franja de Aliados) para que las dos
+   * bandas de logos del sitio lean como el mismo sistema.
+   * ------------------------------------------------------------------ */
+  .prensa__strip {
     display: grid;
-    gap: var(--space-2);
-    flex: 1;
-    min-width: 18rem;
+    gap: var(--space-4);
   }
-  .pr-pullquote__outlet {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .pr-pullquote__dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #003366;
-    flex-shrink: 0;
-  }
-  .pr-pullquote__outlet-name {
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold);
-    font-size: var(--font-size-sm);
-    letter-spacing: -0.02em;
-    color: #003366;
-  }
-  .pr-pullquote__text {
-    font-size: var(--font-size-md);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-primary);
-    line-height: 1.4;
-    letter-spacing: -0.01em;
-    font-style: italic;
-    margin: 0;
-  }
-  .pr-pullquote__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    color: #003366;
-    margin-block-start: var(--space-1);
-  }
-  .pr-pullquote:hover .pr-pullquote__cta { text-decoration: underline; text-underline-offset: 3px; }
 
-  .pr-list__grid {
+  .prensa__strip-caption {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .prensa__strip-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+  @media (min-width: 720px) {
+    .prensa__strip-list {
+      grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+      gap: var(--space-4);
+    }
+  }
+
+  .prensa__outlet {
+    display: grid;
+  }
+
+  /* Caja común: mismo alto para todos, contenido centrado. Es lo que
+     alinea ópticamente wordmarks de distinta familia y tamaño. */
+  .prensa__outlet-link {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    min-height: 5.5rem;
+    padding: var(--space-3);
+    text-align: center;
+    background-color: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-standard);
+  }
+
+  /* Wordmark tipográfico — reemplazo honesto del logo oficial. */
+  .prensa__wordmark {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    line-height: var(--leading-tight);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    transition: color var(--dur-normal) var(--ease-out-cubic);
+  }
+
+  /* Diario tradicional: serif con peso alto. */
+  .prensa__wordmark--broadsheet {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+  }
+  /* Digital de negocios: sans semibold, tracking cerrado. */
+  .prensa__wordmark--digital {
+    font-weight: var(--weight-semibold);
+  }
+  /* Sans muy pesada en minúscula. */
+  .prensa__wordmark--heavy {
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    text-transform: lowercase;
+  }
+  /* Sigla de canal: mayúscula, extrabold, un punto más grande. */
+  .prensa__wordmark--sigla {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: var(--tracking-tightest);
+    text-transform: uppercase;
+  }
+  /* Fallback sobrio. */
+  .prensa__wordmark--neutral {
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+  }
+
+  /* Logo oficial (cuando el cliente entregue los archivos con licencia).
+     Mismo tratamiento gris que la franja de aliados. */
+  .prensa__logo {
+    max-width: 100%;
+    max-height: 2.75rem;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.72;
+    transition:
+      filter var(--dur-normal) var(--ease-out-cubic),
+      opacity var(--dur-normal) var(--ease-out-cubic);
+  }
+
+  .prensa__outlet-link:hover,
+  .prensa__outlet-link:focus-visible {
+    background-color: var(--color-bg-brand-soft);
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+  }
+  .prensa__outlet-link:hover .prensa__wordmark,
+  .prensa__outlet-link:focus-visible .prensa__wordmark {
+    color: var(--color-text-primary);
+  }
+  .prensa__outlet-link:hover .prensa__logo,
+  .prensa__outlet-link:focus-visible .prensa__logo {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+
+  /* Sin hover no hay forma de descubrir el estado a color: en touch va
+     siempre al 100%. */
+  @media (hover: none) {
+    .prensa__logo {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+  }
+
+  /* ---------- Aviso de idioma (solo fuera del español) --------------- */
+  .prensa__aviso {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* ---------- Notas -------------------------------------------------- */
+  .prensa__grid {
     display: grid;
     gap: var(--space-4);
     grid-template-columns: 1fr;
   }
   @media (min-width: 640px) {
-    .pr-list__grid { grid-template-columns: repeat(2, 1fr); }
+    .prensa__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  /* El <li> se estira con la fila: así las cards de una misma fila
+     terminan con el pie alineado aunque los títulos midan distinto. */
+  .prensa__grid > li {
+    display: grid;
   }
 
-  .pr-card {
+  .prensa-card {
     position: relative;
-    display: grid;
-    grid-template-rows: auto auto auto 1fr auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-5);
-    background: var(--color-bg-elevated);
+    background-color: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-xl);
-    transition: transform var(--dur-fast) var(--ease-standard),
-                border-color var(--dur-fast) var(--ease-standard),
-                box-shadow var(--dur-fast) var(--ease-standard);
     overflow: hidden;
+    transition:
+      transform var(--dur-fast) var(--ease-standard),
+      border-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard);
   }
-  .pr-card::before {
+
+  /* Las destacadas (mención directa a QUEM) llevan el filete de marca.
+     Los colores de cada medio no se usan: la identidad de la franja es
+     tipográfica, y pintar cada card de su medio ensucia la sección. */
+  .prensa-card--featured {
+    background-image: linear-gradient(
+      180deg,
+      var(--color-brand-tint) 0%,
+      var(--color-bg-elevated) 60%
+    );
+  }
+  .prensa-card--featured::before {
     content: '';
     position: absolute;
-    inset: 0 0 auto 0;
-    height: 3px;
-    background: var(--color-neutral-300);
-    transition: height var(--dur-normal) var(--ease-out-expo);
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: var(--space-1);
+    background-image: var(--gradient-brand);
   }
-  .pr-card--la-nacion::before { background: linear-gradient(90deg, #003366, #0066aa); }
-  .pr-card--iprofesional::before { background: linear-gradient(90deg, #d63031, #c0392b); }
-  .pr-card--tn::before { background: linear-gradient(90deg, #ffd600, #ffaa00); }
-  .pr-card--clarin::before { background: linear-gradient(90deg, #ce0000, #a30000); }
-  .pr-card--infobae::before { background: linear-gradient(90deg, #1e88e5, #1565c0); }
 
-  .pr-card:hover {
+  .prensa-card:hover,
+  .prensa-card:has(.prensa-card__link:focus-visible) {
     transform: translateY(-3px);
-    border-color: var(--color-brand-300);
+    border-color: var(--color-border-brand);
     box-shadow: var(--shadow-md);
   }
-  .pr-card:hover::before { height: 4px; }
 
-  .pr-card--featured {
-    background: linear-gradient(180deg, var(--color-brand-tint) 0%, var(--color-bg-elevated) 100%);
-  }
-
-  .pr-card__head {
+  .prensa-card__meta {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
+    font-size: var(--font-size-2xs);
+    color: var(--color-text-muted);
   }
-  .pr-card__outlet {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .pr-card__outlet-mark {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  .pr-card--la-nacion .pr-card__outlet-mark { background: #003366; }
-  .pr-card--iprofesional .pr-card__outlet-mark { background: #d63031; }
-  .pr-card--tn .pr-card__outlet-mark { background: #ffd600; }
-  .pr-card--clarin .pr-card__outlet-mark { background: #ce0000; }
-  .pr-card--infobae .pr-card__outlet-mark { background: #1e88e5; }
-
-  .pr-card__outlet-name {
+  .prensa-card__outlet {
     font-family: var(--font-display);
-    font-weight: var(--weight-bold);
     font-size: var(--font-size-sm);
-    letter-spacing: -0.02em;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
     color: var(--color-text-primary);
   }
+  .prensa-card__sep {
+    color: var(--color-border-strong);
+  }
+  .prensa-card__date {
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
 
-  .pr-card__tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
+  .prensa-card__tag {
     width: max-content;
-    padding: 0.2rem 0.55rem;
-    background: var(--color-brand-50);
+    max-width: 100%;
+    padding: var(--space-1) var(--space-3);
+    background-color: var(--color-brand-50);
     color: var(--color-brand-700);
     border-radius: var(--radius-pill);
     font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-widest);
     font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
   }
-  .pr-card--featured .pr-card__tag {
-    background: oklch(from var(--color-accent-500) l c h / 0.14);
-    color: var(--color-accent-700);
-  }
-  .pr-card__tag-star { color: var(--color-accent-700); }
 
-  .pr-card__title {
+  .prensa-card__title {
     font-size: var(--font-size-md);
     font-weight: var(--weight-bold);
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tighter);
     color: var(--color-text-primary);
     text-wrap: balance;
   }
 
-  .pr-card__excerpt {
-    color: var(--color-text-secondary);
+  /* El link está en el título (nombre accesible = el título de la nota),
+     y el ::after estira el área clickeable a toda la card. */
+  .prensa-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .prensa-card:hover .prensa-card__link {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-border-brand);
+  }
+
+  .prensa-card__excerpt {
+    margin-block-end: auto;
     font-size: var(--font-size-sm);
     line-height: var(--leading-snug);
+    color: var(--color-text-secondary);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     line-clamp: 3;
@@ -302,27 +507,36 @@ const { showHead = true } = Astro.props;
     overflow: hidden;
   }
 
-  .pr-card__foot {
+  .prensa-card__foot {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-3);
     padding-block-start: var(--space-3);
-    border-top: 1px solid var(--color-border-subtle);
+    border-block-start: 1px solid var(--color-border-subtle);
   }
-  .pr-card__cta {
+  .prensa-card__cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: var(--space-1);
     font-size: var(--font-size-sm);
     font-weight: var(--weight-semibold);
     color: var(--color-text-brand);
   }
-  .pr-card:hover .pr-card__cta { text-decoration: underline; text-underline-offset: 3px; }
-  .pr-card__domain {
-    font-size: var(--font-size-2xs);
-    color: var(--color-text-muted);
+  .prensa-card__domain {
     font-family: var(--font-mono);
+    font-size: var(--font-size-2xs);
     letter-spacing: var(--tracking-wide);
+    color: var(--color-text-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prensa__outlet-link:hover,
+    .prensa__outlet-link:focus-visible,
+    .prensa-card:hover,
+    .prensa-card:has(.prensa-card__link:focus-visible) {
+      transform: none;
+    }
   }
 </style>

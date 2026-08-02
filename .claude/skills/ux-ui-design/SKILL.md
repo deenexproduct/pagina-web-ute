@@ -21,6 +21,7 @@ Toda decisión visual sale de `src/styles/tokens.css`. Si necesitás un valor qu
 - **z-index** — escala semántica (`raised`, `sticky`, `modal`, `toast`, `cursor`).
 
 Estos tokens están expuestos a Tailwind v4 vía `@theme inline` en `global.css`. Eso significa:
+
 - `bg-bg-elevated` → `--color-bg-elevated`
 - `text-fg-secondary` → `--color-text-secondary`
 - `font-display` → Fraunces
@@ -37,19 +38,19 @@ Definida con `clamp(min, fluid, max)` calibrada para 320px → 1440px. Esto sign
 
 Tamaños disponibles:
 
-| Token              | Min / Max     | Uso típico                            |
-|--------------------|---------------|---------------------------------------|
-| `--font-size-2xs`  | 11 → 12px     | uppercase tags, labels muy chicas     |
-| `--font-size-xs`   | 12 → 14px     | meta, footers, captions               |
-| `--font-size-sm`   | 14 → 16px     | secondary text, ui-controls           |
-| `--font-size-base` | 16 → 18px     | body                                  |
-| `--font-size-md`   | 18 → 20px     | lede paragraphs, blockquotes chicos   |
-| `--font-size-lg`   | 20 → 24px     | subheaders inline                     |
-| `--font-size-xl`   | 24 → 30px     | h3                                    |
-| `--font-size-2xl`  | 30 → 40px     | h2 con peso medio                     |
-| `--font-size-3xl`  | 36 → 52px     | h2 display, quotes destacados         |
-| `--font-size-4xl`  | 44 → 72px     | h1 secundario, section titles fuertes |
-| `--font-size-5xl`  | 56 → 100px    | display impactante                    |
+| Token                 | Min / Max  | Uso típico                            |
+| --------------------- | ---------- | ------------------------------------- |
+| `--font-size-2xs`     | 11 → 12px  | uppercase tags, labels muy chicas     |
+| `--font-size-xs`      | 12 → 14px  | meta, footers, captions               |
+| `--font-size-sm`      | 14 → 16px  | secondary text, ui-controls           |
+| `--font-size-base`    | 16 → 18px  | body                                  |
+| `--font-size-md`      | 18 → 20px  | lede paragraphs, blockquotes chicos   |
+| `--font-size-lg`      | 20 → 24px  | subheaders inline                     |
+| `--font-size-xl`      | 24 → 30px  | h3                                    |
+| `--font-size-2xl`     | 30 → 40px  | h2 con peso medio                     |
+| `--font-size-3xl`     | 36 → 52px  | h2 display, quotes destacados         |
+| `--font-size-4xl`     | 44 → 72px  | h1 secundario, section titles fuertes |
+| `--font-size-5xl`     | 56 → 100px | display impactante                    |
 | `--font-size-display` | 64 → 144px | hero único, una vez por página        |
 
 Tracking + leading van en pares — display siempre con `--leading-tight` (1.05) y `--tracking-tightest` (-0.04em). Body siempre `--leading-relaxed` (1.6) con tracking normal.
@@ -75,6 +76,7 @@ Escala 4px-based con steps no lineales para forzar ritmo:
 ```
 
 Más:
+
 - `--space-section` = `clamp(4rem, 7vw, 10rem)` — padding-block de cada `<section>`.
 - `--space-gutter` = `clamp(1.25rem, 4vw, 3rem)` — padding lateral del container.
 
@@ -123,6 +125,7 @@ Reglas no negociables:
 ## Dark mode
 
 Dos triggers:
+
 - `<html data-theme="dark">` — manual (toggle UI).
 - `prefers-color-scheme: dark` + sin `data-theme="light"` — automático (system).
 
@@ -132,17 +135,17 @@ Si agregás un color, **agregalo a la sección dark de `tokens.css`** también. 
 
 ```css
 /* Texto */
-color: var(--color-text-primary);    /* body */
-color: var(--color-text-secondary);  /* lede, descripciones */
-color: var(--color-text-muted);      /* meta, footnotes */
-color: var(--color-text-brand);      /* acentos en italic */
-color: var(--color-text-inverted);   /* sobre fondos oscuros */
+color: var(--color-text-primary); /* body */
+color: var(--color-text-secondary); /* lede, descripciones */
+color: var(--color-text-muted); /* meta, footnotes */
+color: var(--color-text-brand); /* acentos en italic */
+color: var(--color-text-inverted); /* sobre fondos oscuros */
 
 /* Backgrounds */
-background: var(--color-bg);              /* base */
-background: var(--color-bg-elevated);     /* cards subidos */
-background: var(--color-bg-inverted);     /* sección Contacto */
-background: var(--color-surface-subtle);  /* hover ghost */
+background: var(--color-bg); /* base */
+background: var(--color-bg-elevated); /* cards subidos */
+background: var(--color-bg-inverted); /* sección Contacto */
+background: var(--color-surface-subtle); /* hover ghost */
 
 /* Borders */
 border-color: var(--color-border-subtle);

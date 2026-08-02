@@ -1,0 +1,171 @@
+---
+/**
+ * Logo.astro — Lockup de marca QUEM.
+ *
+ * FUENTE ÚNICA del logo del sitio. Antes el lockup estaba duplicado en
+ * Header, Footer y el hero (con CSS divergente en cada uno: distinto
+ * radio, distinta sombra, distinto halo del punto). Cualquier consumidor
+ * nuevo usa este componente; no se vuelve a copiar el markup.
+ *
+ * Alimentado 100% por `BRAND` de site.ts:
+ *   - `BRAND.logoSvg` con valor → renderiza esa imagen.
+ *   - vacío (hoy) → lockup tipográfico de fallback: isotipo con la
+ *     inicial del wordmark + wordmark + sufijo.
+ *
+ * El componente NO renderiza el link: el consumidor lo envuelve en su
+ * propio `<a>` con el `aria-label` que corresponda. Así el nombre
+ * accesible queda donde vive la navegación, no acá.
+ *
+ * Tuning desde afuera — el consumidor puede pisar estas custom props en
+ * el wrapper (heredan por cascada):
+ *   --logo-mark-size · --logo-halo · --logo-gap · --logo-radius
+ */
+import { BRAND, link } from '../../config/site';
+import { getLangFromUrl } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  /** `header` = compacto; `footer` = un punto más grande y con halo sobre superficie. */
+  variant?: 'header' | 'footer';
+  class?: string;
+}
+
+const { variant = 'header', class: className } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+
+/*
+ * El sufijo del lockup es marca, pero los genéricos ("Grupo") tienen
+ * traducción directa y en EN "QUEM Grupo" se lee raro. Se traduce lo que
+ * está mapeado acá; cualquier otro valor de config se renderiza tal cual
+ * (un sufijo inventado por el cliente no se toca).
+ */
+const SUFFIX_I18N: Record<string, Record<Lang, string>> = {
+  Grupo: { es: 'Grupo', en: 'Group' },
+};
+
+const hasLogoSvg = BRAND.logoSvg.length > 0;
+/* Degradación: si el wordmark queda vacío, caemos al nombre del grupo. */
+const wordmark = BRAND.wordmark || BRAND.group;
+const suffix = SUFFIX_I18N[BRAND.wordmarkSuffix]?.[lang] ?? BRAND.wordmarkSuffix;
+const initial = wordmark.charAt(0);
+
+/* Sin logo y sin wordmark no hay nada que dibujar: mejor no renderizar
+   que dejar un hueco vacío o un isotipo mudo. */
+const renderable = hasLogoSvg || wordmark.length > 0;
+---
+
+{
+  renderable && (
+    <span class:list={['logo', `logo--${variant}`, className]}>
+      {hasLogoSvg ? (
+        <img class="logo__img" src={link(BRAND.logoSvg)} alt={BRAND.group} decoding="async" />
+      ) : (
+        <>
+          <span class="logo__mark" aria-hidden="true">
+            {initial}
+          </span>
+          <span class="logo__wordmark">
+            {wordmark}
+            {suffix.length > 0 && <span class="logo__suffix">{suffix}</span>}
+          </span>
+        </>
+      )}
+    </span>
+  )
+}
+
+<style>
+  .logo {
+    /* Custom props locales — el consumidor las pisa desde su wrapper. */
+    --logo-mark-size: 2.25rem;
+    --logo-radius: var(--radius-md);
+    /* El punto escala con el isotipo en vez de tener un tamaño fijo. */
+    --logo-dot-size: calc(var(--logo-mark-size) / 7);
+    /* Hairline: mismo orden que los borders de 1px del resto del sitio. */
+    --logo-dot-ring: 2px;
+    /* Color del anillo del punto: tiene que ser el fondo sobre el que
+       apoya el lockup, sino el punto se ve sucio contra el isotipo. */
+    --logo-halo: var(--color-bg);
+    --logo-gap: var(--space-2);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--logo-gap);
+    /* Touch target aunque el wrapper sea sólo el link del logo. */
+    min-block-size: 44px;
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+  }
+
+  .logo--footer {
+    --logo-mark-size: 2.5rem;
+    --logo-halo: var(--color-surface-subtle);
+  }
+
+  /* ===== Isotipo ========================================================= */
+  .logo__mark {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: var(--logo-mark-size);
+    block-size: var(--logo-mark-size);
+    border-radius: var(--logo-radius);
+    background: var(--gradient-brand);
+    color: var(--color-text-on-brand);
+    font-weight: var(--weight-extrabold);
+    font-size: var(--font-size-base);
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1;
+    box-shadow:
+      var(--shadow-sm),
+      inset 0 1px 0 oklch(from var(--color-neutral-0) l c h / 0.18);
+  }
+
+  /* Punto de acento arriba a la derecha — el detalle que hace que el
+     isotipo no sea un cuadrado con una letra. */
+  .logo__mark::after {
+    content: '';
+    position: absolute;
+    inset: var(--space-1) var(--space-1) auto auto;
+    inline-size: var(--logo-dot-size);
+    block-size: var(--logo-dot-size);
+    border-radius: var(--radius-circle);
+    background-color: var(--color-accent-500);
+    box-shadow: 0 0 0 var(--logo-dot-ring) var(--logo-halo);
+  }
+
+  /* ===== Wordmark ======================================================== */
+  .logo__wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    font-size: var(--font-size-md);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tighter);
+    white-space: nowrap;
+  }
+
+  .logo__suffix {
+    font-weight: var(--weight-medium);
+    color: var(--color-text-brand);
+  }
+
+  /* En el header, bajo 380px el sufijo compite con el CTA y el toggle.
+     Se oculta ahí y sólo ahí — el lockup completo sigue en el footer. */
+  .logo--header .logo__suffix {
+    display: none;
+  }
+  @media (min-width: 380px) {
+    .logo--header .logo__suffix {
+      display: inline;
+    }
+  }
+
+  /* ===== Logo definitivo (cuando BRAND.logoSvg tenga valor) ============== */
+  .logo__img {
+    block-size: var(--logo-mark-size);
+    inline-size: auto;
+  }
+</style>

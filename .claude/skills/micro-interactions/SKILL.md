@@ -22,12 +22,12 @@ Esta skill es complementaria a `motion-interactions` — ahí va el motion grand
 En `tokens.css`:
 
 ```css
---dur-instant: 80ms;     /* tooltip show */
---dur-fast: 160ms;       /* hover de UI */
---dur-normal: 260ms;     /* page transitions */
---dur-slow: 420ms;       /* reveals */
---dur-slower: 640ms;     /* reveals editoriales */
---dur-cinematic: 1.4s;   /* hero subhead */
+--dur-instant: 80ms; /* tooltip show */
+--dur-fast: 160ms; /* hover de UI */
+--dur-normal: 260ms; /* page transitions */
+--dur-slow: 420ms; /* reveals */
+--dur-slower: 640ms; /* reveals editoriales */
+--dur-cinematic: 1.4s; /* hero subhead */
 
 --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
@@ -45,8 +45,12 @@ En `tokens.css`:
     background-color var(--dur-fast) var(--ease-standard),
     box-shadow var(--dur-fast) var(--ease-standard);
 }
-.btn:hover { transform: translateY(-1px); }
-.btn:active { transform: translateY(0); }
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+}
 ```
 
 El `translateY(-1px)` da sensación de "se levantó al hover". Active resetea — feedback de click instantáneo.
@@ -55,7 +59,10 @@ El `translateY(-1px)` da sensación de "se levantó al hover". Active resetea �
 
 ```css
 .card {
-  transition: transform var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast);
+  transition:
+    transform var(--dur-fast),
+    border-color var(--dur-fast),
+    box-shadow var(--dur-fast);
 }
 .card:hover {
   transform: translateY(-3px);
@@ -95,14 +102,18 @@ Patrón del Header.astro:
 .nav-link::after {
   content: '';
   position: absolute;
-  left: 0; right: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 2px;
   background: var(--color-brand-500);
   transform: scaleX(0);
   transition: transform var(--dur-normal) var(--ease-out-expo);
 }
 .nav-link:hover::after,
-.nav-link--active::after { transform: scaleX(1); }
+.nav-link--active::after {
+  transform: scaleX(1);
+}
 ```
 
 `scaleX` con `transform-origin: center` da el efecto "underline crece desde el centro". Sin layout shift.
@@ -112,12 +123,17 @@ Patrón del Header.astro:
 ```css
 .eyebrow__dot {
   background: var(--color-accent-500);
-  box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18);
+  box-shadow: 0 0 0 4px oklch(62% 0.15 155 / 0.18);
   animation: pulse 2.4s ease-in-out infinite;
 }
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 4px oklch(62% 0.150 155 / 0.18); }
-  50%      { box-shadow: 0 0 0 7px oklch(62% 0.150 155 / 0.06); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px oklch(62% 0.15 155 / 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 7px oklch(62% 0.15 155 / 0.06);
+  }
 }
 ```
 
@@ -126,10 +142,17 @@ Da sensación de "live indicator". Cortar con `@media (prefers-reduced-motion: r
 ### Scroll arrow bounce (scroll hint)
 
 ```css
-.scroll-hint svg { animation: scroll-bounce 2s ease-in-out infinite; }
+.scroll-hint svg {
+  animation: scroll-bounce 2s ease-in-out infinite;
+}
 @keyframes scroll-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
 }
 ```
 
@@ -142,21 +165,44 @@ Cuando el form se está enviando:
   <span data-label>Enviar consulta</span>
   <span data-spinner hidden aria-hidden="true">
     <svg viewBox="0 0 24 24" class="spinner">
-      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="60" stroke-dashoffset="20" fill="none"/>
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-dasharray="60"
+        stroke-dashoffset="20"
+        fill="none"
+      />
     </svg>
   </span>
 </button>
 ```
 
 ```css
-.spinner { width: 1rem; height: 1rem; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-[aria-busy='true'] [data-label] { display: none; }
-[aria-busy='true'] [data-spinner] { display: inline-flex; }
+[aria-busy='true'] [data-label] {
+  display: none;
+}
+[aria-busy='true'] [data-spinner] {
+  display: inline-flex;
+}
 ```
 
 JS:
+
 ```js
 form.addEventListener('submit', async () => {
   btn.setAttribute('aria-busy', 'true');
@@ -174,7 +220,15 @@ Reemplazar el form con un panel "Mensaje enviado":
 ```html
 <div class="form-success" hidden data-form-success>
   <div class="form-success__check">
-    <svg viewBox="0 0 24 24" fill="none"><path d="m4 12 6 6 10-14" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg viewBox="0 0 24 24" fill="none">
+      <path
+        d="m4 12 6 6 10-14"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
   </div>
   <h3>Recibimos tu consulta</h3>
   <p>Te responde el equipo comercial en menos de 48hs.</p>
@@ -187,9 +241,14 @@ Animar entrada con scale + opacity:
 .form-success {
   opacity: 0;
   transform: scale(0.95);
-  transition: opacity var(--dur-normal), transform var(--dur-normal) var(--ease-out-expo);
+  transition:
+    opacity var(--dur-normal),
+    transform var(--dur-normal) var(--ease-out-expo);
 }
-.form-success:not([hidden]) { opacity: 1; transform: scale(1); }
+.form-success:not([hidden]) {
+  opacity: 1;
+  transform: scale(1);
+}
 ```
 
 ### Error inline (validation)
@@ -213,9 +272,16 @@ Animar entrada con scale + opacity:
   animation: shake 0.4s ease-out;
 }
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
 }
 ```
 
@@ -225,7 +291,11 @@ Para dar identidad de marca extra. Solo en `(hover: hover)`:
 
 ```css
 @media (hover: hover) and (pointer: fine) {
-  body { cursor: url('cursor.svg') 10 10, auto; }
+  body {
+    cursor:
+      url('cursor.svg') 10 10,
+      auto;
+  }
 }
 ```
 
@@ -236,7 +306,9 @@ Hoy NO implementado. Si se decide agregar, mantenerlo sutil — un dot 10px del 
 Ya implementado en `Header.astro` con IntersectionObserver. La micro-interaction es:
 
 ```css
-.nav-link--active::after { transform: scaleX(1); }
+.nav-link--active::after {
+  transform: scaleX(1);
+}
 ```
 
 Sin transition flicker entre secciones porque el observer está calibrado para "carril central" del viewport (rootMargin -25% / -55%).
