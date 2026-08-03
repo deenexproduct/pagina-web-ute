@@ -9,6 +9,7 @@ import SocialDock from '../components/ui/SocialDock.astro';
 import {
   SEO,
   SITE_URL,
+  SITE_DOMAIN,
   BRAND,
   ADDRESS,
   EMAILS,
@@ -67,6 +68,20 @@ const fullTitle = title ? pageTitle(title) : t('seo.title');
 /* -------------------------------------------------------------------------- */
 
 const site = Astro.site ?? new URL(SITE_URL);
+
+/**
+ * ¿Este build es el preview o el dominio real?
+ *
+ * `Astro.site` sale de `PUBLIC_SITE`, así que en el deploy de GitHub Pages
+ * vale `deenexproduct.github.io` y en el dominio final vale `SITE_DOMAIN`.
+ * El preview NO puede salir indexable: sería una segunda copia del sitio
+ * compitiendo con el dominio institucional por las mismas queries.
+ *
+ * Se deriva del host en vez de un flag manual para que se corrija solo el
+ * día que se conecte el dominio: ahí el build vuelve a ser indexable sin
+ * que nadie tenga que acordarse de dar vuelta nada.
+ */
+const esPreview = site.host !== SITE_DOMAIN;
 
 /**
  * `astro.config.mjs` declara `trailingSlash: 'never'`, y el sitemap emite
@@ -170,20 +185,33 @@ const organizationNode: JsonLdNode = {
   name: BRAND.group,
   legalName: BRAND.legal,
   url: siteRoot,
-  description,
-  /* `favicon.svg` son 404 bytes y no llega al mínimo de 112px que pide Google
-     para `logo`. Hasta que llegue el logo definitivo usamos la OG, que es
-     raster y declara medidas. TODO swap por el logo real. */
-  logo: {
-    '@type': 'ImageObject',
-    url: defaultOgUrl,
-    width: OG_DEFAULT_SIZE.width,
-    height: OG_DEFAULT_SIZE.height,
-  },
+  /* Descripción de la EMPRESA, no de la página: si una subpágina pasa su
+     propia `description`, el nodo Organization no debe heredarla. */
+  description: t('seo.orgDescription'),
+  /* Con el logo definitivo cargado se publica ése. Mientras no esté,
+     `favicon.svg` son 404 bytes y no llega al mínimo de 112px que Google pide
+     para `logo`, así que se usa la OG, que es raster y declara medidas.
+     Las medidas fijas SOLO aplican a la OG: un SVG no las tiene. */
+  logo: BRAND.logoSvg
+    ? absolute(link(BRAND.logoSvg))
+    : {
+        '@type': 'ImageObject',
+        url: defaultOgUrl,
+        width: OG_DEFAULT_SIZE.width,
+        height: OG_DEFAULT_SIZE.height,
+      },
   image: defaultOgUrl,
   ...(socialUrls.length > 0 ? { sameAs: socialUrls } : {}),
   ...(contactPoints.length > 0 ? { contactPoint: contactPoints } : {}),
-  ...(ADDRESS.country ? { areaServed: { '@type': 'Country', name: ADDRESS.country } } : {}),
+  ...(ADDRESS.countryName
+    ? {
+        areaServed: {
+          '@type': 'Country',
+          name: ADDRESS.countryName,
+          identifier: ADDRESS.country,
+        },
+      }
+    : {}),
   ...(hasAddress()
     ? {
         address: {
@@ -247,7 +275,10 @@ const jsonLd = {
     {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
 
     {
-      noindex ? (
+      /* `esPreview` cubre el deploy de GitHub Pages: mientras el sitio no viva
+         en su dominio, no se indexa nada. `noindex` sigue siendo la marca por
+         página (/corner-quem está despublicada). */
+      noindex || esPreview ? (
         <meta name="robots" content="noindex,nofollow" />
       ) : (
         <meta

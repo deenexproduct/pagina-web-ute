@@ -480,7 +480,12 @@ export const ADDRESS = {
   city: '',
   region: '',
   postalCode: '',
+  /** Código ISO 3166-1, para `addressCountry` del PostalAddress. */
   country: 'AR',
+  /** Nombre humano del país, para `Country.name` del JSON-LD: ese campo
+      espera un nombre, no un código. Publicar "AR" ahí era un dato mal
+      tipado para el consumidor del schema. */
+  countryName: 'Argentina',
 } as const;
 
 export const hasAddress = (): boolean => ADDRESS.streetAddress.length > 0;

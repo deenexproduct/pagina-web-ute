@@ -70,6 +70,11 @@ export const UI = {
     'seo.title': 'QUEM | Grupo de alimentos congelados',
     'seo.description':
       'QUEM integra tiendas, abastecimiento mayorista, franquicias y desarrollo de producto en alimentos congelados. Operación propia en AMBA y PBA.',
+    /* Descripción de la ORGANIZACIÓN para el JSON-LD, independiente de la
+       descripción de cada página: el nodo Organization describe a la empresa,
+       no al documento que se está viendo. */
+    'seo.orgDescription':
+      'Grupo argentino de alimentos congelados. Integra tiendas propias, abastecimiento mayorista, franquicias y desarrollo de producto.',
   },
 
   en: {
@@ -111,6 +116,8 @@ export const UI = {
     'seo.title': 'QUEM | Frozen food group',
     'seo.description':
       'QUEM brings together retail stores, wholesale supply, franchises and product development in frozen food. Own operation across AMBA and Buenos Aires province.',
+    'seo.orgDescription':
+      'Argentine frozen food group. Brings together its own retail stores, wholesale supply, franchises and product development.',
   },
 } as const;
 

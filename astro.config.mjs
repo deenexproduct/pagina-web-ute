@@ -34,9 +34,12 @@ export default defineConfig({
          al sitemap. Revertir cuando Fase 2 habilite subwebs. */
       filter: (page) =>
         !page.includes('/draft/') && !page.includes('/_') && !page.includes('/corner-quem'),
+      /* `es`, no `es-AR`: el hreflang del HTML emite `es` y el del sitemap
+         emitía `es-AR`. Google toma las dos señales y, al contradecirse,
+         descarta el clúster de alternates. Tienen que decir lo mismo. */
       i18n: {
         defaultLocale: 'es',
-        locales: { es: 'es-AR', en: 'en' },
+        locales: { es: 'es', en: 'en' },
       },
     }),
   ],
